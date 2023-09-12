@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .file-upload-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-upload-input {
+            display: none;
+        }
+
+        .file-upload-label {
+            background-color: #3498db;
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .file-upload-label:hover {
+            background-color: #2980b9;
+        }
+
+        #file-name {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="file-upload-container">
+        <h1>File Upload System</h1>
+        <p>Select a file to upload:</p>
+        <label for="file-upload" class="file-upload-label">Choose File</label>
+        <input type="file" id="file-upload" class="file-upload-input">
+        <div id="file-name">No file selected</div>
+		<a href="#" id="download-link" style="display: none;">Download File</a>
+    </div>
+
+    <script>
+        // Display the selected file name
+        const fileUploadInput = document.getElementById("file-upload");
+        const fileNameDisplay = document.getElementById("file-name");
+        const downloadLink = document.getElementById("download-link");
+
+        fileUploadInput.addEventListener("change", () => {
+            const selectedFile = fileUploadInput.files[0];
+            if (selectedFile) {
+                fileNameDisplay.textContent = `Selected file: ${selectedFile.name}`;
+                downloadLink.style.display = "block";
+                downloadLink.setAttribute("href", URL.createObjectURL(selectedFile));
+                downloadLink.setAttribute("download", selectedFile.name);
+            } else {
+                fileNameDisplay.textContent = "No file selected";
+                downloadLink.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
