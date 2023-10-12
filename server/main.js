@@ -8,8 +8,8 @@ const fs = require('fs');
 const app = express();
 
 // Read your SSL certificate and private key files
-const privateKey = fs.readFileSync("key.pem", 'utf8');
-const certificate = fs.readFileSync("cert.pem", 'utf8');
+const privateKey = fs.readFileSync("C:\\Users\\magshimim\\Desktop\\Magshimim\\final project\\guardianvault\\server\\key.pem", 'utf8');
+const certificate = fs.readFileSync("C:\\Users\\magshimim\\Desktop\\Magshimim\\final project\\guardianvault\\server\\cert.pem", 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
 const httpsServer = https.createServer(credentials, app); // Create an HTTPS server
