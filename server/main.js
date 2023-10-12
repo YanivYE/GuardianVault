@@ -1,4 +1,4 @@
-const LOCAL_IP = '192.168.1.109';
+const LOCAL_IP = '10.100.102.15';
 
 const express = require('express');
 const https = require('https'); // Use https module
@@ -8,8 +8,8 @@ const fs = require('fs');
 const app = express();
 
 // Read your SSL certificate and private key files
-const privateKey = fs.readFileSync('key.pem', 'utf8');
-const certificate = fs.readFileSync('cert.pem', 'utf8');
+const privateKey = fs.readFileSync("key.pem", 'utf8');
+const certificate = fs.readFileSync("cert.pem", 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
 const httpsServer = https.createServer(credentials, app); // Create an HTTPS server
