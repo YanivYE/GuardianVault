@@ -26,7 +26,7 @@ io.on('connection', (socket) => {
 });
 
 // Replace 'YOUR_LAN_IP' with the actual LAN IP address of your server machine
-const yourLANIP = '127.0.0.1';
+const yourLANIP = '192.168.1.109';
 const port = 8201;
 
 server.listen(port, yourLANIP, () => {
