@@ -18,7 +18,11 @@ io.on('connection', (socket) => {
 
   socket.on('message', (message) => {
     io.emit('message', message); // Broadcast the message to all connected clients
+    console.log('User said: ' + message);
   });
+
+  // Send a welcome message to the connected client
+  socket.emit('message', 'Welcome to the chat!');
 
   socket.on('disconnect', () => {
     console.log('A user disconnected');
