@@ -1,11 +1,12 @@
-const LOCAL_IP = '10.100.102.15';
+LOCAL_IP = '192.168.1.109'
+
 
 const express = require('express');
-const https = require('https'); // Use https module
+const http = require('http');
 const socketIo = require('socket.io');
-const fs = require('fs');
 
 const app = express();
+<<<<<<< Updated upstream
 
 // Read your SSL certificate and private key files
 const privateKey = fs.readFileSync("C:\\Users\\magshimim\\Desktop\\Magshimim\\final project\\guardianvault\\server\\key.pem", 'utf8');
@@ -14,6 +15,10 @@ const credentials = { key: privateKey, cert: certificate };
 
 const httpsServer = https.createServer(credentials, app); // Create an HTTPS server
 const io = socketIo(httpsServer);
+=======
+const server = http.createServer(app);
+const io = socketIo(server);
+>>>>>>> Stashed changes
 
 app.use(express.static(__dirname));
 
@@ -41,6 +46,6 @@ io.on('connection', (socket) => {
 const yourLANIP = LOCAL_IP;
 const port = 8201;
 
-httpsServer.listen(port, yourLANIP, () => {
-  console.log(`Server is running on https://${yourLANIP}:${port}`);
+server.listen(port, yourLANIP, () => {
+  console.log(`Server is running on http://${yourLANIP}:${port}`);
 });
