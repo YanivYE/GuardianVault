@@ -1,3 +1,6 @@
+LOCAL_IP = '10.100.102.15'
+
+
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -29,8 +32,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// Replace 'YOUR_LAN_IP' with the actual LAN IP address of your server machine
-const yourLANIP = '192.168.1.109';
+const yourLANIP = LOCAL_IP;
 const port = 8201;
 
 server.listen(port, yourLANIP, () => {
