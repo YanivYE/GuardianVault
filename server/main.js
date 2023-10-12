@@ -1,13 +1,19 @@
-LOCAL_IP = '10.100.102.15'
-
+const LOCAL_IP = '192.168.1.109';
 
 const express = require('express');
-const http = require('http');
+const https = require('https'); // Use https module
 const socketIo = require('socket.io');
+const fs = require('fs');
 
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
+
+// Read your SSL certificate and private key files
+const privateKey = fs.readFileSync('key.pem', 'utf8');
+const certificate = fs.readFileSync('cert.pem', 'utf8');
+const credentials = { key: privateKey, cert: certificate };
+
+const httpsServer = https.createServer(credentials, app); // Create an HTTPS server
+const io = socketIo(httpsServer);
 
 app.use(express.static(__dirname));
 
@@ -35,6 +41,6 @@ io.on('connection', (socket) => {
 const yourLANIP = LOCAL_IP;
 const port = 8201;
 
-server.listen(port, yourLANIP, () => {
-  console.log(`Server is running on http://${yourLANIP}:${port}`);
+httpsServer.listen(port, yourLANIP, () => {
+  console.log(`Server is running on https://${yourLANIP}:${port}`);
 });
