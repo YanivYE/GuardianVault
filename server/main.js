@@ -6,19 +6,9 @@ const http = require('http');
 const socketIo = require('socket.io');
 
 const app = express();
-<<<<<<< Updated upstream
 
-// Read your SSL certificate and private key files
-const privateKey = fs.readFileSync("C:\\Users\\magshimim\\Desktop\\Magshimim\\final project\\guardianvault\\server\\key.pem", 'utf8');
-const certificate = fs.readFileSync("C:\\Users\\magshimim\\Desktop\\Magshimim\\final project\\guardianvault\\server\\cert.pem", 'utf8');
-const credentials = { key: privateKey, cert: certificate };
-
-const httpsServer = https.createServer(credentials, app); // Create an HTTPS server
-const io = socketIo(httpsServer);
-=======
 const server = http.createServer(app);
 const io = socketIo(server);
->>>>>>> Stashed changes
 
 app.use(express.static(__dirname));
 
