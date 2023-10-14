@@ -4,6 +4,7 @@ LOCAL_IP = '10.100.102.15' // yaniv = 10.100.102.15
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const path = require('path');
 
 const app = express();
 
@@ -13,8 +14,9 @@ const io = socketIo(server);
 app.use(express.static(__dirname));
 
 // Serve the client.html file at a custom route, e.g., '/chat'
-app.get('/chat', (req, res) => {
-  res.sendFile(__dirname + '/client.html');
+app.get('/', (req, res) => {
+  const filePath = path.join(__dirname, '../client/client.html');
+  res.sendFile(filePath);
 });
 
 io.on('connection', (socket) => {

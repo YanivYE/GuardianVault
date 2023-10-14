@@ -4,7 +4,7 @@
   <title>Simple Chat</title>
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const socket = io('http://localhost:8201');
+    const socket = io(); // Define the 'socket' variable
 
     socket.on('message', (message) => {
       const messages = document.getElementById('messages');
