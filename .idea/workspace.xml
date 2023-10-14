@@ -23,9 +23,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2WdWwY1JLTv0HQBC1W7KphUE5f6" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -36,10 +36,10 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "version-1.0.0",
-    "last_opened_file_path": "C:/Users/magshimim/Desktop/Magshimim/final project/guardianvault"
+    "last_opened_file_path": "C:/Users/magshimim/Desktop/My Projects/Soduko_Solver"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.client">
     <configuration name="client" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="guardianvault" />
       <option name="INTERPRETER_OPTIONS" value="" />

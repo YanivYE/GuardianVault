@@ -1,4 +1,4 @@
-LOCAL_IP = '192.168.1.109'
+LOCAL_IP = '10.100.102.15' // yaniv = 10.100.102.15
 
 
 const express = require('express');
