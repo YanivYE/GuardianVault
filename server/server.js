@@ -1,4 +1,4 @@
-const LOCAL_IP = '10.100.102.15';
+const LOCAL_IP = 'localhost';
 const PORT = 8201;
 
 const express = require('express');
@@ -31,7 +31,18 @@ function serveStaticFiles() {
 function serveClientPage() {
   app.get('/', (req, res) => {
     const filePath = path.join(__dirname, '../client/client.html');
+    res.setHeader('Content-Type', 'text/html');
     res.sendFile(filePath);
+  });
+
+  app.get('/client.js', (req, res) => {
+    const filePath = path.join(__dirname, '../client/client.js');
+    res.setHeader('Content-Type', 'text/javascript');
+    res.sendFile(filePath);
+  });
+
+  app.get('/public-key', (req, res) => {
+    res.send(publicKey); 
   });
 }
 
@@ -64,16 +75,21 @@ function decrypt(encryptedMessage) {
     return '';
   }
 
-  const decryptedBuffer = crypto.privateDecrypt(
-    {
-      key: privateKey,
-      passphrase: '', // If your private key has a passphrase
-    },
-    Buffer.from(encryptedMessage, 'base64')
-  );
+  try {
+    const decryptedBuffer = crypto.privateDecrypt(
+      {
+        key: privateKey,
+        passphrase: '', // If your private key has a passphrase
+      },
+      Buffer.from(encryptedMessage, 'base64')
+    );
 
-  const decryptedMessage = decryptedBuffer.toString('utf8');
-  return decryptedMessage;
+    const decryptedMessage = decryptedBuffer.toString('utf8');
+    return decryptedMessage;
+  } catch (error) {
+    console.error('Decryption error:', error);
+    return '';
+  }
 }
 
 function encrypt(msg) {
@@ -101,6 +117,7 @@ function startServer() {
   server.listen(PORT, LOCAL_IP, () => {
     console.log(`Server is running on http://${LOCAL_IP}:${PORT}`);
   });
+  
 }
 
 serveStaticFiles();
