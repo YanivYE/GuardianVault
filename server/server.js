@@ -40,77 +40,57 @@ function serveClientPage() {
     res.setHeader('Content-Type', 'text/javascript');
     res.sendFile(filePath);
   });
+}
 
-  app.get('/public-key', (req, res) => {
-    res.send(publicKey); 
-  });
+function performKeyExchange(socket, clientPublicKey) {
+  const dh = crypto.createDiffieHellman(256);
+  const sharedSecret = dh.computeSecret(clientPublicKey);
+  return {
+    dh,
+    sharedSecret,
+  };
+}
+
+function encryptWithSharedSecret(sharedSecret, data) {
+  const cipher = crypto.createCipheriv('aes-256-cbc', sharedSecret, Buffer.from('0123456789abcdef0'));
+  return Buffer.concat([cipher.update(data, 'utf8'), cipher.final()]);
+}
+
+function decryptWithSharedSecret(sharedSecret, data) {
+  const decipher = crypto.createDecipheriv('aes-256-cbc', sharedSecret, Buffer.from('0123456789abcdef0'));
+  return Buffer.concat([decipher.update(data, 'base64', 'utf8'), decipher.final()]);
 }
 
 function handleSocketConnection(socket) {
   console.log('A user connected');
+  socket.emit('public-key', publicKey);
 
-  socket.on('message', (encryptedMessage) => {
-    console.log('User sent an encrypted message: ' + encryptedMessage);
+  socket.on('exchange-keys', (data) => {
+    const { dh, sharedSecret } = performKeyExchange(socket, Buffer.from(data.clientPublicKey, 'base64'));
 
-    // Decrypt the received message
-    const decryptedMessage = decrypt(encryptedMessage);
-    console.log('Decrypted message: ' + decryptedMessage);
+    socket.on('client-message', (encryptedData) => {
+      const decryptedData = decryptWithSharedSecret(sharedSecret, encryptedData);
+      console.log('Received and decrypted data:', decryptedData.toString());
 
-    // Broadcast the decrypted message to all connected clients
-    io.emit('message', 'msg:' + decryptedMessage);
-    io.emit('message', 'encrypted msg:' + encrypt(decryptedMessage));
+      const response = 'Message from Server to Client';
+      const encryptedResponse = crypto.publicEncrypt({
+        key: Buffer.from(data.clientPublicKey, 'base64'),
+        padding: crypto.constants.RSA_PKCS1_PADDING,
+      }, Buffer.from(response, 'utf8'));
+
+      socket.emit('server-message', encryptedResponse.toString('base64'));
+    });
+  
+
+    // Send a welcome message to the connected client
+    socket.emit('message', 'Welcome to the chat!');
   });
-
-  // Send a welcome message to the connected client
-  socket.emit('message', 'Welcome to the chat!');
-
+  
   socket.on('disconnect', () => {
     console.log('A user disconnected');
   });
 }
 
-function decrypt(encryptedMessage) {
-  if (!privateKey) {
-    console.log('Private key is not available for decryption.');
-    return '';
-  }
-
-  try {
-    const decryptedBuffer = crypto.privateDecrypt(
-      {
-        key: privateKey,
-        passphrase: '', // If your private key has a passphrase
-      },
-      Buffer.from(encryptedMessage, 'base64')
-    );
-
-    const decryptedMessage = decryptedBuffer.toString('utf8');
-    return decryptedMessage;
-  } catch (error) {
-    console.error('Decryption error:', error);
-    return '';
-  }
-}
-
-function encrypt(msg) {
-  if (!publicKey) {
-    console.log('Public key is not available for encryption.');
-    return '';
-  }
-
-  // Encrypt the data using the recipient's public key
-  const encryptedBuffer = crypto.publicEncrypt(
-    {
-      key: publicKey,
-      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-    },
-    Buffer.from(msg, 'utf8')
-  );
-
-  // Convert the encrypted buffer to a base64-encoded string
-  const encryptedText = encryptedBuffer.toString('base64');
-  return encryptedText;
-}
 
 function startServer() {
   generateRSAKeyPair();
