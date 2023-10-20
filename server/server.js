@@ -80,27 +80,25 @@ function handleSocketConnection(socket) {
 
       socket.emit('server-message', encryptedResponse.toString('base64'));
     });
-  
 
     // Send a welcome message to the connected client
     socket.emit('message', 'Welcome to the chat!');
   });
-  
+
   socket.on('disconnect', () => {
     console.log('A user disconnected');
   });
 }
 
-
 function startServer() {
+  serveStaticFiles();
+  serveClientPage();
   generateRSAKeyPair();
+
   server.listen(PORT, LOCAL_IP, () => {
     console.log(`Server is running on http://${LOCAL_IP}:${PORT}`);
   });
-  
 }
 
-serveStaticFiles();
-serveClientPage();
-io.on('connection', handleSocketConnection);
 startServer();
+io.on('connection', handleSocketConnection);
