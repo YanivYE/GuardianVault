@@ -4,10 +4,16 @@
   <title>Guradian Vault</title>
 </head>
 <body>
+  <div id="hash"></div>
+  <script type="module" src="/client.js"></script>
   <ul id="messages"></ul>
   <input type="text" id="messageInput" placeholder="Type a message">
   <button id="sendButton">Send</button>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="client.js"></script>
+
+  <!-- Include the socket.io-client library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+  <!-- Include the jsencrypt library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.2.1/jsencrypt.min.js"></script>
 </body>
 </html>
