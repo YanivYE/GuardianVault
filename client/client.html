@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Guradian Vault</title>
+    <title>Client</title>
 </head>
 <body>
-  <div id="hash"></div>
-  <script type="module" src="/client.js"></script>
-  <ul id="messages"></ul>
-  <input type="text" id="messageInput" placeholder="Type a message">
-  <button id="sendButton">Send</button>
-
-  <!-- Include the socket.io-client library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
-
-  <script type="text/javascript" src="/usr/local/bin/bower/crypto-js/crypto-js.js"></script>
-  </script>
+    <h1>Client Page</h1>
+    <div>
+        <label for="message">Enter a message:</label>
+        <input type="text" id="message" />
+        <button id="sendButton">Send</button>
+    </div>
+    <div id="messages"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="node-rsa.js"></script> <!-- Include the 'node-rsa' library -->
+    <script src="client.js"></script>
 </body>
 </html>

@@ -1,12 +1,16 @@
+// server fields
 const LOCAL_IP = 'localhost';
 const PORT = 8201;
 
+// libraries import
 const express = require('express');
 const http = require('http');
-const socketIo = require('socket.io');
 const path = require('path');
+const socketIo = require('socket.io');
 const crypto = require('crypto');
+const NodeRSA = require('node-rsa');
 
+// create app & server
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
@@ -14,14 +18,11 @@ const io = socketIo(server);
 let publicKey;
 let privateKey;
 
+// Generate RSA keys for encryption
 function generateRSAKeyPair() {
-  const keyPair = crypto.generateKeyPairSync('rsa', {
-    modulusLength: 2048,
-    publicKeyEncoding: { type: 'spki', format: 'pem' },
-    privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
-  });
-  publicKey = keyPair.publicKey;
-  privateKey = keyPair.privateKey;
+  const key = new NodeRSA({ b: 2048 }); // Create a new RSA key pair
+  publicKey = key.exportKey('public'); // Get the public key in PEM format
+  privateKey = key.exportKey('private'); // Get the private key in PEM format
 }
 
 function serveStaticFiles() {
