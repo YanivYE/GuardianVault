@@ -44,7 +44,8 @@ function serveClientPage() {
 }
 
 function performKeyExchange(socket, clientPublicKey) {
-  const dh = crypto.createDiffieHellman(256);
+  const dh = crypto.createDiffieHellman(2048);
+  dh.generateKeys(); // Generate the private key
   const sharedSecret = dh.computeSecret(clientPublicKey);
   return {
     dh,
@@ -58,9 +59,11 @@ function encryptWithSharedSecret(sharedSecret, data) {
 }
 
 function decryptWithSharedSecret(sharedSecret, data) {
-  const decipher = crypto.createDecipheriv('aes-256-cbc', sharedSecret, Buffer.from('0123456789abcdef0'));
+  const iv = Buffer.from('0123456789abcdef0', 'hex'); // Convert the IV from hex to a buffer
+  const decipher = crypto.createDecipheriv('aes-256-cbc', sharedSecret, iv);
   return Buffer.concat([decipher.update(data, 'base64', 'utf8'), decipher.final()]);
 }
+
 
 function handleSocketConnection(socket) {
   console.log('A user connected');

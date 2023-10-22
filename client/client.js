@@ -16,9 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     sendButton.addEventListener("click", () => {
       const message = messageInput.value;
+      console.log(message);
 
       // Encrypt the message with the server's public key
       const encryptedMessage = serverPublicKey.encrypt(message, 'RSA-OAEP');
+      console.log(encryptedMessage);
 
       socket.emit("client-message", forge.util.encode64(encryptedMessage));
       messageInput.value = "";
