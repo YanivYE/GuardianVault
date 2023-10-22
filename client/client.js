@@ -5,11 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let serverPublicKey;
 
   function generateClientRSAKeyPair() {
-    clientRSAKey = new NodeRSA({ b: 2048 }); // Create a new RSA key pair
+    clientRSAKeys = forge.pki.rsa.generateKeyPair(2048); // Create a new RSA key pair
   }
 
   socket.on("public-key", (publicKey) => {
-    serverPublicKey = new NodeRSA(publicKey, 'public');
+    serverPublicKey = forge.pki.publicKeyFromPem(publicKey);
 
     const messageInput = document.getElementById("message");
     const sendButton = document.getElementById("sendButton");
@@ -18,9 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const message = messageInput.value;
 
       // Encrypt the message with the server's public key
-      const encryptedMessage = serverPublicKey.encrypt(message, 'base64');
+      const encryptedMessage = serverPublicKey.encrypt(message, 'RSA-OAEP');
 
-      socket.emit("client-message", encryptedMessage);
+      socket.emit("client-message", forge.util.encode64(encryptedMessage));
       messageInput.value = "";
     });
   });
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   socket.on("server-message", (encryptedResponse) => {
     const decryptedResponse = clientRSAKeys.privateKey.decrypt(
       forge.util.decode64(encryptedResponse),
-      "RSA-OAEP"
+      'RSA-OAEP'
     );
 
     const messagesDiv = document.getElementById("messages");
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function sendKeyExchange() {
-    const clientPublicKey = clientRSAKey.exportKey('public'); // Export the client's public key
+    const clientPublicKey = forge.pki.publicKeyToPem(clientRSAKeys.publicKey);
     socket.emit("exchange-keys", { clientPublicKey });
   }
 
