@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let serverPublicKey;
 
   function generateClientRSAKeyPair() {
-    clientRSAKeys = forge.pki.rsa.generateKeyPair(2048); // Create a new RSA key pair
+    clientRSAKeys = forge.pki.rsa.generateKeyPair(2048);
   }
 
   socket.on("public-key", (publicKey) => {
@@ -13,14 +13,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const messageInput = document.getElementById("message");
     const sendButton = document.getElementById("sendButton");
+    const encryptedMessageDisplay = document.getElementById("encryptedMessageDisplay"); // Add this line
+    const messageDisplay = document.getElementById("messages"); // Add this line
 
     sendButton.addEventListener("click", () => {
       const message = messageInput.value;
-      console.log(message);
 
-      // Encrypt the message with the server's public key
       const encryptedMessage = serverPublicKey.encrypt(message, 'RSA-OAEP');
-      console.log(encryptedMessage);
+
+      // Display the encrypted message
+      encryptedMessageDisplay.textContent = "Encrypted Message: " + forge.util.encode64(encryptedMessage);
+      messageDisplay.textContent = "Regular Message: " + message;
 
       socket.emit("client-message", forge.util.encode64(encryptedMessage));
       messageInput.value = "";
