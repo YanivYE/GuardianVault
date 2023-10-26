@@ -13,8 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const messageInput = document.getElementById("message");
     const sendButton = document.getElementById("sendButton");
-    const encryptedMessageDisplay = document.getElementById("encryptedMessageDisplay"); // Add this line
-    const messageDisplay = document.getElementById("messages"); // Add this line
+    const encryptedMessageDisplay = document.getElementById("encryptedMessageDisplay"); 
+    const messageDisplay = document.getElementById("messages"); 
 
     sendButton.addEventListener("click", () => {
       const message = messageInput.value;

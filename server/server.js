@@ -21,8 +21,8 @@ let privateKey;
 // Generate RSA keys for encryption
 function generateRSAKeyPair() {
   const key = new NodeRSA({ b: 2048 }); // Create a new RSA key pair
-  publicKey = key.exportKey('public'); // Get the public key in PEM format
-  privateKey = key.exportKey('private'); // Get the private key in PEM format
+  publicKey = key.exportKey('public'); // Get the public key 
+  privateKey = key.exportKey('private'); // Get the private key 
 }
 
 function serveStaticFiles() {
