@@ -8,7 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
     clientRSAKeys = forge.pki.rsa.generateKeyPair(2048);
   }
 
+  function sendKeyExchange() {
+    const clientPublicKey = forge.pki.publicKeyToPem(clientRSAKeys.publicKey);
+    socket.emit("exchange-keys", { clientPublicKey });
+  }
+
   socket.on("public-key", (publicKey) => {
+    console.log(publicKey);
     serverPublicKey = forge.pki.publicKeyFromPem(publicKey);
 
     const messageInput = document.getElementById("message");
@@ -24,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Display the encrypted message
       encryptedMessageDisplay.textContent = "Encrypted Message: " + forge.util.encode64(encryptedMessage);
       messageDisplay.textContent = "Regular Message: " + message;
+      // console.log(message);
 
       socket.emit("client-message", forge.util.encode64(encryptedMessage));
       messageInput.value = "";
@@ -42,10 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     messagesDiv.appendChild(messageElement);
   });
 
-  function sendKeyExchange() {
-    const clientPublicKey = forge.pki.publicKeyToPem(clientRSAKeys.publicKey);
-    socket.emit("exchange-keys", { clientPublicKey });
-  }
+  
 
   generateClientRSAKeyPair();
   sendKeyExchange();
