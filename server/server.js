@@ -9,6 +9,7 @@ const path = require('path');
 const socketIo = require('socket.io');
 const crypto = require('crypto');
 const NodeRSA = require('node-rsa');
+const fs = require('fs');
 
 // create app & server
 const app = express();
