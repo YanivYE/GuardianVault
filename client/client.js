@@ -13,7 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
     socket.emit("exchange-keys", { clientPublicKey });
   }
 
-  socket.on("public-key", (publicKey) => {
+  console.log("d");
+
+  generateClientRSAKeyPair();
+  sendKeyExchange();
+
+  socket.on("server-public-key", (publicKey) => {
     console.log(publicKey);
     serverPublicKey = forge.pki.publicKeyFromPem(publicKey);
 
@@ -49,8 +54,4 @@ document.addEventListener("DOMContentLoaded", () => {
     messagesDiv.appendChild(messageElement);
   });
 
-  
-
-  generateClientRSAKeyPair();
-  sendKeyExchange();
 });

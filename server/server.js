@@ -66,11 +66,14 @@ function decryptWithSharedSecret(sharedSecret, data) {
 
 function handleSocketConnection(socket) {
   console.log('A user connected');
-  socket.emit('public-key', publicKey); 
-  console.log(publicKey);
+  socket.emit('server-public-key', publicKey); 
 
   socket.on('exchange-keys', (data) => {
-    const { dh, sharedSecret } = performKeyExchange(socket, Buffer.from(data.clientPublicKey, 'base64'));
+    const clientPublicKey = crypto.createPublicKey(data);
+    //const { dh, sharedSecret } = performKeyExchange(socket, Buffer.from(data.clientPublicKey, 'base64'));
+
+    console.log("SERVER PUBLIC KEY: ", publicKey);
+    console.log("CLIENT PUBLIC KEY: ", clientPublicKey);
 
     socket.on('client-message', (encryptedData) => {
       const decryptedData = decryptWithSharedSecret(sharedSecret, encryptedData);
