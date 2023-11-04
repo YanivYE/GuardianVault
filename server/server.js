@@ -2,7 +2,7 @@
 const LOCAL_IP = 'localhost';
 const PORT = 8201;
 
-// libraries import
+// import libraries 
 const express = require('express');
 const http = require('http');
 const path = require('path');
@@ -17,13 +17,6 @@ const io = socketIo(server);
 
 let publicKey;
 let privateKey;
-
-// Generate RSA keys for encryption
-function generateRSAKeyPair() {
-  const key = new NodeRSA({ b: 2048 }); // Create a new RSA key pair
-  publicKey = key.exportKey('public'); // Get the public key 
-  privateKey = key.exportKey('private'); // Get the private key 
-}
 
 function serveStaticFiles() {
   app.use(express.static(__dirname));
@@ -41,6 +34,13 @@ function serveClientPage() {
     res.setHeader('Content-Type', 'text/javascript');
     res.sendFile(filePath);
   });
+}
+
+// Generate RSA keys for encryption
+function generateRSAKeyPair() {
+  const key = new NodeRSA({ b: 2048 }); // Create a new RSA key pair
+  publicKey = key.exportKey('public'); // Get the public key 
+  privateKey = key.exportKey('private'); // Get the private key 
 }
 
 function performKeyExchange(socket, clientPublicKey) {
@@ -63,7 +63,6 @@ function decryptWithSharedSecret(sharedSecret, data) {
   const decipher = crypto.createDecipheriv('aes-256-cbc', sharedSecret, iv);
   return Buffer.concat([decipher.update(data, 'base64', 'utf8'), decipher.final()]);
 }
-
 
 function handleSocketConnection(socket) {
   console.log('A user connected');
