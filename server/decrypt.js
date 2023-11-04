@@ -9,3 +9,5 @@ class Decrypt {
         return this.privateKey.decrypt(encryptedData, 'utf8');
     }
 }
+
+module.exports = Decrypt;

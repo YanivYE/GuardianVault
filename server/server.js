@@ -11,6 +11,9 @@ const crypto = require('crypto');
 const NodeRSA = require('node-rsa');
 const fs = require('fs');
 
+const Encrypt = require('Encrypt');
+const Decrypt = require('Decrypt');
+
 // create app & server
 const app = express();
 const server = http.createServer(app);
@@ -43,55 +46,70 @@ function generateRSAKeyPair() {
   privateKey = fs.readFileSync('private.pem', 'utf-8');
 }
 
-function performKeyExchange(socket, clientPublicKey) {
-  const dh = crypto.createDiffieHellman(2048);
-  dh.generateKeys(); // Generate the private key
-  const sharedSecret = dh.computeSecret(clientPublicKey);
-  return {
-    dh,
-    sharedSecret,
-  };
-}
+// function performKeyExchange(socket, clientPublicKey) {
+//   const dh = crypto.createDiffieHellman(2048);
+//   dh.generateKeys(); // Generate the private key
+//   const sharedSecret = dh.computeSecret(clientPublicKey);
+//   return {
+//     dh,
+//     sharedSecret,
+//   };
+// }
 
-function encryptWithSharedSecret(sharedSecret, data) {
-  const cipher = crypto.createCipheriv('aes-256-cbc', sharedSecret, Buffer.from('0123456789abcdef0'));
-  return Buffer.concat([cipher.update(data, 'utf8'), cipher.final()]);
-}
+// function encryptWithSharedSecret(sharedSecret, data) {
+//   const cipher = crypto.createCipheriv('aes-256-cbc', sharedSecret, Buffer.from('0123456789abcdef0'));
+//   return Buffer.concat([cipher.update(data, 'utf8'), cipher.final()]);
+// }
 
-function decryptWithSharedSecret(sharedSecret, data) {
-  const iv = Buffer.from('0123456789abcdef0', 'hex'); // Convert the IV from hex to a buffer
-  const decipher = crypto.createDecipheriv('aes-256-cbc', sharedSecret, iv);
-  return Buffer.concat([decipher.update(data, 'base64', 'utf8'), decipher.final()]);
+// function decryptWithSharedSecret(sharedSecret, data) {
+//   const iv = Buffer.from('0123456789abcdef0', 'hex'); // Convert the IV from hex to a buffer
+//   const decipher = crypto.createDecipheriv('aes-256-cbc', sharedSecret, iv);
+//   return Buffer.concat([decipher.update(data, 'base64', 'utf8'), decipher.final()]);
+// }
+
+function exchangePublicKeys()
+{
+  socket.emit('public-key', publicKey); 
+  socket.on('public-key', (clientPublicKey) => {
+    return clientPublicKey;
+  });
 }
 
 function handleSocketConnection(socket) {
   console.log('A user connected');
-  socket.emit('public-key', publicKey); 
-  console.log(publicKey);
+  clientPublicKey = exchangePublicKeys();
+  console.log(clientPublicKey);
+  const encryptData = new Encrypt(clientPublicKey);
+  const decryptData = new Decrypt(privateKey);
 
-  socket.on('exchange-keys', (data) => {
-    const { dh, sharedSecret } = performKeyExchange(socket, Buffer.from(data.clientPublicKey, 'base64'));
+  const originalData = 'Hello, World!';
+  const encryptedData = encryptData.encrypt(originalData);
+  console.log('Encrypted:', encryptedData);
 
-    socket.on('client-message', (encryptedData) => {
-      const decryptedData = decryptWithSharedSecret(sharedSecret, encryptedData);
-      console.log('Received and decrypted data:', decryptedData.toString());
 
-      const response = 'Message from Server to Client';
-      const encryptedResponse = crypto.publicEncrypt({
-        key: Buffer.from(data.clientPublicKey, 'base64'),
-        padding: crypto.constants.RSA_PKCS1_PADDING,
-      }, Buffer.from(response, 'utf8'));
+//   socket.on('exchange-keys', (data) => {
+//     const { dh, sharedSecret } = performKeyExchange(socket, Buffer.from(data.clientPublicKey, 'base64'));
 
-      socket.emit('server-message', encryptedResponse.toString('base64'));
-    });
+//     socket.on('client-message', (encryptedData) => {
+//       const decryptedData = decryptWithSharedSecret(sharedSecret, encryptedData);
+//       console.log('Received and decrypted data:', decryptedData.toString());
 
-    // Send a welcome message to the connected client
-    socket.emit('message', 'Welcome to the chat!');
-  });
+//       const response = 'Message from Server to Client';
+//       const encryptedResponse = crypto.publicEncrypt({
+//         key: Buffer.from(data.clientPublicKey, 'base64'),
+//         padding: crypto.constants.RSA_PKCS1_PADDING,
+//       }, Buffer.from(response, 'utf8'));
 
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
-  });
+//       socket.emit('server-message', encryptedResponse.toString('base64'));
+//     });
+
+//     // Send a welcome message to the connected client
+//     socket.emit('message', 'Welcome to the chat!');
+//   });
+
+//   socket.on('disconnect', () => {
+//     console.log('A user disconnected');
+//   });
 }
 
 function startServer() {

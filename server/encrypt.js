@@ -9,3 +9,5 @@ class Encrypt {
         return this.publicKey.encrypt(data, 'base64');
     }
 }
+
+module.exports = Encrypt;
