@@ -1,14 +1,11 @@
-const crypto = require('crypto');
+const NodeRSA = require('node-rsa');
 
 class Decrypt {
-    constructor(privateKey) 
-    {
-        this.privateKey = privateKey;
+    constructor(privateKey) {
+        this.privateKey = new NodeRSA(privateKey, 'private');
     }
   
     decrypt(encryptedData) {
-        const bufferData = Buffer.from(encryptedData, 'base64');
-        const decryptedData = crypto.privateDecrypt(this.privateKey, bufferData);
-        return decryptedData.toString();
+        return this.privateKey.decrypt(encryptedData, 'utf8');
     }
-  }
+}
