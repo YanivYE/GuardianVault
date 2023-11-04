@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Simple Chat</title>
+    <title>Client</title>
+    <script src="https://unpkg.com/node-forge@1.0.0/dist/forge.min.js"></script>
 </head>
 <body>
-  <ul id="messages"></ul>
-  <input type="text" id="messageInput" placeholder="Type a message">
-  <button id="sendButton">Send</button>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="client.js"></script>
+    <h1>Client Page</h1>
+    <div>
+        <label for="message">Enter a message:</label>
+        <input type="text" id="message" />
+        <button id="sendButton">Send</button>
+    </div>
+    <div id="encryptedMessageDisplay"></div>
+    <div id="messages"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
 </body>
 </html>

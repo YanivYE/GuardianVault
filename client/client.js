@@ -1,39 +1,56 @@
-const socket = io(); // Define the 'socket' variable
+document.addEventListener("DOMContentLoaded", () => {
+  const socket = io();
 
-socket.on('message', (encryptedMessage) => {
-  const messages = document.getElementById('messages');
-  const messageElement = document.createElement('li');
+  let clientRSAKeys;
+  let serverPublicKey;
 
-  // Decrypt the received message using the server's private key
-  const serverPrivateKey = 'YOUR_SERVER_PRIVATE_KEY_HERE'; // Replace with your server's private key
-  const decryptedMessageBuffer = crypto.privateDecrypt(
-    {
-      key: serverPrivateKey,
-      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-    },
-    Buffer.from(encryptedMessage, 'base64')
-  );
-  const decryptedMessage = decryptedMessageBuffer.toString('utf8');
+  function generateClientRSAKeyPair() {
+    clientRSAKeys = forge.pki.rsa.generateKeyPair(2048);
+  }
 
-  messageElement.textContent = decryptedMessage;
-  messages.appendChild(messageElement);
+  function sendKeyExchange() {
+    const clientPublicKey = forge.pki.publicKeyToPem(clientRSAKeys.publicKey);
+    socket.emit("exchange-keys", { clientPublicKey });
+  }
+
+  socket.on("public-key", (publicKey) => {
+    console.log(publicKey);
+    serverPublicKey = forge.pki.publicKeyFromPem(publicKey);
+
+    const messageInput = document.getElementById("message");
+    const sendButton = document.getElementById("sendButton");
+    const encryptedMessageDisplay = document.getElementById("encryptedMessageDisplay"); 
+    const messageDisplay = document.getElementById("messages"); 
+
+    sendButton.addEventListener("click", () => {
+      const message = messageInput.value;
+
+      const encryptedMessage = serverPublicKey.encrypt(message, 'RSA-OAEP');
+
+      // Display the encrypted message
+      encryptedMessageDisplay.textContent = "Encrypted Message: " + forge.util.encode64(encryptedMessage);
+      messageDisplay.textContent = "Regular Message: " + message;
+      // console.log(message);
+
+      socket.emit("client-message", forge.util.encode64(encryptedMessage));
+      messageInput.value = "";
+    });
+  });
+
+  socket.on("server-message", (encryptedResponse) => {
+    const decryptedResponse = clientRSAKeys.privateKey.decrypt(
+      forge.util.decode64(encryptedResponse),
+      'RSA-OAEP'
+    );
+
+    const messagesDiv = document.getElementById("messages");
+    const messageElement = document.createElement("p");
+    messageElement.textContent = "Server's response: " + decryptedResponse;
+    messagesDiv.appendChild(messageElement);
+  });
+
+  
+
+  generateClientRSAKeyPair();
+  sendKeyExchange();
 });
-
-function sendMessage() {
-  const messageInput = document.getElementById('messageInput');
-  const message = messageInput.value;
-
-  // Encrypt the message using the server's public key
-  const serverPublicKey = 'YOUR_SERVER_PUBLIC_KEY_HERE'; // Replace with your server's public key
-  const encryptedMessageBuffer = crypto.publicEncrypt(
-    {
-      key: serverPublicKey,
-      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-    },
-    Buffer.from(message, 'utf8')
-  );
-  const encryptedMessage = encryptedMessageBuffer.toString('base64');
-
-  socket.emit('message', encryptedMessage);
-  messageInput.value = '';
-}
