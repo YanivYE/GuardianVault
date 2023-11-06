@@ -11,8 +11,8 @@ const crypto = require('crypto');
 const NodeRSA = require('node-rsa');
 const fs = require('fs');
 
-const Encrypt = require('Encrypt');
-const Decrypt = require('Decrypt');
+const Encrypt = require('./Encrypt');
+const Decrypt = require('./Decrypt');
 
 // create app & server
 const app = express();
