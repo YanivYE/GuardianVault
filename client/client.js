@@ -10,16 +10,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function sendKeyExchange() {
     const clientPublicKey = forge.pki.publicKeyToPem(clientRSAKeys.publicKey);
+    console.log("client: " + clientPublicKey)
     socket.emit("exchange-keys", { clientPublicKey });
   }
 
-  console.log("d");
 
   generateClientRSAKeyPair();
   sendKeyExchange();
 
   socket.on("server-public-key", (publicKey) => {
-    console.log(publicKey);
+    console.log("server: " + publicKey);
     serverPublicKey = forge.pki.publicKeyFromPem(publicKey);
 
     const messageInput = document.getElementById("message");
