@@ -6,7 +6,7 @@ const PORT = 8201;
 const express = require('express');
 const http = require('http');
 const path = require('path');
-const socketIo = require('socket.io');
+const socketIO = require('socket.io');
 const crypto = require('crypto');
 const NodeRSA = require('node-rsa');
 
@@ -18,7 +18,7 @@ const Decrypt = require('./Decrypt');
 // create app & server
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const socket = socketIO(server);
 
 let publicKey;
 let privateKey;
@@ -77,8 +77,10 @@ function generateRSAKeyPair() {
 
 function exchangePublicKeys()
 {
+  console.log('server public key sent: ', publicKey);
   socket.emit('server-public-key', publicKey); 
   socket.on('client-public-key', (clientPublicKey) => {
+    console.log('client public key receivrd: ', clientPublicKey);
     return clientPublicKey;
   });
 }
@@ -87,21 +89,18 @@ function exchangePublicKeys()
 function handleSocketConnection(socket) {
   console.log('A user connected');
   clientPublicKey = exchangePublicKeys();
-  console.log(clientPublicKey);
-  const encryptData = new Encrypt(clientPublicKey);
-  const decryptData = new Decrypt(privateKey);
+  console.log('client public key receivrd: ', clientPublicKey);
+  // const encryptData = new Encrypt(clientPublicKey);
+  // const decryptData = new Decrypt(privateKey);
 
   const originalData = 'Hello, client!';
-  const encryptedData = encryptData.encrypt(originalData);
-  console.log('Encrypted:', encryptedData);
-  socket.emit('server-message', encryptData);
+  //const encryptedData = encryptData.encrypt(originalData);
+  console.log('Encrypted:', originalData);
+  socket.emit('server-message', originalData);
   socket.on('client-message', (clientData) =>{
-    const decryptedData = decryptData.decrypt(clientData);
-    console.log("Decrypted: ", decryptedData);
+    // const decryptedData = decryptData.decrypt(clientData);
+    console.log("Decrypted: ", clientData);
   });
-
-  
-
 
 //   socket.on('exchange-keys', (data) => {
 //     const { dh, sharedSecret } = performKeyExchange(socket, Buffer.from(data.clientPublicKey, 'base64'));
@@ -147,4 +146,4 @@ function startServer() {
 // const decryptedData = decryptData.decrypt(encryptedData);
 // console.log("Decrypted: ", decryptedData);
 startServer();
-io.on('connection', handleSocketConnection);
+socket.on('connection', handleSocketConnection);

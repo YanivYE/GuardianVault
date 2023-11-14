@@ -29,13 +29,15 @@ document.addEventListener("DOMContentLoaded", () => {
         this.handleServerPublicKey(publicKey);
       });
 
-      this.socket.on("server-message", (encryptedResponse) => {
-        this.handleServerMessage(encryptedResponse);
+      this.socket.on("server-message", (serverMsg) => {
+        console.log("server msg: ", serverMsg);
+        this.socket.emit('client-message', "client response: HEllo server!");
+        //this.handleServerMessage(encryptedResponse);
       });
 
-      document.getElementById("sendButton").addEventListener("click", () => {
-        this.handleSendMessage();
-      });
+      // document.getElementById("sendButton").addEventListener("click", () => {
+      //   this.handleSendMessage();
+      // });
     }
 
     generateClientRSAKeyPair() {
@@ -44,12 +46,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     sendKeyExchange() {
       clientPublicKey = forge.pki.publicKeyToPem(this.clientRSAKeys.publicKey);
-      console.log("client: " + clientPublicKey);
-      this.socket.emit("client-public-key", { clientPublicKey });
+      console.log("client public key sent: " + clientPublicKey);
+      this.socket.emit('client-public-key',  clientPublicKey );
     }
 
     handleServerPublicKey(publicKey) {
-      console.log("server: " + publicKey);
+      console.log("server public key received: " + publicKey);
       this.serverPublicKey = forge.pki.publicKeyFromPem(publicKey);
     }
 
@@ -80,5 +82,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Create an instance of the Client class when the DOM is loaded
   const client = new Client();
-]});
+});
 
