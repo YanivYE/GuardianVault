@@ -1,56 +1,83 @@
+var clientPublicKey = null;
+
+async function encryptMessage(message, publicKey) {
+  const publicKeyObj = forge.pki.publicKeyFromPem(publicKey);
+  const encryptedMessage = publicKeyObj.encrypt(message, 'RSA-OAEP');
+  return forge.util.encode64(encryptedMessage);
+}
+
+async function decryptMessage(encryptedMessage, privateKey) {
+  const privateKeyObj = forge.pki.privateKeyFromPem(privateKey);
+  const decryptedMessage = privateKeyObj.decrypt(forge.util.decode64(encryptedMessage), 'RSA-OAEP');
+  return decryptedMessage;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  const socket = io();
+  class Client {
+    constructor() {
+      this.socket = io();
+      this.clientRSAKeys = null;
+      this.serverPublicKey = null;
 
-  let clientRSAKeys;
-  let serverPublicKey;
+      this.setupEventListeners();
+      this.generateClientRSAKeyPair();
+      this.sendKeyExchange();
+    }
 
-  function generateClientRSAKeyPair() {
-    clientRSAKeys = forge.pki.rsa.generateKeyPair(2048);
-  }
+    setupEventListeners() {
+      this.socket.on("server-public-key", (publicKey) => {
+        this.handleServerPublicKey(publicKey);
+      });
 
-  function sendKeyExchange() {
-    const clientPublicKey = forge.pki.publicKeyToPem(clientRSAKeys.publicKey);
-    socket.emit("exchange-keys", { clientPublicKey });
-  }
+      this.socket.on("server-message", (encryptedResponse) => {
+        this.handleServerMessage(encryptedResponse);
+      });
 
-  socket.on("public-key", (publicKey) => {
-    console.log(publicKey);
-    serverPublicKey = forge.pki.publicKeyFromPem(publicKey);
+      document.getElementById("sendButton").addEventListener("click", () => {
+        this.handleSendMessage();
+      });
+    }
 
-    const messageInput = document.getElementById("message");
-    const sendButton = document.getElementById("sendButton");
-    const encryptedMessageDisplay = document.getElementById("encryptedMessageDisplay"); 
-    const messageDisplay = document.getElementById("messages"); 
+    generateClientRSAKeyPair() {
+      this.clientRSAKeys = forge.pki.rsa.generateKeyPair(2048);
+    }
 
-    sendButton.addEventListener("click", () => {
+    sendKeyExchange() {
+      clientPublicKey = forge.pki.publicKeyToPem(this.clientRSAKeys.publicKey);
+      console.log("client: " + clientPublicKey);
+      this.socket.emit("client-public-key", { clientPublicKey });
+    }
+
+    handleServerPublicKey(publicKey) {
+      console.log("server: " + publicKey);
+      this.serverPublicKey = forge.pki.publicKeyFromPem(publicKey);
+    }
+
+    async handleSendMessage() {
+      const messageInput = document.getElementById("message");
       const message = messageInput.value;
 
-      const encryptedMessage = serverPublicKey.encrypt(message, 'RSA-OAEP');
+      const encryptedMessage = await encryptMessage(message, this.serverPublicKey);
 
       // Display the encrypted message
-      encryptedMessageDisplay.textContent = "Encrypted Message: " + forge.util.encode64(encryptedMessage);
-      messageDisplay.textContent = "Regular Message: " + message;
-      // console.log(message);
+      document.getElementById("encryptedMessageDisplay").textContent =
+        "Encrypted Message: " + encryptedMessage;
+      document.getElementById("messages").textContent = "Regular Message: " + message;
 
-      socket.emit("client-message", forge.util.encode64(encryptedMessage));
+      this.socket.emit("client-message", encryptedMessage);
       messageInput.value = "";
-    });
-  });
+    }
 
-  socket.on("server-message", (encryptedResponse) => {
-    const decryptedResponse = clientRSAKeys.privateKey.decrypt(
-      forge.util.decode64(encryptedResponse),
-      'RSA-OAEP'
-    );
+    async handleServerMessage(encryptedResponse) {
+      const decryptedResponse = await decryptMessage(encryptedResponse, clientPrivateKey);
 
-    const messagesDiv = document.getElementById("messages");
-    const messageElement = document.createElement("p");
-    messageElement.textContent = "Server's response: " + decryptedResponse;
-    messagesDiv.appendChild(messageElement);
-  });
+      const messagesDiv = document.getElementById("messages");
+      const messageElement = document.createElement("p");
+      messageElement.textContent = "Server's message: " + decryptedResponse;
+      messagesDiv.appendChild(messageElement);
+    }
+  }
 
-  
-
-  generateClientRSAKeyPair();
-  sendKeyExchange();
-});
+  // Create an instance of the Client class when the DOM is loaded
+  const client = new Client();
+]});
