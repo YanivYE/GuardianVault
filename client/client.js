@@ -81,3 +81,4 @@ document.addEventListener("DOMContentLoaded", () => {
   // Create an instance of the Client class when the DOM is loaded
   const client = new Client();
 ]});
+
