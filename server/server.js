@@ -69,8 +69,8 @@ function generateRSAKeyPair() {
 
 function exchangePublicKeys()
 {
-  socket.emit('public-key', publicKey); 
-  socket.on('public-key', (clientPublicKey) => {
+  socket.emit('server-public-key', publicKey); 
+  socket.on('client-public-key', (clientPublicKey) => {
     return clientPublicKey;
   });
 }
@@ -82,9 +82,16 @@ function handleSocketConnection(socket) {
   const encryptData = new Encrypt(clientPublicKey);
   const decryptData = new Decrypt(privateKey);
 
-  const originalData = 'Hello, World!';
+  const originalData = 'Hello, client!';
   const encryptedData = encryptData.encrypt(originalData);
   console.log('Encrypted:', encryptedData);
+  socket.emit('server-message', encryptData);
+  socket.on('client-message', (clientData) =>{
+    const decryptedData = decryptData.decrypt(clientData);
+    console.log("Decrypted: ", decryptedData);
+  });
+
+  
 
 
 //   socket.on('exchange-keys', (data) => {
@@ -121,6 +128,14 @@ function startServer() {
     console.log(`Server is running on http://${LOCAL_IP}:${PORT}`);
   });
 }
+// generateRSAKeyPair();
+// const encryptData = new Encrypt(publicKey);
+// const decryptData = new Decrypt(privateKey);
+// const originalData = 'Hello, World!';
+// const encryptedData = encryptData.encrypt(originalData);
+// console.log('Encrypted:', encryptedData);
 
+// const decryptedData = decryptData.decrypt(encryptedData);
+// console.log("Decrypted: ", decryptedData);
 startServer();
 io.on('connection', handleSocketConnection);
