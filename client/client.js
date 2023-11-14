@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sendKeyExchange() {
       clientPublicKey = forge.pki.publicKeyToPem(this.clientRSAKeys.publicKey);
       console.log("client: " + clientPublicKey);
-      this.socket.emit("exchange-keys", { clientPublicKey });
+      this.socket.emit("client-public-key", { clientPublicKey });
     }
 
     handleServerPublicKey(publicKey) {
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const messagesDiv = document.getElementById("messages");
       const messageElement = document.createElement("p");
-      messageElement.textContent = "Server's response: " + decryptedResponse;
+      messageElement.textContent = "Server's message: " + decryptedResponse;
       messagesDiv.appendChild(messageElement);
     }
   }
