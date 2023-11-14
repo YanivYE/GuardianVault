@@ -22,6 +22,7 @@ const socket = socketIO(server);
 
 let publicKey;
 let privateKey;
+let serverDH;
 
 function serveStaticFiles() {
   app.use(express.static(__dirname));
@@ -54,15 +55,16 @@ function generateRSAKeyPair() {
   privateKey = fs.readFileSync('private.pem', 'utf-8');
 }
 
-// function performKeyExchange(socket, clientPublicKey) {
-//   const dh = crypto.createDiffieHellman(2048);
-//   dh.generateKeys(); // Generate the private key
-//   const sharedSecret = dh.computeSecret(clientPublicKey);
-//   return {
-//     dh,
-//     sharedSecret,
-//   };
-// }
+function performKeyExchange(socket) {
+  serverDH = crypto.createDiffieHellman(2048);
+  serverDH.generateKeys();
+
+  socket.emit('server-public-key', serverDH.getPublicKey());
+  socket.on('client-public-key', (clientPublicKey) => {
+    const sharedSecret = serverDH.computeSecret(clientPublicKey, 'hex', 'hex');
+    // You can use the sharedSecret for encryption or derive keys from it.
+  });
+}
 
 // function encryptWithSharedSecret(sharedSecret, data) {
 //   const cipher = crypto.createCipheriv('aes-256-cbc', sharedSecret, Buffer.from('0123456789abcdef0'));
