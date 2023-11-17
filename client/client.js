@@ -5,9 +5,10 @@ document.addEventListener("DOMContentLoaded", () => {
     constructor() {
       this.socket = io();
       this.clientPublicKey = null; // Store client's public key
+      this.sharedSecret = null;
 
       this.setupEventListeners();
-      this.sendKeyExchange();
+      this.performKeyExchange();
     }
 
     setupEventListeners() {
@@ -25,49 +26,69 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    async sendKeyExchange() {
-      // Generate a Diffie-Hellman key pair using Web Crypto API
-      const { publicKey, privateKey } = await window.crypto.subtle.generateKey(
-        {
-          name: 'ECDH',
-          namedCurve: 'P-384', // You can choose different curves based on your security requirements
-        },
-        true,
-        ['deriveKey']
-      );
-    
-      // Export the public key as an ArrayBuffer
-      const exportedPublicKey = await window.crypto.subtle.exportKey('spki', publicKey);
-      const clientPublicKey = this.arrayBufferToHexString(exportedPublicKey);
-    
-      // Send the client's public key to the server
-      this.socket.emit('client-public-key', clientPublicKey);
+    async performKeyExchange() {
+      // Generate your key pair
+      const algorithm = {
+        name: 'ECDH',
+        namedCurve: 'P-256', // You can choose a different curve if needed
+      };
+
+      const keyPair = await crypto.subtle.generateKey(algorithm, true, ['deriveKey']);
+
+      // Send your public key to the other party (you need to implement this part)
+      this.clientPublicKey = await crypto.subtle.exportKey('raw', myKeyPair.publicKey);
+
+      // Assume the other party sends their public key, you receive it as otherPublicKey
+      // Derive the shared secret
+      this.sharedSecret = await deriveSharedSecret(myKeyPair.privateKey, otherPublicKey);
+
+      console.log('Shared secret:', sharedSecret);
+
     }
 
+    // Function to derive a shared secret from your private key and the other party's public key
+    async deriveSharedSecret(privateKey, otherPublicKey) {
+      const algorithm = {
+        name: 'ECDH',
+        namedCurve: 'P-256',
+        public: otherPublicKey,
+      };
+
+      const sharedSecret = await crypto.subtle.deriveKey(
+        algorithm,
+        privateKey,
+        { name: 'AES-GCM', length: 256 },
+        true,
+        ['encrypt', 'decrypt']
+      );
+
+      return sharedSecret;
+    }
+
+
+
+
     async handleServerPublicKey(serverPublicKey) {
-      // Convert the hex string to an ArrayBuffer
-      const arrayBuffer = this.hexStringToArrayBuffer(serverPublicKey);
-    
       // Import the server's public key using Web Crypto API
       const importedServerPublicKey = await window.crypto.subtle.importKey(
-        'spki',
-        arrayBuffer,
+        'jwk',
+        JSON.parse(serverPublicKey),
         { name: 'ECDH', namedCurve: 'P-384' },
         false,
         []
       );
     
-      // Generate the shared secret using Web Crypto API
+      // Derive the shared secret using Web Crypto API
       const sharedSecret = await window.crypto.subtle.deriveKey(
         { name: 'ECDH', public: importedServerPublicKey },
-        privateKey,
+        this.clientPrivateKey,
         { name: 'AES-GCM', length: 256 },
         true,
         ['encrypt', 'decrypt']
       );
     
       // Use a key derivation function to derive keys from the shared secret
-      const keyMaterial = crypto.createHash('sha256').update(this.arrayBufferToHexString(sharedSecret), 'hex').digest();
+      const keyMaterial = new Uint8Array(await window.crypto.subtle.exportKey('raw', sharedSecret));
     
       // Use derived keys for encryption or integrity
       this.socket.encryptionKey = keyMaterial.slice(0, 16);
@@ -96,18 +117,28 @@ document.addEventListener("DOMContentLoaded", () => {
       const messageInput = document.getElementById("message");
       const message = messageInput.value;
     
-      // Encrypt the message using the shared secret
-      const cipher = await window.crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv: new Uint8Array(16) },  // Use a random IV or an agreed-upon mechanism
+      // Import the shared key using Web Crypto API
+      const encryptionKey = await window.crypto.subtle.importKey(
+        'raw',
         this.socket.encryptionKey,
+        { name: 'AES-GCM' },
+        false,
+        ['encrypt']
+      );
+    
+      // Encrypt the message using the shared key
+      const iv = window.crypto.getRandomValues(new Uint8Array(16)); // Use a random IV
+      const cipherText = await window.crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv },
+        encryptionKey,
         new TextEncoder().encode(message)
       );
     
       // Calculate HMAC for message integrity
-      const hmac = crypto.createHmac('sha256', this.socket.integrityKey).update(new Uint8Array(cipher)).digest('hex');
+      const hmac = crypto.createHmac('sha256', this.socket.integrityKey).update(new Uint8Array(cipherText)).digest('hex');
     
-      // Send the encrypted message and HMAC to the server
-      this.socket.emit('client-message', this.arrayBufferToHexString(cipher), hmac);
+      // Send the encrypted message, IV, and HMAC to the server
+      this.socket.emit('client-message', this.arrayBufferToHexString(cipherText), this.arrayBufferToHexString(iv), hmac);
     
       messageInput.value = "";
     }
