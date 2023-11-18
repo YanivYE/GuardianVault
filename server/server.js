@@ -39,14 +39,16 @@ function serveClientPage() {
     res.setHeader('Content-Type', 'text/javascript');
     res.sendFile(filePath);
   });
-}
+} 
 
 function performKeyExchange(socket) {
+  console.log('exchanging keys');
   serverDH = crypto.createDiffieHellman(2048);
   serverDH.generateKeys();
-
+  console.log('send key to client', serverDH.getPublicKey());
   socket.emit('server-public-key', serverDH.getPublicKey());
   socket.on('client-public-key', (clientPublicKey) => {
+    console.log('got client key:', clientPublicKey);
     const sharedSecret = serverDH.computeSecret(clientPublicKey, 'hex', 'hex');
     // You can use the sharedSecret for encryption or derive keys from it.
 
@@ -106,17 +108,17 @@ function receiveMessageFromClient()
 
 function handleSocketConnection(socket) {
   console.log('A user connected');
-  performKeyExchange();
+  performKeyExchange(socket);
 
-  const msgToClient = 'Hello, client!';
-  sendMessageToClient(msgToClient);
-  receiveMessageFromClient();
+//   const msgToClient = 'Hello, client!';
+//   sendMessageToClient(msgToClient);
+//   receiveMessageFromClient();
 
 
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
-  });
-}
+//   socket.on('disconnect', () => {
+//     console.log('A user disconnected');
+//   });
+  }
 
 function startServer() {
   serveStaticFiles();
