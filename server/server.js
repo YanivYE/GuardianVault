@@ -53,6 +53,7 @@ function performKeyExchange(socket) {
     // You can use the sharedSecret for encryption or derive keys from it.
 
     const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
+    console.log('key aterial: ', keyMaterial);
     
     // Use derived keys for encryption or integrity
     socket.encryptionKey = keyMaterial.slice(0, 16);  // For example, use the first 16 bytes as an encryption key

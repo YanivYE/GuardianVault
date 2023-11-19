@@ -27,6 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async performKeyExchange(serverPublicKey) {
       console.log('performing exchange');
+      console.log('got server public key: ', serverPublicKey);
+    
       // Generate your key pair
       const algorithm = {
         name: 'ECDH',
@@ -38,8 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // Send your public key to the other party (you need to implement this part)
       this.clientPublicKey = await crypto.subtle.exportKey('raw', keyPair.publicKey);
       this.socket.emit('client-public-key', this.clientPublicKey);
-    
+      console.log('sent client public key: ', this.clientPublicKey);
       try {
+        console.log('getting shared secret');
         // Assume the other party sends their public key, you receive it as serverPublicKey
         // Derive the shared secret
         this.sharedSecret = await this.deriveSharedSecret(keyPair.privateKey, serverPublicKey);
@@ -48,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
         // Use a key derivation function to derive keys from the shared secret
         const keyMaterial = new Uint8Array(await window.crypto.subtle.exportKey('raw', this.sharedSecret));
+        console.log('key material: ', keyMaterial);
     
         // Use derived keys for encryption or integrity
         this.socket.encryptionKey = keyMaterial.slice(0, 16);
@@ -56,19 +60,21 @@ document.addEventListener("DOMContentLoaded", () => {
         // Notify the server that the key exchange is complete
         console.log('key-exchange-complete');
       } catch (error) {
-        console.error('Error in key exchange:', error);
+        console.error('Error in key exchange:', error.message || error);
+        console.log(error.stack);
+        debugger; // This line will cause your code execution to pause here
       }
     }
+    
  
     // Function to derive a shared secret from your private key and the other party's public key
     async deriveSharedSecret(privateKey, serverPublicKey) {
-      // Convert the serverPublicKey from hex string to ArrayBuffer
-      const serverPublicKeyBuffer = this.hexStringToArrayBuffer(serverPublicKey);
-    
+      console.log('buffer: ', serverPublicKey);
+
       // Import the server's public key
       const importedServerPublicKey = await crypto.subtle.importKey(
         'raw',
-        serverPublicKeyBuffer,
+        serverPublicKey,
         { name: 'ECDH', namedCurve: 'P-256' },
         false,
         []
@@ -92,14 +98,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // Helper function to convert a hex string to an ArrayBuffer
     hexStringToArrayBuffer(hexString) {
-      const bytes = [];
-      for (let i = 0; i < hexString.length; i += 2) {
-        bytes.push(parseInt(hexString.substr(i, 2), 16));
+      const length = hexString.length / 2;
+      const buffer = new Uint8Array(length);
+    
+      for (let i = 0; i < length; i++) {
+        buffer[i] = parseInt(hexString.substr(i * 2, 2), 16);
       }
-      return new Uint8Array(bytes).buffer;
+    
+      return buffer.buffer;
     }
+    
 
     // Helper function to convert an ArrayBuffer to a hex string
     arrayBufferToHexString(arrayBuffer) {
