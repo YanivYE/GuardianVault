@@ -73,7 +73,7 @@ function decryptUsingEncryptionKey(message)
 {
   // Decrypt the data using the derived encryption key
   const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(socket.encryptionKey), Buffer.alloc(16, 0));
-  const decryptedData = Buffer.concat([decipher.update(encryptedData, 'hex'), decipher.final()]);
+  const decryptedData = Buffer.concat([decipher.update(message, 'hex'), decipher.final()]);
   return decryptedData;
 }
 

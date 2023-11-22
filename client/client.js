@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // });
     }
 
-    async performKeyExchange(serverPublicKey) {
+    performKeyExchange(serverPublicKey) {
       console.log('performing exchange');
       console.log('got server public key: ', serverPublicKey);
     
@@ -35,67 +35,60 @@ document.addEventListener("DOMContentLoaded", () => {
         namedCurve: 'P-256', // You can choose a different curve if needed
       };
     
-      const keyPair = await crypto.subtle.generateKey(algorithm, true, ['deriveKey']);
+      crypto.subtle.generateKey(algorithm, true, ['deriveKey'])
+        .then(async (keyPair) => {
+          // Send your public key to the other party (you need to implement this part)
+          this.clientPublicKey = await crypto.subtle.exportKey('raw', keyPair.publicKey);
+          this.socket.emit('client-public-key', this.clientPublicKey);
+          console.log('sent client public key: ', this.clientPublicKey);
     
-      // Send your public key to the other party (you need to implement this part)
-      this.clientPublicKey = await crypto.subtle.exportKey('raw', keyPair.publicKey);
-      this.socket.emit('client-public-key', this.clientPublicKey);
-      console.log('sent client public key: ', this.clientPublicKey);
-      try {
-        console.log('getting shared secret');
-        // Assume the other party sends their public key, you receive it as serverPublicKey
-        // Derive the shared secret
-        this.sharedSecret = await this.deriveSharedSecret(keyPair.privateKey, serverPublicKey);
+          console.log('getting shared secret');
+          // Assume the other party sends their public key, you receive it as serverPublicKey
+          // Import the server's public key
+          const importedServerPublicKey = await crypto.subtle.importKey(
+            'raw',
+            serverPublicKey,
+            { name: 'ECDH', namedCurve: 'P-256' },
+            false,
+            []
+          );
     
-        console.log('Shared secret:', this.sharedSecret);
+          const sharedSecretAlgorithm = {
+            name: 'ECDH',
+            namedCurve: 'P-256',
+            public: importedServerPublicKey,
+          };
     
-        // Use a key derivation function to derive keys from the shared secret
-        const keyMaterial = new Uint8Array(await window.crypto.subtle.exportKey('raw', this.sharedSecret));
-        console.log('key material: ', keyMaterial);
+          // Derive the shared secret
+          this.sharedSecret = await crypto.subtle.deriveKey(
+            sharedSecretAlgorithm,
+            keyPair.privateKey,
+            { name: 'AES-GCM', length: 256 },
+            true,
+            ['encrypt', 'decrypt']
+          );
     
-        // Use derived keys for encryption or integrity
-        this.socket.encryptionKey = keyMaterial.slice(0, 16);
-        this.socket.integrityKey = keyMaterial.slice(16, 32);
+          console.log('Shared secret:', this.sharedSecret);
     
-        // Notify the server that the key exchange is complete
-        console.log('key-exchange-complete');
-      } catch (error) {
-        console.error('Error in key exchange:', error.message || error);
-        console.log(error.stack);
-        debugger; // This line will cause your code execution to pause here
-      }
+          // Use a key derivation function to derive keys from the shared secret
+          const keyMaterial = new Uint8Array(await window.crypto.subtle.exportKey('raw', this.sharedSecret));
+          console.log('key material: ', keyMaterial);
+    
+          // Use derived keys for encryption or integrity
+          this.socket.encryptionKey = keyMaterial.slice(0, 16);
+          this.socket.integrityKey = keyMaterial.slice(16, 32);
+    
+          // Notify the server that the key exchange is complete
+          console.log('key-exchange-complete');
+        })
+        .catch((error) => {
+          console.error('Error in key exchange:', error.message || error);
+          console.log(error.stack);
+          debugger; // This line will cause your code execution to pause here
+        });
     }
     
- 
-    // Function to derive a shared secret from your private key and the other party's public key
-    async deriveSharedSecret(privateKey, serverPublicKey) {
-      console.log('buffer: ', serverPublicKey);
-
-      // Import the server's public key
-      const importedServerPublicKey = await crypto.subtle.importKey(
-        'raw',
-        serverPublicKey,
-        { name: 'ECDH', namedCurve: 'P-256' },
-        false,
-        []
-      );
     
-      const algorithm = {
-        name: 'ECDH',
-        namedCurve: 'P-256',
-        public: importedServerPublicKey,
-      };
-    
-      const sharedSecret = await crypto.subtle.deriveKey(
-        algorithm,
-        privateKey,
-        { name: 'AES-GCM', length: 256 },
-        true,
-        ['encrypt', 'decrypt']
-      );
-    
-      return sharedSecret;
-    }
 
 
     hexStringToArrayBuffer(hexString) {
