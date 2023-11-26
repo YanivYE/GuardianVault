@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     constructor() {
       this.socket = io();
       this.clientPublicKey = null; // Store client's public key
-      this.sharedSecret = null;
+      //this.sharedSecret = null;
 
       this.setupEventListeners();
     } 
@@ -45,12 +45,15 @@ document.addEventListener("DOMContentLoaded", () => {
           console.log('getting shared secret');
           // Assume the other party sends their public key, you receive it as serverPublicKey
           // Import the server's public key
-          const importedServerPublicKey = await crypto.subtle.importKey(
-            'raw',
+
+          // error here
+          debugger; // This line will cause your code execution to pause here
+          const importedServerPublicKey = window.crypto.subtle.importKey(
+            "raw",
             serverPublicKey,
             { name: 'ECDH', namedCurve: 'P-256' },
-            false,
-            []
+            true,
+            ['encrypt', 'decrypt']
           );
     
           const sharedSecretAlgorithm = {
@@ -60,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
           };
     
           // Derive the shared secret
-          this.sharedSecret = await crypto.subtle.deriveKey(
+          const sharedSecret = window.crypto.subtle.deriveKey(
             sharedSecretAlgorithm,
             keyPair.privateKey,
             { name: 'AES-GCM', length: 256 },
