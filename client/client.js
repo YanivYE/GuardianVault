@@ -48,28 +48,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // error here
           debugger; // This line will cause your code execution to pause here
-          const importedServerPublicKey = window.crypto.subtle.importKey(
-            "raw",
-            serverPublicKey,
-            { name: 'ECDH', namedCurve: 'P-256' },
-            true,
-            ['encrypt', 'decrypt']
-          );
+          const importedServerPublicKey = await importServerPublicKey(serverPublicKey);
+
+          importServerPublicKey(serverPublicKey)
+            .then((result) => {
+              // You can use the imported key here if you didn't do it in the function itself
+              console.log(result);
+            })
+            .catch((error) => {
+              // Handle errors here if necessary
+              console.error(error);
+          });
     
-          const sharedSecretAlgorithm = {
-            name: 'ECDH',
-            namedCurve: 'P-256',
-            public: importedServerPublicKey,
-          };
-    
-          // Derive the shared secret
-          const sharedSecret = window.crypto.subtle.deriveKey(
-            sharedSecretAlgorithm,
-            keyPair.privateKey,
-            { name: 'AES-GCM', length: 256 },
-            true,
-            ['encrypt', 'decrypt']
-          );
+          deriveSharedSecret(importedServerPublicKey, keyPair)
+            .then((result) => {
+              // You can use the derived shared key here
+              console.log(result);
+            })
+            .catch((error) => {
+              // Handle errors here if necessary
+              console.error(error);
+          });
     
           console.log('Shared secret:', this.sharedSecret);
     
@@ -177,3 +176,66 @@ document.addEventListener("DOMContentLoaded", () => {
   // Create an instance of the Client class when the DOM is loaded
   const client = new Client();
 });
+
+async function importServerPublicKey(serverPublicKey) {
+  try {
+    const importedServerPublicKey = await window.crypto.subtle.importKey(
+      "raw",
+      serverPublicKey,
+      { name: 'ECDH', namedCurve: 'P-256' },
+      true,
+      ['deriveKey']
+      );
+    // Use the importedServerPublicKey here
+    console.log(importedServerPublicKey);
+    return importedServerPublicKey;
+  } catch (error) {
+    console.error('Error importing server public key:', error);
+    throw error;
+  }
+}
+
+async function deriveSharedSecret(importedServerPublicKey, keyPair) {
+  try {
+    const sharedSecretAlgorithm = {
+      name: 'ECDH',
+      namedCurve: 'P-256',
+      public: importedServerPublicKey,
+    };
+
+    // Wait for the server public key import
+    const sharedKey = await window.crypto.subtle.deriveKey(
+      sharedSecretAlgorithm,
+      keyPair.privateKey,
+      { name: 'AES-GCM', length: 256 },
+      true,
+      ['encrypt', 'decrypt']
+    );
+
+    // Use the shared key here
+    console.log('Derived shared key:', sharedKey);
+    return sharedKey;
+  } catch (error) {
+    console.error('Error deriving shared secret:', error);
+    throw error;
+  }
+}
+
+async function importServerPublicKey(serverPublicKey) {
+  try {
+    const importedServerPublicKey = await window.crypto.subtle.importKey(
+      "raw",
+      serverPublicKey,
+      { name: 'ECDH', namedCurve: 'P-256' },
+      true,
+      ['encrypt', 'decrypt']
+    );
+
+    // Use the importedServerPublicKey here
+    console.log('Imported server public key:', importedServerPublicKey);
+    return importedServerPublicKey;
+  } catch (error) {
+    console.error('Error importing server public key:', error);
+    throw error;
+  }
+}
