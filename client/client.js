@@ -87,7 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
           console.log("shared secret:", this.sharedSecret);
 
-          // Use derived keys for encryption or integrity
+
+              // Use derived keys for encryption or integrity
           const encryptionKey = new Uint8Array(sharedSecret.slice(0, 16));
           const integrityKey = new Uint8Array(sharedSecret.slice(16, 32));
 
@@ -197,3 +198,66 @@ document.addEventListener("DOMContentLoaded", () => {
   // Create an instance of the Client class when the DOM is loaded
   const client = new Client();
 });
+
+async function importServerPublicKey(serverPublicKey) {
+  try {
+    const importedServerPublicKey = await window.crypto.subtle.importKey(
+      "raw",
+      serverPublicKey,
+      { name: 'ECDH', namedCurve: 'P-256' },
+      true,
+      ['deriveKey']
+      );
+    // Use the importedServerPublicKey here
+    console.log(importedServerPublicKey);
+    return importedServerPublicKey;
+  } catch (error) {
+    console.error('Error importing server public key:', error);
+    throw error;
+  }
+}
+
+async function deriveSharedSecret(importedServerPublicKey, keyPair) {
+  try {
+    const sharedSecretAlgorithm = {
+      name: 'ECDH',
+      namedCurve: 'P-256',
+      public: importedServerPublicKey,
+    };
+
+    // Wait for the server public key import
+    const sharedKey = await window.crypto.subtle.deriveKey(
+      sharedSecretAlgorithm,
+      keyPair.privateKey,
+      { name: 'AES-GCM', length: 256 },
+      true,
+      ['encrypt', 'decrypt']
+    );
+
+    // Use the shared key here
+    console.log('Derived shared key:', sharedKey);
+    return sharedKey;
+  } catch (error) {
+    console.error('Error deriving shared secret:', error);
+    throw error;
+  }
+}
+
+async function importServerPublicKey(serverPublicKey) {
+  try {
+    const importedServerPublicKey = await window.crypto.subtle.importKey(
+      "raw",
+      serverPublicKey,
+      { name: 'ECDH', namedCurve: 'P-256' },
+      true,
+      ['encrypt', 'decrypt']
+    );
+
+    // Use the importedServerPublicKey here
+    console.log('Imported server public key:', importedServerPublicKey);
+    return importedServerPublicKey;
+  } catch (error) {
+    console.error('Error importing server public key:', error);
+    throw error;
+  }
+}
