@@ -15,6 +15,7 @@ const server = http.createServer(app);
 const socket = socketIO(server);
 
 let serverDH;
+const sharedSecret = null;
 
 function serveStaticFiles() {
   app.use(express.static(__dirname));
@@ -43,23 +44,56 @@ function serveClientPage() {
 
 function performKeyExchange(socket) {
   console.log('exchanging keys');
-  serverDH = crypto.createDiffieHellman(2048);
-  serverDH.generateKeys();
-  console.log('send key to client', serverDH.getPublicKey());
-  socket.emit('server-public-key', serverDH.getPublicKey());
-  socket.on('client-public-key', (clientPublicKey) => {
-    console.log('got client key:', clientPublicKey);
-    const sharedSecret = serverDH.computeSecret(clientPublicKey, 'hex', 'hex');
-    // You can use the sharedSecret for encryption or derive keys from it.
 
-    const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
-    console.log('key aterial: ', keyMaterial);
-    
-    // Use derived keys for encryption or integrity
-    socket.encryptionKey = keyMaterial.slice(0, 16);  // For example, use the first 16 bytes as an encryption key
-    socket.integrityKey = keyMaterial.slice(16, 32); 
+  serverDH = crypto.createECDH('secp256k1');
+  serverDH.generateKeys();
+  const serverPublicKeyBase64 = serverDH.getPublicKey().toString('base64');
+
+  console.log(serverPublicKeyBase64);
+
+  // Sign the server's public key
+  const serverPrivateKey = serverDH.getPrivateKey();
+  const serverPublicKeyBuffer = Buffer.from(serverPublicKeyBase64, 'base64');
+
+  // Create a signature
+  const sign = crypto.createSign('SHA256');
+  sign.update(serverPublicKeyBuffer);
+  const serverSignature = sign.sign(serverPrivateKey, 'base64');
+  const serverSignatureBase64 = serverSignature.toString('base64');
+
+  console.log('sent key to client', serverPublicKeyBase64, 'with signature', serverSignatureBase64);
+
+  // Send serverPublicKeyBase64 and serverSignatureBase64 to the client
+  socket.emit('server-public-key', serverPublicKeyBase64, serverSignatureBase64);
+
+  socket.on('client-public-key', (clientPublicKey, clientSignatureBase64) => {
+    console.log('got client key:', clientPublicKey);
+
+    // Verify the client's signature
+    const clientPublicKeyBuffer = Buffer.from(clientPublicKey, 'base64');
+    const clientSignatureBuffer = Buffer.from(clientSignatureBase64, 'base64');
+    const isSignatureValid = crypto.verify('sha256', clientPublicKeyBuffer, clientSignatureBuffer, clientPublicKey);
+
+    if (isSignatureValid) {
+      console.log('Client signature is valid.');
+
+      // Compute shared secret
+      sharedSecret = serverDH.computeSecret(clientPublicKey, 'base64', 'hex');
+      console.log("Shared Secret", sharedSecret);
+
+      // You can use the sharedSecret for encryption or derive keys from it.
+      const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
+      console.log('key material: ', keyMaterial);
+
+      // Use derived keys for encryption or integrity
+      socket.encryptionKey = keyMaterial.slice(0, 16);  // For example, use the first 16 bytes as an encryption key
+      socket.integrityKey = keyMaterial.slice(16, 32);
+    } else {
+      console.log('Client signature is not valid. Abort key exchange.');
+    }
   });
 }
+
 
 function encryptUsingEncryptionKey(message)
 {

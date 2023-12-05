@@ -4,15 +4,14 @@ document.addEventListener("DOMContentLoaded", () => {
   class Client {
     constructor() {
       this.socket = io();
-      this.clientPublicKey = null; // Store client's public key
-      //this.sharedSecret = null;
+      this.sharedSecret = null;
 
       this.setupEventListeners();
     } 
 
     setupEventListeners() {
-      this.socket.on("server-public-key", (serverPublicKey) => {
-        this.performKeyExchange(serverPublicKey);
+      this.socket.on('server-public-key', async (serverPublicKeyBase64, serverSignatureBase64) => {
+        this.performKeyExchange(serverPublicKeyBase64, serverSignatureBase64);
       });
 
       // // Handling messages from the server with integrity check
@@ -25,71 +24,92 @@ document.addEventListener("DOMContentLoaded", () => {
       // });
     }
 
-    performKeyExchange(serverPublicKey) {
-      console.log('performing exchange');
-      console.log('got server public key: ', serverPublicKey);
-    
-      // Generate your key pair
-      const algorithm = {
-        name: 'ECDH',
-        namedCurve: 'P-256', // You can choose a different curve if needed
-      };
-    
-      crypto.subtle.generateKey(algorithm, true, ['deriveKey'])
-        .then(async (keyPair) => {
-          // Send your public key to the other party (you need to implement this part)
-          this.clientPublicKey = await crypto.subtle.exportKey('raw', keyPair.publicKey);
-          this.socket.emit('client-public-key', this.clientPublicKey);
-          console.log('sent client public key: ', this.clientPublicKey);
-    
-          console.log('getting shared secret');
-          // Assume the other party sends their public key, you receive it as serverPublicKey
-          // Import the server's public key
+    async performKeyExchange(serverPublicKeyBase64, serverSignatureBase64) {
+      console.log("got server public key:", serverPublicKeyBase64);
 
-          // error here
-          debugger; // This line will cause your code execution to pause here
-          const importedServerPublicKey = window.crypto.subtle.importKey(
-            "raw",
-            serverPublicKey,
-            { name: 'ECDH', namedCurve: 'P-256' },
-            true,
-            ['encrypt', 'decrypt']
-          );
-    
+      window.crypto.subtle.generateKey(
+        {
+          name: "ECDH",
+          namedCurve: "P-256"
+        },
+        true,
+        ["deriveKey", "deriveBits"]
+      )
+      .then(async (keyPair) => {
+        // Get the client's public key
+        const clientPublicKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
+
+        // Sign the client's public key
+        const clientPrivateKey = keyPair.privateKey;
+        const clientSignature = await window.crypto.subtle.sign(
+          {
+            name: "ECDSA",
+            hash: {name: "SHA-256"}
+          },
+          clientPrivateKey,
+          clientPublicKey
+        );
+
+        console.log("client public key:", clientPublicKey);
+        // Send clientPublicKey and clientSignature to the server
+        socket.emit('client-public-key', clientPublicKey, clientSignature);
+
+
+        // Verify the server's signature
+        const serverPublicKeyBuffer = new Uint8Array(atob(serverPublicKeyBase64).split("").map(c => c.charCodeAt(0)));
+        const serverSignatureBuffer = new Uint8Array(atob(serverSignatureBase64).split("").map(c => c.charCodeAt(0)));
+
+        const isSignatureValid = await window.crypto.subtle.verify(
+          {
+            name: "ECDSA",
+            hash: {name: "SHA-256"}
+          },
+          serverPublicKeyBuffer,
+          serverSignatureBuffer,
+          serverPublicKeyBuffer
+        );
+
+        if (isSignatureValid) {
+          console.log('Server signature is valid.');
+
+          // Derive shared secret
           const sharedSecretAlgorithm = {
             name: 'ECDH',
             namedCurve: 'P-256',
-            public: importedServerPublicKey,
+            public: serverPublicKeyBuffer
           };
-    
-          // Derive the shared secret
-          const sharedSecret = window.crypto.subtle.deriveKey(
+
+          sharedSecret = await window.crypto.subtle.deriveBits(
             sharedSecretAlgorithm,
             keyPair.privateKey,
-            { name: 'AES-GCM', length: 256 },
-            true,
-            ['encrypt', 'decrypt']
+            256
           );
-    
-          console.log('Shared secret:', this.sharedSecret);
-    
-          // Use a key derivation function to derive keys from the shared secret
-          const keyMaterial = new Uint8Array(await window.crypto.subtle.exportKey('raw', this.sharedSecret));
-          console.log('key material: ', keyMaterial);
-    
+
+          console.log("shared secret:", this.sharedSecret);
+
           // Use derived keys for encryption or integrity
-          this.socket.encryptionKey = keyMaterial.slice(0, 16);
-          this.socket.integrityKey = keyMaterial.slice(16, 32);
-    
-          // Notify the server that the key exchange is complete
-          console.log('key-exchange-complete');
-        })
-        .catch((error) => {
-          console.error('Error in key exchange:', error.message || error);
-          console.log(error.stack);
-          debugger; // This line will cause your code execution to pause here
-        });
+          const encryptionKey = new Uint8Array(sharedSecret.slice(0, 16));
+          const integrityKey = new Uint8Array(sharedSecret.slice(16, 32));
+
+          console.log('Shared secret:', sharedSecret);
+          console.log('Encryption Key:', encryptionKey);
+          console.log('Integrity Key:', integrityKey);
+
+          // Continue with your application logic using the derived keys
+        } else {
+          console.log('Server signature is not valid. Abort key exchange.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error in key generation:', error.message || error);
+      });
+      
     }
+    
+    
+    
+    
+    
     
     
 
