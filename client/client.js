@@ -47,14 +47,14 @@ document.addEventListener("DOMContentLoaded", () => {
       debugger;
       // buffer array -> crypto key
       const importedServerPublicKey = await window.crypto.subtle.importKey(
-        "spki",
+        "raw",
         serverPublicKey,
         {
           name: "ECDH",
           namedCurve: "P-256"
         },
         true,
-        ['deriveKey', 'deriveBits']
+        []
       );
       debugger;
       // Derive shared secret
@@ -105,10 +105,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             // Use derived keys for encryption or integrity
-        const encryptionKey = new Uint8Array(sharedSecret.slice(0, 16));
-        const integrityKey = new Uint8Array(sharedSecret.slice(16, 32));
+        const encryptionKey = new Uint8Array(this.sharedSecret.slice(0, 16));
+        const integrityKey = new Uint8Array(this.sharedSecret.slice(16, 32));
 
-        console.log('Shared secret:', sharedSecret);
+        console.log('Shared secret:', this.sharedSecret);
         console.log('Encryption Key:', encryptionKey);
         console.log('Integrity Key:', integrityKey);
 
