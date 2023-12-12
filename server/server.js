@@ -44,9 +44,10 @@ function serveClientPage() {
 
 function performKeyExchange(socket) {
   console.log('exchanging keys');
-
+  // heliptic curve deffie helman
   serverDH = crypto.createECDH('secp256k1');
   serverDH.generateKeys();
+  console.log(serverDH.getPublicKey());
   const serverPublicKeyBase64 = serverDH.getPublicKey().toString('base64');
 
   console.log(serverPublicKeyBase64);
@@ -67,8 +68,8 @@ function performKeyExchange(socket) {
   // Send serverPublicKeyBase64 and serverSignatureBase64 to the client
   socket.emit('server-public-key', serverPublicKeyBase64);
 
-  socket.on('client-public-key', (clientPublicKey) => {
-    console.log('got client key:', clientPublicKey);
+  socket.on('client-public-key', (clientPublicKeyBase64) => {
+    console.log('got client key:', clientPublicKeyBase64);
 
     // Verify the client's signature
     // const clientPublicKeyBuffer = Buffer.from(clientPublicKey, 'base64');
@@ -79,7 +80,7 @@ function performKeyExchange(socket) {
     //   console.log('Client signature is valid.');
 
       // Compute shared secret
-      sharedSecret = serverDH.computeSecret(clientPublicKey, 'base64', 'hex');
+      sharedSecret = serverDH.computeSecret(clientPublicKeyBase64, 'base64', 'hex');
       console.log("Shared Secret", sharedSecret);
 
       // You can use the sharedSecret for encryption or derive keys from it.

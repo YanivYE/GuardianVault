@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } 
 
     setupEventListeners() {
-      this.socket.on('server-public-key', async (serverPublicKeyBase64, serverSignatureBase64) => {
-        this.performKeyExchange(serverPublicKeyBase64, serverSignatureBase64);
+      this.socket.on('server-public-key', async (serverPublicKeyBase64) => {
+        this.performKeyExchange(serverPublicKeyBase64);
       });
 
       // // Handling messages from the server with integrity check
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const clientPublicKeyBase64 = clientPublicKey.toString('base64');
         console.log("client public key:", clientPublicKeyBase64);
         // Send clientPublicKey and clientSignature to the server
-        this.socket.emit('client-public-key', clientPublicKey);
+        this.socket.emit('client-public-key', clientPublicKeyBase64);
 
 
         // Verify the server's signature
