@@ -57,7 +57,7 @@ function performKeyExchange(socket) {
   // Create a signature
   const sign = crypto.createSign('sha256');
   sign.update(serverPublicKeyBuffer);
-  const serverSignature = sign.sign(serverPrivateKey, 'base64');
+  const serverSignature = sign.sign(serverPrivateKey, 'base64'); //
   const serverSignatureBase64 = serverSignature.toString('base64');
 
   console.log('sent key to client', serverPublicKeyBase64, 'with signature', serverSignatureBase64);
