@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } 
 
     setupEventListeners() {
-      this.socket.on('server-public-key', async (serverPublicKeyBase64) => {
-        this.performKeyExchange(serverPublicKeyBase64);
+      this.socket.on('server-public-key', async (serverPublicKey) => {
+        this.performKeyExchange(serverPublicKey);
       });
 
       // // Handling messages from the server with integrity check
@@ -24,20 +24,51 @@ document.addEventListener("DOMContentLoaded", () => {
       // });
     }
 
-    async performKeyExchange(serverPublicKeyBase64) {
-      console.log("got server public key:", serverPublicKeyBase64);
+    async performKeyExchange(serverPublicKey) {
 
-      window.crypto.subtle.generateKey(
+      console.log("got server public key:", typeof(serverPublicKey));
+
+      const keyPair = await window.crypto.subtle.generateKey(
         {
           name: "ECDH",
           namedCurve: "P-256"
         },
         true,
         ["deriveKey", "deriveBits"]
-      )
-      .then(async (keyPair) => {
-        // Get the client's public key
-        const clientPublicKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
+      );
+
+      // crypto key -> array buffer
+      const clientPublicKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
+
+      // Send clientPublicKey to the server
+      this.socket.emit('client-public-key', clientPublicKey);
+      console.log(typeof(clientPublicKey));
+
+      debugger;
+      // buffer array -> crypto key
+      const importedServerPublicKey = await window.crypto.subtle.importKey(
+        "spki",
+        serverPublicKey,
+        {
+          name: "ECDH",
+          namedCurve: "P-256"
+        },
+        true,
+        ['deriveKey', 'deriveBits']
+      );
+      debugger;
+      // Derive shared secret
+      const sharedSecretAlgorithm = {
+        name: 'ECDH',
+        namedCurve: 'P-256',
+        public: importedServerPublicKey
+      };
+
+      this.sharedSecret = await window.crypto.subtle.deriveBits(
+        sharedSecretAlgorithm,
+        keyPair.privateKey,
+        256
+      );
 
         // // Sign the client's public key
         // const clientPrivateKey = keyPair.privateKey;
@@ -49,14 +80,12 @@ document.addEventListener("DOMContentLoaded", () => {
         //   clientPrivateKey,
         //   clientPublicKey
         // );
-        const clientPublicKeyBase64 = clientPublicKey.toString('base64');
-        console.log("client public key:", clientPublicKeyBase64);
-        // Send clientPublicKey and clientSignature to the server
-        this.socket.emit('client-public-key', clientPublicKeyBase64);
+        // const clientPublicKeyBase64 = clientPublicKey.toString('base64');
+
 
 
         // Verify the server's signature
-        const serverPublicKeyBuffer = new Uint8Array(atob(serverPublicKeyBase64).split("").map(c => c.charCodeAt(0)));
+        // const serverPublicKeyBuffer = new Uint8Array(atob(clientPublicKey).split("").map(c => c.charCodeAt(0)));
         // const serverSignatureBuffer = new Uint8Array(atob(serverSignatureBase64).split("").map(c => c.charCodeAt(0)));
 
         // const isSignatureValid = await window.crypto.subtle.verify(
@@ -70,20 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // );
 
         // if (isSignatureValid) {
-        //   console.log('Server signature is valid.');
-
-          // Derive shared secret
-        const sharedSecretAlgorithm = {
-          name: 'ECDH',
-          namedCurve: 'P-256',
-          public: serverPublicKeyBuffer
-        };
-
-        sharedSecret = await window.crypto.subtle.deriveBits(
-          sharedSecretAlgorithm,
-          keyPair.privateKey,
-          256
-        );
+        //   console.log('Server signature is valid.')
 
         console.log("shared secret:", this.sharedSecret);
 
@@ -100,10 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // } else {
         //   console.log('Server signature is not valid. Abort key exchange.');
         // }
-      })
-      .catch((error) => {
-        console.error('Error in key generation:', error.message || error);
-      });
       
     }
     

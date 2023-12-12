@@ -45,8 +45,9 @@ function serveClientPage() {
 function performKeyExchange(socket) {
   console.log('exchanging keys');
   // heliptic curve deffie helman
-  serverDH = crypto.createECDH('secp256k1');
+  serverDH = crypto.createECDH('prime256v1');
   serverDH.generateKeys();
+
   console.log(serverDH.getPublicKey());
   const serverPublicKeyBase64 = serverDH.getPublicKey().toString('base64');
 
@@ -64,12 +65,12 @@ function performKeyExchange(socket) {
 
   // console.log('sent key to client', serverPublicKeyBase64, 'with signature', serverSignatureBase64);
   console.log('sent key to client', serverPublicKeyBase64);
-
+  console.log(typeof(serverDH.getPublicKey()));
   // Send serverPublicKeyBase64 and serverSignatureBase64 to the client
-  socket.emit('server-public-key', serverPublicKeyBase64);
+  socket.emit('server-public-key', serverDH.getPublicKey());
 
-  socket.on('client-public-key', (clientPublicKeyBase64) => {
-    console.log('got client key:', clientPublicKeyBase64);
+  socket.on('client-public-key', (clientPublicKey) => {
+    console.log('got client key:', typeof(clientPublicKey));
 
     // Verify the client's signature
     // const clientPublicKeyBuffer = Buffer.from(clientPublicKey, 'base64');
@@ -80,16 +81,16 @@ function performKeyExchange(socket) {
     //   console.log('Client signature is valid.');
 
       // Compute shared secret
-      sharedSecret = serverDH.computeSecret(clientPublicKeyBase64, 'base64', 'hex');
-      console.log("Shared Secret", sharedSecret);
+    sharedSecret = serverDH.computeSecret(clientPublicKey, 'hex', 'hex');
+    console.log("Shared Secret", sharedSecret);
 
-      // You can use the sharedSecret for encryption or derive keys from it.
-      const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
-      console.log('key material: ', keyMaterial);
+    // You can use the sharedSecret for encryption or derive keys from it.
+    const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
+    console.log('key material: ', keyMaterial);
 
-      // Use derived keys for encryption or integrity
-      socket.encryptionKey = keyMaterial.slice(0, 16);  // For example, use the first 16 bytes as an encryption key
-      socket.integrityKey = keyMaterial.slice(16, 32);
+    // Use derived keys for encryption or integrity
+    socket.encryptionKey = keyMaterial.slice(0, 16);  // For example, use the first 16 bytes as an encryption key
+    socket.integrityKey = keyMaterial.slice(16, 32);
     // } else {
     //   console.log('Client signature is not valid. Abort key exchange.');
     // }
