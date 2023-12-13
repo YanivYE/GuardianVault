@@ -43,21 +43,29 @@ function serveClientPage() {
 } 
 
 function performKeyExchange(socket) {
-  console.log('exchanging keys');
-  serverDH = crypto.createECDH('prime256v1');
+  console.log('Exchanging keys');
+
+  // Create ECDH instance and generate keys
+  const serverDH = crypto.createECDH('prime256v1');
   serverDH.generateKeys();
 
-  const serverPublicKeyBase64 = serverDH.getPublicKey().toString('base64');
+  // Get the server's public key as a base64-encoded string
+  const serverPublicKeyBase64 = serverDH.getPublicKey('base64');
 
   // Sign the server's public key
   const serverPrivateKey = serverDH.getPrivateKey();
-  const serverPublicKeyBuffer = Buffer.from(serverPublicKeyBase64, 'base64');
+  const b64_publicKey = Buffer.from(serverPrivateKey).toString('base64');
+  const pemKey = `
+  -----BEGIN RSA PUBLIC KEY-----
+  ${b64_publicKey}
+  -----END RSA PUBLIC KEY-----`;
 
+  const serverPublicKeyBuffer = Buffer.from(serverPublicKeyBase64, 'base64');
 
   // Create a signature
   const sign = crypto.createSign('sha256');
   sign.update(serverPublicKeyBuffer);
-  const serverSignature = sign.sign(serverPrivateKey, 'base64'); //
+  const serverSignature = sign.sign(pemKey, 'base64'); 
   const serverSignatureBase64 = serverSignature.toString('base64');
 
   console.log('sent key to client', serverPublicKeyBase64, 'with signature', serverSignatureBase64);

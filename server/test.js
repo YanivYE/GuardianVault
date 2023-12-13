@@ -8,24 +8,25 @@ const sign = crypto.createSign('RSA-SHA256');
 // Update the sign object with the message to be signed
 sign.update(message);
 
-// Generate the private key
-const privateKey = `-----BEGIN RSA PRIVATE KEY-----
-MIICXQIBAAKBgQC9r7QVfVY5lQkYpFZ8OVGry8z3M7+V0sNTDN3eCtRYFVEss1zg
-sPvjhDaCExxjKYkW0sOaIv4+MSAMKs83Bb3xQ9ZSv1tRF7OETpgLsCsw7zxC1Z7k
-DVaPDo34pBxJPVq4Z+QKBoA7sRRt8RoXjGmNS+szF0LHHmmfaXVhMGDYywIDAQAB
-AoGAAwZShvGw+q/GwbFXD7V+Vmi25vgFss/yXy+/vAxoJuvXebsMG0xWZB/WgJY/
-GwDFJycKnQoHe1rvjW9umHjYr4I7jvgGbfSltF2S3XekLxX6bNab5JzHKdJiB3lX
-A7aUnqCv+U41Zz7yHzSdVrBOPKfyC/vUEzcRvqaQivdAJECQQDiRPWZUtmLu5yxM
-n7j4V/vOe2uN8K09A7+emM+tUd5CvJexCoy1GDFQ/Lq+QrKda1iMO1K7zZpLsAAp
-9eXYj+ERAkEAyYiWizmcuc0KOH13vncNnlty6dI5J6q1lQv1qFy9BLj0ST7Z+3K1
-7z/yZM0QJNbbgO9V9sZ3+2qYiMjojApu1QJAErA9GzZL6FnAwj22/0uLObfbLbZY
-U8S9hz8C2qVRy9aIb6EPmk6WBoaCZVeF/yjtQQQKLjvAczQaAg2vp3ZJYwJAD5dC
-Cn6DFf2sP1dJ/cR6yQmUkMGvVDeW46tCqLKYJw+f0nAejstQFOphuybwl2ylb+/v
-YTXe7g8EHfu3y+viJwJAP2jeoGRyCB8FJGTvn2Z4T3Aht4OTcJKfe/WCpN9Ky9A0
-9Wnv0JvZp+YHZHuQR2e7TY3YFhTHXcfTnOJRs0zCw==
+// Generate the fake private key (replace this with your real private key)
+const fakePrivateKey = `
+-----BEGIN RSA PRIVATE KEY-----
+MIICWwIBAAKBgF9gWWdUg4+YBpBFsZpIbBydGKV+AduTMMraYmK+e9wIhlSk7kRo
+hyLKGPyFQrHFhlHGIvx0WKzNxbm/QkTlu4YY3Ncut4jUm6FyXBkAl+X3swHqe2gZ
+IAMk+v6KkvM5b/zydpyz07qoqAMlRNNp8oT8SzqkLOPm2djdad61ra7NAgMBAAEC
+gYAz7l4/qQDJWtmYDJqbivtyyQb2dRnF2OskSKxxX45JTEr4I6WokdGi26+nL1gV
+O5vbQqsiEqeFz7TtYnpO0Ve9DD25LQuTrk2ZWR4pOcL41wqRaZFcpin9Tfeqrh+W
+k8fXZwF7bhBaQnTAT/iRWPGSXbHPrHuzuLyg+s3EJkoAgQJBALRAl+8staD0iT2u
+ZZpBI047rbY2nlaIMFMK62DRFPhm3pTKDen13zrYNfZBIWxBlIZcBIapL1l8hwFK
+XQGcmaUCQQCHdN2TIRo9izRHrdPTwbFmqlGtjFdD4TuIho3FC6uNWbuD64ADYCo1
+fOgYe0NxHZas1EjPECwgbkRZE27ZeKgJAkEAgZkvpDdxH5iyVDbftli/GbCu5SPA
+FFc2534iXin1+eN8hV4BQwYUyipKIhQSA9PjBfeDCY77DEwMhVECLfZ6QQJAIfRd
+hoAJv9uhI0ajjrVC7uVKzCIdzdorvjFcYERooGoZ4xupXy8/5WCGHXzojvZHytL7
+3UvEg+ygHWQNqV3hYQJAFVvaD073jte/1tToB6SU4DTwJ7z4GnlFjb45vgp/mK1J
+dqJMI0Ff7CyKGwqRacV4pNXxTUH/AcybUkTfFtbobQ==
 -----END RSA PRIVATE KEY-----`;
 
-// Sign the message using the private key
-sign.end();
-const signature = sign.sign(privateKey, 'base64');
-console.log(signature); // Outputs the digital signature
+// Sign the message using the fake private key
+const signature = sign.sign(fakePrivateKey, 'hex');
+
+console.log('Signature:', signature);
