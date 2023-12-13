@@ -54,18 +54,25 @@ function performKeyExchange(socket) {
 
   // Sign the server's public key
   const serverPrivateKey = serverDH.getPrivateKey();
-  const b64_publicKey = Buffer.from(serverPrivateKey).toString('base64');
-  const pemKey = `
-  -----BEGIN RSA PUBLIC KEY-----
-  ${b64_publicKey}
-  -----END RSA PUBLIC KEY-----`;
+  const privateKey = crypto.createPrivateKey({
+    key: serverPrivateKey,
+    format: 'pem',
+    type: 'pkcs8' // or 'pkcs8' based on the actual format of your key
+  });
+  
+  // Export the private key in PEM format
+  const privateKeyPEM = crypto.export({
+    type: 'pkcs8', // or 'pkcs8' based on the actual format of your key
+    format: 'pem',
+    key: privateKey
+  });
 
   const serverPublicKeyBuffer = Buffer.from(serverPublicKeyBase64, 'base64');
 
   // Create a signature
   const sign = crypto.createSign('sha256');
   sign.update(serverPublicKeyBuffer);
-  const serverSignature = sign.sign(pemKey, 'base64'); 
+  const serverSignature = sign.sign(privateKeyPEM, 'hex'); 
   const serverSignatureBase64 = serverSignature.toString('base64');
 
   console.log('sent key to client', serverPublicKeyBase64, 'with signature', serverSignatureBase64);
