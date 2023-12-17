@@ -52,50 +52,15 @@ function performKeyExchange(socket) {
   // Get the server's public key as a base64-encoded string
   const serverPublicKeyBase64 = serverDH.getPublicKey('base64');
 
-  // Sign the server's public key
-  const serverPrivateKey = serverDH.getPrivateKey();
-  console.log(serverPrivateKey);
-  const privateKeyBuffer = Buffer.from(serverPrivateKey); // Convert Uint8Array to Buffer
-  console.log(privateKeyBuffer);
-
-  const privateKey = crypto.createPrivateKey({
-    key: serverPrivateKey,
-    format: 'pem',
-    type: 'pkcs8', // or 'pkcs8' based on the actual format of your key
-    passphrase: 'passphrase',
-    cipher: 'prime256v1'
-  });
-  
-
-  // Export the private key in PEM format
-  const privateKeyPEM = crypto.export({
-    type: 'pkcs8', // or 'pkcs8' based on the actual format of your key
-    format: 'pem',
-    key: privateKey
-  });
-
-  const serverPublicKeyBuffer = Buffer.from(serverPublicKeyBase64, 'base64');
-
-  // Create a signature
-  const sign = crypto.createSign('sha256');
-  sign.update(serverPublicKeyBuffer);
-  const serverSignature = sign.sign(privateKeyPEM, 'hex'); 
-  const serverSignatureBase64 = serverSignature.toString('base64');
-
-  console.log('sent key to client', serverPublicKeyBase64, 'with signature', serverSignatureBase64);
+  console.log('sent key to client', serverPublicKeyBase64);
   // Send serverPublicKeyBase64 and serverSignatureBase64 to the client
-  socket.emit('server-public-key', serverPublicKeyBase64, serverSignatureBase64);
+  socket.emit('server-public-key', serverPublicKeyBase64);
 
-  socket.on('client-public-key', (clientPublicKeyBase64, clientSignatureBase64) => {
+  socket.on('client-public-key', (clientPublicKeyBase64) => {
     // Verify the client's signature
     const clientPublicKeyBuffer = Buffer.from(clientPublicKeyBase64, 'base64');
-    const clientSignatureBuffer = Buffer.from(clientSignatureBase64, 'base64');
-    const verify = crypto.createVerify('sha256');
-    verify.update(clientPublicKeyBuffer);
-    const isSignatureValid = verify.verify(serverPublicKeyBuffer, clientSignatureBuffer);
 
-    if (isSignatureValid) {
-      console.log('Client signature is valid.');
+    console.log('Client signature is valid.');
 
       // Compute shared secret
       sharedSecret = serverDH.computeSecret(clientPublicKeyBase64, 'base64', 'hex');
@@ -108,9 +73,6 @@ function performKeyExchange(socket) {
       // Use derived keys for encryption or integrity
       socket.encryptionKey = keyMaterial.slice(0, 16);  // For example, use the first 16 bytes as an encryption key
       socket.integrityKey = keyMaterial.slice(16, 32);
-    } else {
-      console.log('Client signature is not valid. Abort key exchange.');
-    }
   });
 }
 
