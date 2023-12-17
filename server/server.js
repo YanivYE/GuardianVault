@@ -72,25 +72,33 @@ function performKeyExchange(socket) {
   });
 }
 
-function base64ToArrayBuffer(base64) {
-  const buffer = Buffer.from(base64, 'base64');
-  const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
-  return arrayBuffer;
-}
-
 function encryptUsingEncryptionKey(message)
 {
-  // Encrypt the message using the derived encryption key
-  const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(socket.encryptionKey), Buffer.alloc(16, 0));
+  const iv = crypto.randomBytes(12);
+
+  // Create the cipher using AES-GCM
+  const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(socket.encryptionKey), iv);
+
+  // Encrypt the message
   const encryptedMessage = Buffer.concat([cipher.update(message, 'utf8'), cipher.final()]);
-  return encryptedMessage;
+
+  // Get the authentication tag
+  const tag = cipher.getAuthTag();
+
+  // Return the IV, encrypted message, and authentication tag
+  return { iv, encryptedMessage, tag };
 }
 
-function decryptUsingEncryptionKey(message)
+function decryptUsingEncryptionKey(encryptedMessage, iv, tag)
 {
-  // Decrypt the data using the derived encryption key
-  const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(socket.encryptionKey), Buffer.alloc(16, 0));
-  const decryptedData = Buffer.concat([decipher.update(message, 'hex'), decipher.final()]);
+  const decipher = crypto.createDecipheriv('aes-256-gcm', socket.EncryptionKey, iv);
+
+  // Set the authentication tag
+  decipher.setAuthTag(tag);
+
+  // Concatenate the ciphertext and get the decrypted data
+  const decryptedData = Buffer.concat([decipher.update(encryptedMessage), decipher.final()]);
+
   return decryptedData;
 }
 
@@ -104,6 +112,7 @@ function sendMessageToClient(message)
   // Send the encrypted message and HMAC to the client
   socket.emit('server-message', encryptedMessage.toString('hex'), hmac);
 }
+
 
 function receiveMessageFromClient() 
 {
@@ -128,14 +137,14 @@ function handleSocketConnection(socket) {
   console.log('A user connected');
   performKeyExchange(socket);
 
-//   const msgToClient = 'Hello, client!';
-//   sendMessageToClient(msgToClient);
-//   receiveMessageFromClient();
+  const msgToClient = 'Hello, client!';
+  sendMessageToClient(msgToClient);
+  receiveMessageFromClient();
 
 
-//   socket.on('disconnect', () => {
-//     console.log('A user disconnected');
-//   });
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
   }
 
 function startServer() {

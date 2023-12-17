@@ -14,14 +14,14 @@ document.addEventListener("DOMContentLoaded", () => {
         this.performKeyExchange(serverPublicKeyBase64);
       });
 
-      // // Handling messages from the server with integrity check
-      // this.socket.on('server-message', (encryptedMessage, receivedHMAC) => {
-      //   this.handleServerMessage(encryptedMessage, receivedHMAC);
-      // });
+      // Handling messages from the server with integrity check
+      this.socket.on('server-message', (encryptedMessage, receivedHMAC) => {
+        this.handleServerMessage(encryptedMessage, receivedHMAC);
+      });
 
-      // document.getElementById("sendButton").addEventListener("click", () => {
-      //   this.handleSendMessage();
-      // });
+      document.getElementById("sendButton").addEventListener("click", () => {
+        this.handleSendMessage();
+      });
     }
 
     async performKeyExchange(serverPublicKeyBase64) {
@@ -187,30 +187,3 @@ document.addEventListener("DOMContentLoaded", () => {
   const client = new Client();
 });
 
-
-
-async function deriveSharedSecret(importedServerPublicKey, keyPair) {
-  try {
-    const sharedSecretAlgorithm = {
-      name: 'ECDH',
-      namedCurve: 'P-256',
-      public: importedServerPublicKey,
-    };
-
-    // Wait for the server public key import
-    const sharedKey = await window.crypto.subtle.deriveKey(
-      sharedSecretAlgorithm,
-      keyPair.privateKey,
-      { name: 'AES-GCM', length: 256 },
-      true,
-      ['encrypt', 'decrypt']
-    );
-
-    // Use the shared key here
-    console.log('Derived shared key:', sharedKey);
-    return sharedKey;
-  } catch (error) {
-    console.error('Error deriving shared secret:', error);
-    throw error;
-  }
-}
