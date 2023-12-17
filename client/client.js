@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } 
 
     setupEventListeners() {
-      this.socket.on('server-public-key', async (serverPublicKey) => {
-        this.performKeyExchange(serverPublicKey);
+      this.socket.on('server-public-key', async (serverPublicKeyBase64) => {
+        this.performKeyExchange(serverPublicKeyBase64);
       });
 
       // // Handling messages from the server with integrity check
@@ -24,9 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // });
     }
 
-    async performKeyExchange(serverPublicKey) {
+    async performKeyExchange(serverPublicKeyBase64) {
 
-      console.log("got server public key:", typeof(serverPublicKey));
+      console.log("got server public key:", serverPublicKeyBase64);
 
       const keyPair = await window.crypto.subtle.generateKey(
         {
@@ -37,16 +37,17 @@ document.addEventListener("DOMContentLoaded", () => {
         ["deriveKey", "deriveBits"]
       );
 
-      // crypto key -> array buffer
       const clientPublicKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
 
-      // Send clientPublicKey to the server
-      this.socket.emit('client-public-key', clientPublicKey);
+      const clientPublicKeyBase64 = this.arrayBufferToBase64(clientPublicKey);
 
-      // buffer array -> crypto key
+      console.log('sent to server:', clientPublicKey);
+      console.log('sent to server:', clientPublicKeyBase64);
+      this.socket.emit('client-public-key', clientPublicKeyBase64);
+
       const importedServerPublicKey = await window.crypto.subtle.importKey(
         "raw",
-        this.base64ToArrayBuffer(serverPublicKey),
+        this.base64ToArrayBuffer(serverPublicKeyBase64),
         {
           name: "ECDH",
           namedCurve: "P-256"
@@ -54,8 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
         true,
         []
       );
-      debugger;
-      // Derive shared secret
+
       const sharedSecretAlgorithm = {
         name: 'ECDH',
         namedCurve: 'P-256',
@@ -68,21 +68,19 @@ document.addEventListener("DOMContentLoaded", () => {
         256
       );
 
-      console.log("shared secret:", this.sharedSecret);
+      // hex type
+      console.log("shared secret:", this.arrayBufferToHexString(this.sharedSecret));
 
 
-          // Use derived keys for encryption or integrity
+      // Use derived keys for encryption or integrity
       const encryptionKey = new Uint8Array(this.sharedSecret.slice(0, 16));
       const integrityKey = new Uint8Array(this.sharedSecret.slice(16, 32));
 
-      console.log('Shared secret:', this.sharedSecret);
+      console.log('Shared secret:', this.sharedSecret.toString('hex'));
       console.log('Encryption Key:', encryptionKey);
       console.log('Integrity Key:', integrityKey);
       
     }
-    
-    
-    
     
     
     base64ToArrayBuffer(base64) {
@@ -98,6 +96,12 @@ document.addEventListener("DOMContentLoaded", () => {
       return arrayBuffer;
     }
     
+    arrayBufferToBase64(arrayBuffer) {
+      const uint8Array = new Uint8Array(arrayBuffer);
+      const binaryString = Array.from(uint8Array).map(byte => String.fromCharCode(byte)).join('');
+      const base64String = btoa(binaryString);
+      return base64String;
+    }
 
 
     hexStringToArrayBuffer(hexString) {
@@ -112,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
 
-    // Helper function to convert an ArrayBuffer to a hex string
     arrayBufferToHexString(arrayBuffer) {
       const byteArray = new Uint8Array(arrayBuffer);
       return Array.from(byteArray, byte => byte.toString(16).padStart(2, '0')).join('');
@@ -184,23 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const client = new Client();
 });
 
-async function importServerPublicKey(serverPublicKey) {
-  try {
-    const importedServerPublicKey = await window.crypto.subtle.importKey(
-      "raw",
-      serverPublicKey,
-      { name: 'ECDH', namedCurve: 'P-256' },
-      true,
-      ['deriveKey']
-      );
-    // Use the importedServerPublicKey here
-    console.log(importedServerPublicKey);
-    return importedServerPublicKey;
-  } catch (error) {
-    console.error('Error importing server public key:', error);
-    throw error;
-  }
-}
+
 
 async function deriveSharedSecret(importedServerPublicKey, keyPair) {
   try {
@@ -224,25 +211,6 @@ async function deriveSharedSecret(importedServerPublicKey, keyPair) {
     return sharedKey;
   } catch (error) {
     console.error('Error deriving shared secret:', error);
-    throw error;
-  }
-}
-
-async function importServerPublicKey(serverPublicKey) {
-  try {
-    const importedServerPublicKey = await window.crypto.subtle.importKey(
-      "raw",
-      serverPublicKey,
-      { name: 'ECDH', namedCurve: 'P-256' },
-      true,
-      ['encrypt', 'decrypt']
-    );
-
-    // Use the importedServerPublicKey here
-    console.log('Imported server public key:', importedServerPublicKey);
-    return importedServerPublicKey;
-  } catch (error) {
-    console.error('Error importing server public key:', error);
     throw error;
   }
 }

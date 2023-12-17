@@ -57,25 +57,26 @@ function performKeyExchange(socket) {
   socket.emit('server-public-key', serverPublicKeyBase64);
 
   socket.on('client-public-key', (clientPublicKeyBase64) => {
-    // Verify the client's signature
-    const clientPublicKeyBuffer = Buffer.from(clientPublicKeyBase64, 'base64');
 
-    console.log('Client signature is valid.');
+    // Compute shared secret
+    sharedSecret = serverDH.computeSecret(clientPublicKeyBase64, 'base64', 'hex');
+    console.log("Shared Secret", sharedSecret); // hex type
 
-      // Compute shared secret
-      sharedSecret = serverDH.computeSecret(clientPublicKeyBase64, 'base64', 'hex');
-      console.log("Shared Secret", sharedSecret);
+    // You can use the sharedSecret for encryption or derive keys from it.
+    const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
+    console.log('key material: ', keyMaterial);
 
-      // You can use the sharedSecret for encryption or derive keys from it.
-      const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
-      console.log('key material: ', keyMaterial);
-
-      // Use derived keys for encryption or integrity
-      socket.encryptionKey = keyMaterial.slice(0, 16);  // For example, use the first 16 bytes as an encryption key
-      socket.integrityKey = keyMaterial.slice(16, 32);
+    // Use derived keys for encryption or integrity
+    socket.encryptionKey = keyMaterial.slice(0, 16);  // For example, use the first 16 bytes as an encryption key
+    socket.integrityKey = keyMaterial.slice(16, 32);
   });
 }
 
+function base64ToArrayBuffer(base64) {
+  const buffer = Buffer.from(base64, 'base64');
+  const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+  return arrayBuffer;
+}
 
 function encryptUsingEncryptionKey(message)
 {
