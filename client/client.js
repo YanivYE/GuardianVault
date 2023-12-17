@@ -54,7 +54,24 @@ document.addEventListener("DOMContentLoaded", () => {
           ["deriveKey", "deriveBits"]
         );
 
-        const clientPublicKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
+      // buffer array -> crypto key
+      const importedServerPublicKey = await window.crypto.subtle.importKey(
+        "spki",
+        serverPublicKey,
+        {
+          name: "ECDH",
+          namedCurve: "P-256"
+        },
+        true,
+        ['deriveKey', 'deriveBits']
+      );
+      debugger;
+      // Derive shared secret
+      const sharedSecretAlgorithm = {
+        name: 'ECDH',
+        namedCurve: 'P-256',
+        public: importedServerPublicKey
+      };
 
         // Sign the client's public key
         const clientPrivateKey = keyPair.privateKey;
@@ -97,12 +114,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         
         this.sharedSecret = arrayBufferToHexString(this.sharedSecret);
+        console.log("shared secret:", this.sharedSecret);
 
-        // Use derived keys for encryption or integrity
-        const encryptionKey = new Uint8Array(this.sharedSecret.slice(0, 16));
-        const integrityKey = new Uint8Array(this.sharedSecret.slice(16, 32));
 
-        console.log('Shared secret:', this.sharedSecret);
+            // Use derived keys for encryption or integrity
+        const encryptionKey = new Uint8Array(sharedSecret.slice(0, 16));
+        const integrityKey = new Uint8Array(sharedSecret.slice(16, 32));
+
+        console.log('Shared secret:', sharedSecret);
         console.log('Encryption Key:', encryptionKey);
         console.log('Integrity Key:', integrityKey);
 
