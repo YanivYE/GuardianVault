@@ -54,12 +54,19 @@ function performKeyExchange(socket) {
 
   // Sign the server's public key
   const serverPrivateKey = serverDH.getPrivateKey();
+  console.log(serverPrivateKey);
+  const privateKeyBuffer = Buffer.from(serverPrivateKey); // Convert Uint8Array to Buffer
+  console.log(privateKeyBuffer);
+
   const privateKey = crypto.createPrivateKey({
     key: serverPrivateKey,
     format: 'pem',
-    type: 'pkcs8' // or 'pkcs8' based on the actual format of your key
+    type: 'pkcs8', // or 'pkcs8' based on the actual format of your key
+    passphrase: 'passphrase',
+    cipher: 'prime256v1'
   });
   
+
   // Export the private key in PEM format
   const privateKeyPEM = crypto.export({
     type: 'pkcs8', // or 'pkcs8' based on the actual format of your key

@@ -26,6 +26,7 @@ hoAJv9uhI0ajjrVC7uVKzCIdzdorvjFcYERooGoZ4xupXy8/5WCGHXzojvZHytL7
 dqJMI0Ff7CyKGwqRacV4pNXxTUH/AcybUkTfFtbobQ==
 -----END RSA PRIVATE KEY-----`;
 
+console.log(typeof(fakePrivateKey));
 // Sign the message using the fake private key
 const signature = sign.sign(fakePrivateKey, 'hex');
 
