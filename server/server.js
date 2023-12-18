@@ -14,7 +14,6 @@ const app = express();
 const server = http.createServer(app);
 const socket = socketIO(server);
 
-let serverDH;
 let sharedSecret = null;
 
 function serveStaticFiles() {
@@ -64,53 +63,59 @@ function performKeyExchange(socket) {
 
     // You can use the sharedSecret for encryption or derive keys from it.
     const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
-    console.log('key material: ', keyMaterial);
-
-    // Use derived keys for encryption or integrity
-    socket.encryptionKey = keyMaterial.slice(0, 16);  // For example, use the first 16 bytes as an encryption key
-    socket.integrityKey = keyMaterial.slice(16, 32);
+    // Use derived keys for encryption
+    socket.aesGcmKey = keyMaterial.slice(0, 32);  // AES-GCM key (first 32 bytes)
+    
+    // Use derived keys for integrity
+    socket.integrityKey = keyMaterial.slice(32, 64);  // HMAC key (next 32 bytes)
+    
+    console.log('AES-GCM Key:', socket.aesGcmKey);
+    console.log('Integrity Key:', socket.integrityKey);
   });
 }
 
-function encryptUsingEncryptionKey(message)
+function encryptWithAESGCM(text) 
 {
+  // Generate a random IV (Initialization Vector)
   const iv = crypto.randomBytes(12);
 
-  // Create the cipher using AES-GCM
-  const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(socket.encryptionKey), iv);
+  // Create the AES-GCM cipher
+  const cipher = crypto.createCipheriv('aes-256-gcm', socket.aesGcmKey, iv);
 
-  // Encrypt the message
-  const encryptedMessage = Buffer.concat([cipher.update(message, 'utf8'), cipher.final()]);
+  // Update the cipher with the plaintext
+  const encryptedBuffer = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
 
   // Get the authentication tag
   const tag = cipher.getAuthTag();
 
-  // Return the IV, encrypted message, and authentication tag
-  return { iv, encryptedMessage, tag };
+  // Return the IV, ciphertext, and authentication tag
+  return { iv, ciphertext: encryptedBuffer, tag };
 }
 
-function decryptUsingEncryptionKey(encryptedMessage, iv, tag)
-{
-  const decipher = crypto.createDecipheriv('aes-256-gcm', socket.EncryptionKey, iv);
+function decryptWithAESGCM(iv, ciphertext, tag) {
+  // Create the AES-GCM decipher
+  const decipher = crypto.createDecipheriv('aes-256-gcm', socket.aesGcmKey, iv);
 
   // Set the authentication tag
   decipher.setAuthTag(tag);
 
-  // Concatenate the ciphertext and get the decrypted data
-  const decryptedData = Buffer.concat([decipher.update(encryptedMessage), decipher.final()]);
+  // Update the decipher with the ciphertext
+  const decryptedBuffer = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
 
-  return decryptedData;
+  // Return the decrypted plaintext
+  return decryptedBuffer.toString('utf8');
 }
 
 function sendMessageToClient(message) 
 {
-  const encryptedMessage = encryptUsingEncryptionKey(message);
+  const { iv, ciphertext, tag } = encryptWithAESGCM(message);
+  const encryptedMessage = ciphertext.toString('hex');
 
   // Calculate HMAC for message integrity
   const hmac = crypto.createHmac('sha256', socket.integrityKey).update(encryptedMessage).digest('hex');
 
   // Send the encrypted message and HMAC to the client
-  socket.emit('server-message', encryptedMessage.toString('hex'), hmac);
+  socket.emit('server-message', encryptedMessage, hmac);
 }
 
 
@@ -118,12 +123,13 @@ function receiveMessageFromClient()
 {
   socket.on('client-message', (encryptedData, receivedHMAC) => {
     
-    const decryptedData = decryptUsingEncryptionKey(encryptedData);
+    const decryptedText = decryptWithAESGCM(iv, ciphertext, tag);
     // Verify the integrity of the received message using HMAC
-    const computedHMAC = crypto.createHmac('sha256', socket.integrityKey).update(decryptedData).digest('hex');
+    const computedHMAC = crypto.createHmac('sha256', socket.integrityKey).update(decryptedText).digest('hex');
     
+    // Verify the integrity of the received message using HMAC
     if (computedHMAC === receivedHMAC) {
-      console.log('Message integrity verified. Decrypted data:', decryptedData.toString());
+      console.log('Message integrity verified. Decrypted data:', decryptedText.toString());
       // Process the decrypted and authenticated data
     } else {
       console.log('Message integrity check failed. Discarding message.');
