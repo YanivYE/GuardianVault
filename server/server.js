@@ -15,6 +15,8 @@ const server = http.createServer(app);
 const socket = socketIO(server);
 
 let sharedSecret = null;
+let aesGcmKey = null;
+let integrityKey = null;
 
 function serveStaticFiles() {
   app.use(express.static(__dirname));
@@ -64,13 +66,13 @@ function performKeyExchange(socket) {
     // You can use the sharedSecret for encryption or derive keys from it.
     const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
     // Use derived keys for encryption
-    socket.aesGcmKey = keyMaterial.slice(0, 32);  // AES-GCM key (first 32 bytes)
+    aesGcmKey = keyMaterial.slice(0, 32);  // AES-GCM key (first 32 bytes)
     
     // Use derived keys for integrity
-    socket.integrityKey = keyMaterial.slice(32, 64);  // HMAC key (next 32 bytes)
+    integrityKey = keyMaterial.slice(32, 64);  // HMAC key (next 32 bytes)
     
-    console.log('AES-GCM Key:', socket.aesGcmKey);
-    console.log('Integrity Key:', socket.integrityKey);
+    console.log('AES-GCM Key:', aesGcmKey);
+    console.log('Integrity Key:', integrityKey);
   });
 }
 
@@ -80,7 +82,7 @@ function encryptWithAESGCM(text)
   const iv = crypto.randomBytes(12);
 
   // Create the AES-GCM cipher
-  const cipher = crypto.createCipheriv('aes-256-gcm', socket.aesGcmKey, iv);
+  const cipher = crypto.createCipheriv('aes-256-gcm', aesGcmKey, iv);
 
   // Update the cipher with the plaintext
   const encryptedBuffer = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
@@ -94,7 +96,7 @@ function encryptWithAESGCM(text)
 
 function decryptWithAESGCM(iv, ciphertext, tag) {
   // Create the AES-GCM decipher
-  const decipher = crypto.createDecipheriv('aes-256-gcm', socket.aesGcmKey, iv);
+  const decipher = crypto.createDecipheriv('aes-256-gcm', aesGcmKey, iv);
 
   // Set the authentication tag
   decipher.setAuthTag(tag);
@@ -112,7 +114,7 @@ function sendMessageToClient(message)
   const encryptedMessage = ciphertext.toString('hex');
 
   // Calculate HMAC for message integrity
-  const hmac = crypto.createHmac('sha256', socket.integrityKey).update(encryptedMessage).digest('hex');
+  const hmac = crypto.createHmac('sha256', integrityKey).update(encryptedMessage).digest('hex');
 
   // Send the encrypted message and HMAC to the client
   socket.emit('server-message', encryptedMessage, hmac);
@@ -125,7 +127,7 @@ function receiveMessageFromClient()
     
     const decryptedText = decryptWithAESGCM(iv, ciphertext, tag);
     // Verify the integrity of the received message using HMAC
-    const computedHMAC = crypto.createHmac('sha256', socket.integrityKey).update(decryptedText).digest('hex');
+    const computedHMAC = crypto.createHmac('sha256', integrityKey).update(decryptedText).digest('hex');
     
     // Verify the integrity of the received message using HMAC
     if (computedHMAC === receivedHMAC) {
