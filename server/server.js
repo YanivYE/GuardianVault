@@ -44,35 +44,34 @@ function serveClientPage() {
 } 
 
 function performKeyExchange(socket) {
-  console.log('Exchanging keys');
+  return new Promise((resolve, reject) => {
+    console.log('Exchanging keys');
 
-  // Create ECDH instance and generate keys
-  const serverDH = crypto.createECDH('prime256v1');
-  serverDH.generateKeys();
+    const serverDH = crypto.createECDH('prime256v1');
+    serverDH.generateKeys();
 
-  // Get the server's public key as a base64-encoded string
-  const serverPublicKeyBase64 = serverDH.getPublicKey('base64');
+    const serverPublicKeyBase64 = serverDH.getPublicKey('base64');
 
-  console.log('sent key to client', serverPublicKeyBase64);
-  // Send serverPublicKeyBase64 and serverSignatureBase64 to the client
-  socket.emit('server-public-key', serverPublicKeyBase64);
+    console.log('sent key to client', serverPublicKeyBase64);
+    socket.emit('server-public-key', serverPublicKeyBase64);
 
-  socket.on('client-public-key', (clientPublicKeyBase64) => {
+    socket.on('client-public-key', async (clientPublicKeyBase64) => {
+      try {
+        sharedSecret = serverDH.computeSecret(clientPublicKeyBase64, 'base64', 'hex');
+        console.log("Shared Secret", sharedSecret); // hex type
 
-    // Compute shared secret
-    sharedSecret = serverDH.computeSecret(clientPublicKeyBase64, 'base64', 'hex');
-    console.log("Shared Secret", sharedSecret); // hex type
+        const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
+        aesGcmKey = keyMaterial.slice(0, 32);
+        integrityKey = keyMaterial.slice(32, 64);
 
-    // You can use the sharedSecret for encryption or derive keys from it.
-    const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
-    // Use derived keys for encryption
-    aesGcmKey = keyMaterial.slice(0, 32);  // AES-GCM key (first 32 bytes)
-    
-    // Use derived keys for integrity
-    integrityKey = keyMaterial.slice(32, 64);  // HMAC key (next 32 bytes)
-    
-    console.log('AES-GCM Key:', aesGcmKey);
-    console.log('Integrity Key:', integrityKey);
+        console.log('AES-GCM Key:', aesGcmKey);
+        console.log('Integrity Key:', integrityKey);
+
+        resolve(); // Resolve the promise once key exchange is complete
+      } catch (err) {
+        reject(err); // Reject the promise if any error occurs
+      }
+    });
   });
 }
 
@@ -108,28 +107,23 @@ function decryptWithAESGCM(iv, ciphertext, tag) {
   return decryptedBuffer.toString('utf8');
 }
 
-function sendMessageToClient(message) 
-{
+async function sendMessageToClient(message) {
   const { iv, ciphertext, tag } = encryptWithAESGCM(message);
   const encryptedMessage = ciphertext.toString('hex');
 
-  // Calculate HMAC for message integrity
   const hmac = crypto.createHmac('sha256', integrityKey).update(encryptedMessage).digest('hex');
 
-  // Send the encrypted message and HMAC to the client
   socket.emit('server-message', encryptedMessage, hmac);
 }
 
 
-function receiveMessageFromClient() 
-{
-  socket.on('client-message', (encryptedData, receivedHMAC) => {
-    
+function receiveMessageFromClient() {
+  socket.on('client-message', async (encryptedData, receivedHMAC) => {
+    console.log("received:", encryptedData);
     const decryptedText = decryptWithAESGCM(iv, ciphertext, tag);
-    // Verify the integrity of the received message using HMAC
+
     const computedHMAC = crypto.createHmac('sha256', integrityKey).update(decryptedText).digest('hex');
-    
-    // Verify the integrity of the received message using HMAC
+
     if (computedHMAC === receivedHMAC) {
       console.log('Message integrity verified. Decrypted data:', decryptedText.toString());
       // Process the decrypted and authenticated data
@@ -141,19 +135,21 @@ function receiveMessageFromClient()
 }
 
 
-function handleSocketConnection(socket) {
+async function handleSocketConnection(socket) {
   console.log('A user connected');
-  performKeyExchange(socket);
+
+  await performKeyExchange(socket);
 
   const msgToClient = 'Hello, client!';
-  sendMessageToClient(msgToClient);
-  receiveMessageFromClient();
+  //socket.emit('server-message', msgToClient);
 
+  await sendMessageToClient(msgToClient);
+  receiveMessageFromClient();
 
   socket.on('disconnect', () => {
     console.log('A user disconnected');
   });
-  }
+}
 
 function startServer() {
   serveStaticFiles();
