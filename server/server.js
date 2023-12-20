@@ -60,12 +60,19 @@ function performKeyExchange(socket) {
         sharedSecret = serverDH.computeSecret(clientPublicKeyBase64, 'base64', 'hex');
         console.log("Shared Secret", sharedSecret); // hex type
 
-        const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
-        aesGcmKey = keyMaterial.slice(0, 32);
-        integrityKey = keyMaterial.slice(32, 64);
+        // Derive keyMaterial using SHA-256
+        const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'utf-8').digest();
 
-        console.log('AES-GCM Key:', aesGcmKey);
-        console.log('Integrity Key:', integrityKey);
+        // Use PBKDF2 to derive keys for AES-GCM and integrity with different salts
+        const saltAesGcm = crypto.randomBytes(16);
+        const saltIntegrity = crypto.randomBytes(16);
+        const iterations = 100000; // Adjust the number of iterations as needed
+
+        aesGcmKey = crypto.pbkdf2Sync(keyMaterial, saltAesGcm, iterations, 32, 'sha256');
+        integrityKey = crypto.pbkdf2Sync(keyMaterial, saltIntegrity, iterations, 32, 'sha256');
+
+        console.log('aesGcmKey:', aesGcmKey.toString('hex'));
+        console.log('integrityKey:', integrityKey.toString('hex'));
 
         resolve(); // Resolve the promise once key exchange is complete
       } catch (err) {
@@ -141,7 +148,6 @@ async function handleSocketConnection(socket) {
   await performKeyExchange(socket);
 
   const msgToClient = 'Hello, client!';
-  //socket.emit('server-message', msgToClient);
 
   await sendMessageToClient(msgToClient);
   receiveMessageFromClient();
