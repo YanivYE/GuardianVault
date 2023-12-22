@@ -4,7 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
   class Client {
     constructor() {
       this.socket = io();
-      this.sharedSecret = null;
+      this.encryptionKey = null;
+      this.integrityKey = null;
 
       this.setupEventListeners();
     } 
@@ -62,21 +63,61 @@ document.addEventListener("DOMContentLoaded", () => {
         public: importedServerPublicKey
       };
 
-      this.sharedSecret = await window.crypto.subtle.deriveBits(
+      let sharedSecret = await window.crypto.subtle.deriveBits(
         sharedSecretAlgorithm,
         keyPair.privateKey,
         256
       );
 
+      sharedSecret = this.arrayBufferToHexString(sharedSecret);
       // hex type
-      console.log("shared secret:", this.arrayBufferToHexString(this.sharedSecret));
+      console.log("shared secret:", sharedSecret);
 
+      sharedSecret = new TextEncoder().encode(sharedSecret);
+
+      // Derive key material using HKDF (HMAC-based Key Derivation Function)
+      // Import shared secret as a CryptoKey
+      const importedKey = await crypto.subtle.importKey(
+        'raw',
+        sharedSecret,
+        { name: 'HKDF'},
+        false,
+        ['deriveBits', 'deriveKey']
+      );
+
+      const salt = crypto.getRandomValues(new Uint8Array(16)); // 16 bytes for example
+
+      // Derive key material using HKDF
+      const derivedKeyMaterial = await crypto.subtle.deriveBits(
+        {
+          name: 'HKDF',
+          hash: { name: 'SHA-256' },
+          salt: new TextEncoder().encode(salt),
+          info: new TextEncoder().encode(''),
+        },
+        importedKey,
+        256 // Specify the length in bits
+      );
+
+      // Derive separate keys for encryption and integrity
+      const encryptionKey = await crypto.subtle.importKey(
+        'raw',
+        derivedKeyMaterial,
+        { name: 'AES-GCM' },
+        true,
+        ['encrypt', 'decrypt']
+      );
+
+      const integrityKey = await crypto.subtle.importKey(
+        'raw',
+        derivedKeyMaterial,
+        { name: 'HMAC', hash: { name: 'SHA-256' } },
+        true,
+        ['sign', 'verify']
+      );
 
       // Use derived keys for encryption or integrity
-      const encryptionKey = new Uint8Array(this.sharedSecret.slice(0, 16));
-      const integrityKey = new Uint8Array(this.sharedSecret.slice(16, 32));
 
-      console.log('Shared secret:', this.sharedSecret.toString('hex'));
       console.log('Encryption Key:', encryptionKey);
       console.log('Integrity Key:', integrityKey);
       
