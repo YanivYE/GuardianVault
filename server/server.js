@@ -14,7 +14,6 @@ const app = express();
 const server = http.createServer(app);
 const socket = socketIO(server);
 
-let sharedSecret = null;
 let aesGcmKey = null;
 let integrityKey = null;
 
@@ -52,24 +51,29 @@ function performKeyExchange(socket) {
 
     const serverPublicKeyBase64 = serverDH.getPublicKey('base64');
 
-    console.log('sent key to client', serverPublicKeyBase64);
+    console.log('sent key to client: ', serverPublicKeyBase64);
     socket.emit('server-public-key', serverPublicKeyBase64);
 
     socket.on('client-public-key', async (clientPublicKeyBase64) => {
       try {
-        sharedSecret = serverDH.computeSecret(clientPublicKeyBase64, 'base64', 'hex');
-        console.log("Shared Secret", sharedSecret); // hex type
+        console.log('received key from client: ', clientPublicKeyBase64);
+        const sharedSecret = serverDH.computeSecret(clientPublicKeyBase64, 'base64', 'hex');
+        console.log("Computed Shared Secret: ", sharedSecret); 
 
         // Derive keyMaterial using SHA-256
-        const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'utf-8').digest();
+        const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
+        console.log('Key Material: ', keyMaterial.toString('hex'));
 
         // Use PBKDF2 to derive keys for AES-GCM and integrity with different salts
-        const saltAesGcm = crypto.randomBytes(16);
-        const saltIntegrity = crypto.randomBytes(16);
+        const salt = crypto.randomBytes(16);
         const iterations = 100000; // Adjust the number of iterations as needed
 
-        aesGcmKey = crypto.pbkdf2Sync(keyMaterial, saltAesGcm, iterations, 32, 'sha256');
-        integrityKey = crypto.pbkdf2Sync(keyMaterial, saltIntegrity, iterations, 32, 'sha256');
+        // send salt to client
+        console.log('server salt sent: ', salt.toString('hex'));
+        socket.emit('salt', JSON.stringify({ type: 'salt', salt: salt.toString('hex') }));
+
+        aesGcmKey = crypto.pbkdf2Sync(keyMaterial, salt, iterations, 32, 'sha256');
+        integrityKey = crypto.pbkdf2Sync(keyMaterial, salt, iterations, 32, 'sha256');
 
         console.log('aesGcmKey:', aesGcmKey.toString('hex'));
         console.log('integrityKey:', integrityKey.toString('hex'));
@@ -120,6 +124,7 @@ async function sendMessageToClient(message) {
 
   const hmac = crypto.createHmac('sha256', integrityKey).update(encryptedMessage).digest('hex');
 
+  console.log('Sent encrypted message to client: ', encryptedMessage);
   socket.emit('server-message', encryptedMessage, hmac);
 }
 
@@ -133,7 +138,6 @@ function receiveMessageFromClient() {
 
     if (computedHMAC === receivedHMAC) {
       console.log('Message integrity verified. Decrypted data:', decryptedText.toString());
-      // Process the decrypted and authenticated data
     } else {
       console.log('Message integrity check failed. Discarding message.');
       // Handle the case where the message may have been tampered with

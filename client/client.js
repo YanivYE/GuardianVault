@@ -26,8 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async performKeyExchange(serverPublicKeyBase64) {
+      console.log('Exchanging Keys');
 
-      console.log("got server public key:", serverPublicKeyBase64);
+      console.log("received server public key:", serverPublicKeyBase64);
 
       const keyPair = await window.crypto.subtle.generateKey(
         {
@@ -42,7 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const clientPublicKeyBase64 = this.arrayBufferToBase64(clientPublicKey);
 
-      console.log('sent to server:', clientPublicKey);
       console.log('sent to server:', clientPublicKeyBase64);
       this.socket.emit('client-public-key', clientPublicKeyBase64);
 
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sharedSecret = this.arrayBufferToHexString(sharedSecret);
       // hex type
-      console.log("shared secret:", sharedSecret);
+      console.log("Computed shared secret:", sharedSecret);
 
       sharedSecret = new TextEncoder().encode(sharedSecret);
 
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ['deriveBits', 'deriveKey']
       );
 
-      const salt = crypto.getRandomValues(new Uint8Array(16)); // 16 bytes for example
+      const salt = await this.receiveSaltFromServer();
 
       // Derive key material using HKDF
       const derivedKeyMaterial = await crypto.subtle.deriveBits(
@@ -99,8 +99,10 @@ document.addEventListener("DOMContentLoaded", () => {
         256 // Specify the length in bits
       );
 
+      console.log('Key Material: ', this.arrayBufferToHexString(derivedKeyMaterial));
+
       // Derive separate keys for encryption and integrity
-      const encryptionKey = await crypto.subtle.importKey(
+      this.encryptionKey = await crypto.subtle.importKey(
         'raw',
         derivedKeyMaterial,
         { name: 'AES-GCM' },
@@ -108,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ['encrypt', 'decrypt']
       );
 
-      const integrityKey = await crypto.subtle.importKey(
+      this.integrityKey = await crypto.subtle.importKey(
         'raw',
         derivedKeyMaterial,
         { name: 'HMAC', hash: { name: 'SHA-256' } },
@@ -117,10 +119,19 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       // Use derived keys for encryption or integrity
+      this.encryptionKey = await this.cryptoKeyToHex(this.encryptionKey);
+      this.integrityKey = await this.cryptoKeyToHex(this.integrityKey);
 
-      console.log('Encryption Key:', encryptionKey);
-      console.log('Integrity Key:', integrityKey);
+      console.log('Encryption Key:', this.encryptionKey);
+      console.log('Integrity Key:', this.integrityKey);
       
+    }
+
+    async cryptoKeyToHex(cryptoKey) {
+      const keyMaterial = await crypto.subtle.exportKey('raw', cryptoKey);
+      const byteArray = new Uint8Array(keyMaterial);
+      const hexString = Array.from(byteArray, byte => byte.toString(16).padStart(2, '0')).join('');
+      return hexString;
     }
     
     
@@ -161,6 +172,33 @@ document.addEventListener("DOMContentLoaded", () => {
       const byteArray = new Uint8Array(arrayBuffer);
       return Array.from(byteArray, byte => byte.toString(16).padStart(2, '0')).join('');
     }
+
+    async receiveSaltFromServer() {
+      // Assuming you're using a WebSocket for communication
+      // You may need to handle WebSocket events appropriately
+      // For simplicity, let's assume the salt is received before other operations
+      return new Promise((resolve) => {
+        this.socket.on('salt', (serverSalt) => {
+          try {
+            const parsedMessage = JSON.parse(serverSalt);
+    
+            if (parsedMessage.type === 'salt') {
+              const receivedSaltHex = parsedMessage.salt; // Assuming it's already in hex format
+              const receivedSalt = this.hexStringToArrayBuffer(receivedSaltHex);
+              
+              // Use the received salt in your application
+              console.log('Received Salt:', this.arrayBufferToHexString(receivedSalt));
+    
+              // Resolve the promise with the received salt
+              resolve(receivedSalt);
+            }
+          } catch (error) {
+            console.error('Error parsing server salt:', error.message);
+          }
+        });
+      });
+    }
+    
 
     async handleServerMessage(encryptedMessage, receivedHMAC) {
       const arrayBuffer = this.hexStringToArrayBuffer(encryptedMessage);
