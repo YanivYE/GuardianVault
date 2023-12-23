@@ -75,25 +75,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sharedSecret = new TextEncoder().encode(sharedSecret);
 
-      // Derive key material using HKDF (HMAC-based Key Derivation Function)
-      // Import shared secret as a CryptoKey
+      // Derive key material using PBKDF2
       const importedKey = await crypto.subtle.importKey(
         'raw',
         sharedSecret,
-        { name: 'HKDF'},
+        { name: 'PBKDF2' },
         false,
         ['deriveBits', 'deriveKey']
       );
 
       const salt = await this.receiveSaltFromServer();
 
-      // Derive key material using HKDF
+      // Derive key material using PBKDF2
       const derivedKeyMaterial = await crypto.subtle.deriveBits(
         {
-          name: 'HKDF',
-          hash: { name: 'SHA-256' },
+          name: 'PBKDF2',
           salt: new TextEncoder().encode(salt),
-          info: new TextEncoder().encode(''),
+          iterations: 100000,
+          hash: { name: 'SHA-256' },
         },
         importedKey,
         256 // Specify the length in bits
@@ -101,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       console.log('Key Material: ', this.arrayBufferToHexString(derivedKeyMaterial));
 
-      // Derive separate keys for encryption and integrity
+      // Derive separate keys for encryption and integrity using PBKDF2
       this.encryptionKey = await crypto.subtle.importKey(
         'raw',
         derivedKeyMaterial,
@@ -124,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       console.log('Encryption Key:', this.encryptionKey);
       console.log('Integrity Key:', this.integrityKey);
-      
+            
     }
 
     async cryptoKeyToHex(cryptoKey) {
