@@ -205,9 +205,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // Calculate the HMAC using Web Crypto API
       const textEncoder = new TextEncoder();
 
-      console.log("integrity key", this.socket.integrityKey);
-      console.log("integrity key", typeof(this.socket.integrityKey));
-      const keyData = textEncoder.encode(this.socket.integrityKey); // Convert string to ArrayBuffer
+      console.log("integrity key", this.integrityKey);
+      const keyData = textEncoder.encode(this.integrityKey); // Convert string to ArrayBuffer
       const hmacKey = await window.crypto.subtle.importKey(
         "raw",
         keyData,
@@ -228,15 +227,52 @@ document.addEventListener("DOMContentLoaded", () => {
         .join("");
 
       if (computedHMACHex === receivedHMAC) {
-        // Decrypt the data using the derived encryption key (existing code remains unchanged)
-        // ...
-
-        // Process the decrypted and authenticated message (existing code remains unchanged)
-        // ...
+        const decryptedData = decryptWithAESGCM()
       } else {
         console.log("Message integrity check failed. Discarding message.");
         // Handle the case where the message may have been tampered with
       }
+    }
+
+    async encryptWithAESGCM(text, encryptionKey) {
+      // Generate a random IV (Initialization Vector)
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+    
+      // Convert the text to ArrayBuffer
+      const data = new TextEncoder().encode(text);
+    
+      // Encrypt the data using AES-GCM
+      const ciphertext = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv },
+        encryptionKey,
+        data
+      );
+    
+      // Convert the IV and ciphertext to hex strings
+      const ivHex = Array.from(iv).map(byte => byte.toString(16).padStart(2, '0')).join('');
+      const ciphertextHex = Array.from(new Uint8Array(ciphertext)).map(byte => byte.toString(16).padStart(2, '0')).join('');
+    
+      // Return the IV and ciphertext
+      return { iv: ivHex, ciphertext: ciphertextHex };
+    }
+    
+    async decryptWithAESGCM(ivHex, ciphertextHex, tag, encryptionKey) {
+      // Convert hex strings to Uint8Arrays
+      const iv = Uint8Array.from(Buffer.from(ivHex, 'hex'));
+      const ciphertext = Uint8Array.from(Buffer.from(ciphertextHex, 'hex'));
+    
+      // Decrypt the data using AES-GCM
+      const decryptedData = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv, tag },
+        encryptionKey,
+        ciphertext
+      );
+    
+      // Convert the decrypted ArrayBuffer to a string
+      const decryptedText = new TextDecoder().decode(decryptedData);
+    
+      // Return the decrypted plaintext
+      return decryptedText;
     }
 
     async handleSendMessage() {
