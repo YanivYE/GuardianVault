@@ -60,13 +60,17 @@ function performKeyExchange(socket) {
         const sharedSecret = serverDH.computeSecret(clientPublicKeyBase64, 'base64', 'hex');
         console.log("Computed Shared Secret: ", sharedSecret); 
 
-        // Derive keyMaterial using SHA-256
-        const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
-        console.log('Key Material: ', keyMaterial.toString('hex'));
-
         // Use PBKDF2 to derive keys for AES-GCM and integrity with different salts
         const salt = crypto.randomBytes(16);
         const iterations = 100000; // Adjust the number of iterations as needed
+
+        // Derive keyMaterial using SHA-256
+        //const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
+        const keyMaterial = crypto.pbkdf2Sync(sharedSecret, salt, iterations, 32, 'SHA-256');
+        //console.log(keyMaterial);
+        console.log('Key Material: ', keyMaterial.toString('hex'));
+
+        
 
         // send salt to client
         console.log('server salt sent: ', salt.toString('hex'));

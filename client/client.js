@@ -92,11 +92,12 @@ document.addEventListener("DOMContentLoaded", () => {
           name: 'PBKDF2',
           salt: new TextEncoder().encode(salt),
           iterations: 100000,
-          hash: { name: 'SHA-256' },
+          hash: "SHA-256"
         },
         importedKey,
         256 // Specify the length in bits
       );
+      //console.log(derivedKeyMaterial);
 
       console.log('Key Material: ', this.arrayBufferToHexString(derivedKeyMaterial));
 
