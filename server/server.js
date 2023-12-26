@@ -76,8 +76,8 @@ function performKeyExchange(socket) {
         
         socket.emit('salt', JSON.stringify({ type: 'salt', salt: salt.toString('hex') }));
 
-        const aesGcmKey = crypto.pbkdf2Sync(keyMaterial, '', 1, 32, 'sha256');
-        const integrityKey = crypto.pbkdf2Sync(keyMaterial, '', 1, 32, 'sha256');
+        aesGcmKey = crypto.pbkdf2Sync(keyMaterial, '', 1, 32, 'sha256');
+        integrityKey = crypto.pbkdf2Sync(keyMaterial, '', 1, 32, 'sha256');
 
         console.log('aesGcmKey:', aesGcmKey.toString('hex'));
         console.log('integrityKey:', integrityKey.toString('hex'));
