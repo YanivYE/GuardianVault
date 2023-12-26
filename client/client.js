@@ -16,8 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       // Handling messages from the server with integrity check
-      this.socket.on('server-message', (encryptedMessage, receivedHMAC) => {
-        this.handleServerMessage(encryptedMessage, receivedHMAC);
+      this.socket.on('server-message', (iv, encryptedMessage, tag, receivedHMAC) => {
+        this.handleServerMessage(iv, encryptedMessage, tag, receivedHMAC);
       });
 
       document.getElementById("sendButton").addEventListener("click", () => {
@@ -75,8 +75,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sharedSecret = new TextEncoder().encode(sharedSecret);
 
-      // Derive key material using PBKDF2
-      const importedKey = await crypto.subtle.importKey(
+      const salt = await this.receiveSaltFromServer();
+
+      const keyMaterial = await crypto.subtle.importKey(
         'raw',
         sharedSecret,
         { name: 'PBKDF2' },
@@ -84,24 +85,21 @@ document.addEventListener("DOMContentLoaded", () => {
         ['deriveBits', 'deriveKey']
       );
 
-      const salt = await this.receiveSaltFromServer();
-
-      // Derive key material using PBKDF2
+    
       const derivedKeyMaterial = await crypto.subtle.deriveBits(
         {
           name: 'PBKDF2',
-          salt: new TextEncoder().encode(salt),
+          salt,
           iterations: 100000,
-          hash: "SHA-256"
+          hash: 'SHA-256',
         },
-        importedKey,
+        keyMaterial,
         256 // Specify the length in bits
       );
-      //console.log(derivedKeyMaterial);
 
-      console.log('Key Material: ', this.arrayBufferToHexString(derivedKeyMaterial));
-
-      // Derive separate keys for encryption and integrity using PBKDF2
+      console.log('material: ', this.arrayBufferToHexString(derivedKeyMaterial));
+    
+      // Use derived keys for encryption and integrity
       this.encryptionKey = await crypto.subtle.importKey(
         'raw',
         derivedKeyMaterial,
@@ -109,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
         true,
         ['encrypt', 'decrypt']
       );
-
+    
       this.integrityKey = await crypto.subtle.importKey(
         'raw',
         derivedKeyMaterial,
@@ -118,12 +116,8 @@ document.addEventListener("DOMContentLoaded", () => {
         ['sign', 'verify']
       );
 
-      // Use derived keys for encryption or integrity
-      this.encryptionKey = await this.cryptoKeyToHex(this.encryptionKey);
-      this.integrityKey = await this.cryptoKeyToHex(this.integrityKey);
-
-      console.log('Encryption Key:', this.encryptionKey);
-      console.log('Integrity Key:', this.integrityKey);
+      console.log('Encryption Key:', await this.cryptoKeyToHex(this.encryptionKey));
+      console.log('Integrity Key:', await this.cryptoKeyToHex(this.integrityKey));
             
     }
 
@@ -157,14 +151,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     hexStringToArrayBuffer(hexString) {
-      const length = hexString.length / 2;
-      const buffer = new Uint8Array(length);
-    
-      for (let i = 0; i < length; i++) {
-        buffer[i] = parseInt(hexString.substr(i * 2, 2), 16);
+      const buffer = new Uint8Array(hexString.length / 2);
+      for (let i = 0; i < hexString.length; i += 2) {
+        buffer[i / 2] = parseInt(hexString.substr(i, 2), 16);
       }
-    
-      return buffer.buffer;
+      return buffer;
     }
     
 
@@ -200,13 +191,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
 
-    async handleServerMessage(encryptedMessage, receivedHMAC) {
+    async handleServerMessage(iv, encryptedMessage, tag, receivedHMAC) {
       const arrayBuffer = this.hexStringToArrayBuffer(encryptedMessage);
+      console.log('got message from server: ', encryptedMessage, ' and hmac: ', receivedHMAC);
+      const decryptedData = await this.decryptWithAESGCM(iv, encryptedMessage, tag, this.encryptionKey);
+      console.log('decrypted server data: ', decryptedData);
 
       // Calculate the HMAC using Web Crypto API
       const textEncoder = new TextEncoder();
 
-      console.log("integrity key", this.integrityKey);
       const keyData = textEncoder.encode(this.integrityKey); // Convert string to ArrayBuffer
       const hmacKey = await window.crypto.subtle.importKey(
         "raw",
@@ -226,9 +219,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const computedHMACHex = Array.from(new Uint8Array(computedHMAC))
         .map((byte) => byte.toString(16).padStart(2, "0"))
         .join("");
+      
+        console.log('client computed hmac', computedHMACHex)
 
       if (computedHMACHex === receivedHMAC) {
-        const decryptedData = decryptWithAESGCM()
+        const decryptedData = decryptWithAESGCM();
+        console.log('decrypted server message: ', decryptedData);
       } else {
         console.log("Message integrity check failed. Discarding message.");
         // Handle the case where the message may have been tampered with
@@ -257,23 +253,28 @@ document.addEventListener("DOMContentLoaded", () => {
       return { iv: ivHex, ciphertext: ciphertextHex };
     }
     
-    async decryptWithAESGCM(ivHex, ciphertextHex, tag, encryptionKey) {
-      // Convert hex strings to Uint8Arrays
-      const iv = Uint8Array.from(Buffer.from(ivHex, 'hex'));
-      const ciphertext = Uint8Array.from(Buffer.from(ciphertextHex, 'hex'));
+    async decryptWithAESGCM(iv, ciphertextHex, tag, encryptionKey) {
+      try {
+        // Convert hex strings to Uint8Arrays
+        const ciphertext = Uint8Array.from(this.hexStringToArrayBuffer(ciphertextHex));
     
-      // Decrypt the data using AES-GCM
-      const decryptedData = await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv, tag },
-        encryptionKey,
-        ciphertext
-      );
+        // Decrypt the data using AES-GCM
+        const decryptedData = await crypto.subtle.decrypt(
+          { name: 'AES-GCM', iv, tag },
+          encryptionKey,
+          ciphertext
+        );
     
-      // Convert the decrypted ArrayBuffer to a string
-      const decryptedText = new TextDecoder().decode(decryptedData);
+        // Convert the decrypted ArrayBuffer to a string
+        const decryptedText = new TextDecoder().decode(decryptedData);
     
-      // Return the decrypted plaintext
-      return decryptedText;
+        // Return the decrypted plaintext
+        return decryptedText;
+      } catch (error) {
+        // Handle decryption errors
+        console.error('Decryption error:', error);
+        throw error;
+      }
     }
 
     async handleSendMessage() {

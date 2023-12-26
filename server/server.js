@@ -128,8 +128,8 @@ async function sendMessageToClient(message) {
 
   const hmac = crypto.createHmac('sha256', integrityKey).update(encryptedMessage).digest('hex');
 
-  console.log('Sent encrypted message to client: ', encryptedMessage);
-  socket.emit('server-message', encryptedMessage, hmac);
+  console.log('Sent encrypted message to client: ', encryptedMessage, ' and hmac: ', hmac);
+  socket.emit('server-message', iv, encryptedMessage, tag, hmac);
 }
 
 
