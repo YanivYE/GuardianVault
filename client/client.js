@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   class Client {
     constructor() {
       this.socket = io();
-      this.encryptionKey = null;
+      this.aesGcmKey = null;
       this.integrityKey = null;
 
       this.setupEventListeners();
@@ -99,24 +99,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
       console.log('material: ', this.arrayBufferToHexString(derivedKeyMaterial));
     
-      // Use derived keys for encryption and integrity
-      this.encryptionKey = await crypto.subtle.importKey(
+      const importedEncryptionKey = await crypto.subtle.importKey(
         'raw',
         derivedKeyMaterial,
-        { name: 'AES-GCM' },
+        { name: 'PBKDF2' },
+        false,
+        ['deriveBits', 'deriveKey']
+      );
+      
+      // Derive key using PBKDF2
+      this.aesGcmKey = await crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: Uint8Array.from(''), // Empty salt
+          iterations: 1,
+          hash: 'SHA-256',
+        },
+        importedEncryptionKey,
+        { name: 'AES-GCM', length: 256 },
         true,
         ['encrypt', 'decrypt']
       );
+      
     
-      this.integrityKey = await crypto.subtle.importKey(
+      const importedIntegrityKey = await crypto.subtle.importKey(
         'raw',
         derivedKeyMaterial,
-        { name: 'HMAC', hash: { name: 'SHA-256' } },
+        { name: 'PBKDF2' },
+        false,
+        ['deriveBits', 'deriveKey']
+      );
+      
+      // Derive key using PBKDF2
+      this.integrityKey = await crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: Uint8Array.from(''), // Empty salt
+          iterations: 1,
+          hash: 'SHA-256',
+        },
+        importedIntegrityKey,
+        { name: 'HMAC', hash: { name: 'SHA-256' } , length: 256 },
         true,
         ['sign', 'verify']
       );
 
-      console.log('Encryption Key:', await this.cryptoKeyToHex(this.encryptionKey));
+      console.log('Encryption Key:', await this.cryptoKeyToHex(this.aesGcmKey));
       console.log('Integrity Key:', await this.cryptoKeyToHex(this.integrityKey));
             
     }

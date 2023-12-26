@@ -64,20 +64,20 @@ function performKeyExchange(socket) {
         const salt = crypto.randomBytes(16);
         const iterations = 100000; // Adjust the number of iterations as needed
 
+        console.log('server salt sent: ', salt.toString('hex'));
+
         // Derive keyMaterial using SHA-256
         //const keyMaterial = crypto.createHash('sha256').update(sharedSecret, 'hex').digest();
         const keyMaterial = crypto.pbkdf2Sync(sharedSecret, salt, iterations, 32, 'SHA-256');
         //console.log(keyMaterial);
         console.log('Key Material: ', keyMaterial.toString('hex'));
 
-        
-
         // send salt to client
-        console.log('server salt sent: ', salt.toString('hex'));
+        
         socket.emit('salt', JSON.stringify({ type: 'salt', salt: salt.toString('hex') }));
 
-        aesGcmKey = crypto.pbkdf2Sync(keyMaterial, salt, iterations, 32, 'sha256');
-        integrityKey = crypto.pbkdf2Sync(keyMaterial, salt, iterations, 32, 'sha256');
+        const aesGcmKey = crypto.pbkdf2Sync(keyMaterial, '', 1, 32, 'sha256');
+        const integrityKey = crypto.pbkdf2Sync(keyMaterial, '', 1, 32, 'sha256');
 
         console.log('aesGcmKey:', aesGcmKey.toString('hex'));
         console.log('integrityKey:', integrityKey.toString('hex'));
