@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
       this.socket = io();
       this.aesGcmKey = null;
       this.integrityKey = null;
+      this.serverSalt = null;
 
       this.setupEventListeners();
     } 
@@ -16,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       // Handling messages from the server with integrity check
-      this.socket.on('server-message', (iv, encryptedMessage, tag, receivedHMAC) => {
+      this.socket.on('server-message', async (iv, encryptedMessage, tag, receivedHMAC) => {
         this.handleServerMessage(iv, encryptedMessage, tag, receivedHMAC);
       });
 
@@ -75,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sharedSecret = new TextEncoder().encode(sharedSecret);
 
-      const salt = await this.receiveSaltFromServer();
+      this.serverSalt = await this.receiveSaltFromServer();
 
       const keyMaterial = await crypto.subtle.importKey(
         'raw',
@@ -89,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const derivedKeyMaterial = await crypto.subtle.deriveBits(
         {
           name: 'PBKDF2',
-          salt,
+          salt: this.serverSalt,
           iterations: 100000,
           hash: 'SHA-256',
         },
@@ -146,8 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       console.log('Encryption Key:', await this.cryptoKeyToHex(this.aesGcmKey));
       console.log('Integrity Key:', await this.cryptoKeyToHex(this.integrityKey));
-            
-    }
+    } 
 
     async cryptoKeyToHex(cryptoKey) {
       const keyMaterial = await crypto.subtle.exportKey('raw', cryptoKey);
@@ -193,18 +193,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async receiveSaltFromServer() {
-      // Assuming you're using a WebSocket for communication
-      // You may need to handle WebSocket events appropriately
-      // For simplicity, let's assume the salt is received before other operations
+      // Check if the salt has already been received
+      if (this.serverSalt) {
+        return this.serverSalt;
+      }
+    
+      // If not, set up an event listener to handle the salt when received
       return new Promise((resolve) => {
-        this.socket.on('salt', (serverSalt) => {
+        this.socket.once('salt', (serverSalt) => {
           try {
             const parsedMessage = JSON.parse(serverSalt);
     
             if (parsedMessage.type === 'salt') {
               const receivedSaltHex = parsedMessage.salt; // Assuming it's already in hex format
               const receivedSalt = this.hexStringToArrayBuffer(receivedSaltHex);
-              
+    
+              // Save the received salt for future use
+              this.serverSalt = receivedSalt;
+    
               // Use the received salt in your application
               console.log('Received Salt:', this.arrayBufferToHexString(receivedSalt));
     
@@ -213,6 +219,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           } catch (error) {
             console.error('Error parsing server salt:', error.message);
+            // Reject the promise if there's an error
+            resolve(Promise.reject(error));
           }
         });
       });
@@ -222,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async handleServerMessage(iv, encryptedMessage, tag, receivedHMAC) {
       const arrayBuffer = this.hexStringToArrayBuffer(encryptedMessage);
       console.log('got message from server: ', encryptedMessage, ' and hmac: ', receivedHMAC);
-      const decryptedData = await this.decryptWithAESGCM(iv, encryptedMessage, tag, this.encryptionKey);
+      const decryptedData = await this.decryptWithAESGCM(iv, encryptedMessage, tag);
       console.log('decrypted server data: ', decryptedData);
 
       // Calculate the HMAC using Web Crypto API
@@ -281,7 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return { iv: ivHex, ciphertext: ciphertextHex };
     }
     
-    async decryptWithAESGCM(iv, ciphertextHex, tag, encryptionKey) {
+    async decryptWithAESGCM(iv, ciphertextHex, tag) {
       try {
         // Convert hex strings to Uint8Arrays
         const ciphertext = Uint8Array.from(this.hexStringToArrayBuffer(ciphertextHex));
@@ -289,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Decrypt the data using AES-GCM
         const decryptedData = await crypto.subtle.decrypt(
           { name: 'AES-GCM', iv, tag },
-          encryptionKey,
+          this.aesGcmKey,
           ciphertext
         );
     
@@ -312,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Import the shared key using Web Crypto API
       const encryptionKey = await window.crypto.subtle.importKey(
         'raw',
-        this.socket.encryptionKey,
+        this.aesGcmKey,
         { name: 'AES-GCM' },
         false,
         ['encrypt']
@@ -329,9 +337,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // Calculate HMAC for message integrity using Web Crypto API
       const textEncoder = new TextEncoder();
 
-      console.log("integrity key", this.socket.integrityKey);
-      console.log("integrity key", typeof(this.socket.integrityKey));
-      const keyData = textEncoder.encode(this.socket.integrityKey); // Convert string to ArrayBuffer
+      console.log("integrity key", this.integrityKey);
+      console.log("integrity key", typeof(this.integrityKey));
+      const keyData = textEncoder.encode(this.integrityKey); // Convert string to ArrayBuffer
       const hmacKey = await window.crypto.subtle.importKey(
         "raw",
         keyData,
