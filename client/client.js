@@ -7,22 +7,30 @@ document.addEventListener("DOMContentLoaded", () => {
       this.aesGcmKey = null;
       this.integrityKey = null;
       this.serverSalt = null;
+      this.keyExchangeComplete = false; // Flag to track key exchange completion
+      this.messageQueue = []; // Queue to store server messages before key exchange completion
 
       this.setupEventListeners();
-    } 
+    }
 
     setupEventListeners() {
       this.socket.on('server-public-key', async (serverPublicKeyBase64) => {
-        this.performKeyExchange(serverPublicKeyBase64);
-      });
-
-      // Handling messages from the server with integrity check
-      this.socket.on('server-message', async (iv, encryptedMessage, tag, receivedHMAC) => {
-        this.handleServerMessage(iv, encryptedMessage, tag, receivedHMAC);
+        await this.performKeyExchange(serverPublicKeyBase64);
+        this.processMessageQueue(); // Process queued messages after key exchange
       });
 
       document.getElementById("sendButton").addEventListener("click", () => {
         this.handleSendMessage();
+      });
+
+      // Listen for server messages after instantiation
+      this.socket.on('server-message', async (iv, encryptedMessage, tag, receivedHMAC) => {
+        if (this.keyExchangeComplete) {
+          await this.handleServerMessage(iv, encryptedMessage, tag, receivedHMAC);
+        } else {
+          console.log("Key exchange is not complete. Queuing server message.");
+          this.messageQueue.push({ iv, encryptedMessage, tag, receivedHMAC });
+        }
       });
     }
 
@@ -108,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
         ['deriveBits', 'deriveKey']
       );
       
-      // Derive key using PBKDF2
       this.aesGcmKey = await crypto.subtle.deriveKey(
         {
           name: 'PBKDF2',
@@ -121,7 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
         true,
         ['encrypt', 'decrypt']
       );
-      
     
       const importedIntegrityKey = await crypto.subtle.importKey(
         'raw',
@@ -145,9 +151,22 @@ document.addEventListener("DOMContentLoaded", () => {
         ['sign', 'verify']
       );
 
-      console.log('Encryption Key:', await this.cryptoKeyToHex(this.aesGcmKey));
+      console.log('Encryption Key(AES-GCM):', await this.cryptoKeyToHex(this.aesGcmKey));
       console.log('Integrity Key:', await this.cryptoKeyToHex(this.integrityKey));
+
+      // Once the key exchange is complete, set the flag to true
+      this.keyExchangeComplete = true;
+
+      console.log('Key exchange completed.');
     } 
+
+    async processMessageQueue() {
+      console.log('Processing queued messages...');
+      while (this.messageQueue.length > 0) {
+        const { iv, encryptedMessage, tag, receivedHMAC } = this.messageQueue.shift();
+        await this.handleServerMessage(iv, encryptedMessage, tag, receivedHMAC);
+      }
+    }
 
     async cryptoKeyToHex(cryptoKey) {
       const keyMaterial = await crypto.subtle.exportKey('raw', cryptoKey);
@@ -225,42 +244,40 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
     }
-    
 
     async handleServerMessage(iv, encryptedMessage, tag, receivedHMAC) {
-      const arrayBuffer = this.hexStringToArrayBuffer(encryptedMessage);
       console.log('got message from server: ', encryptedMessage, ' and hmac: ', receivedHMAC);
-      const decryptedData = await this.decryptWithAESGCM(iv, encryptedMessage, tag);
-      console.log('decrypted server data: ', decryptedData);
-
+    
+      // Convert hex strings to Uint8Arrays
+      const ivArray = this.hexStringToArrayBuffer(iv);
+      const tagArray = this.hexStringToArrayBuffer(tag);
+      const encryptedMessageArray = this.hexStringToArrayBuffer(encryptedMessage);
+    
+      // Decrypt the message using AES-GCM
+      const decryptedMessage = await this.decryptWithAESGCM(ivArray, encryptedMessageArray, tagArray);
+      
       // Calculate the HMAC using Web Crypto API
-      const textEncoder = new TextEncoder();
-
-      const keyData = textEncoder.encode(this.integrityKey); // Convert string to ArrayBuffer
+      const hmacData = new TextEncoder().encode(decryptedMessage); // Convert decrypted message to ArrayBuffer
       const hmacKey = await window.crypto.subtle.importKey(
         "raw",
-        keyData,
+        this.integrityKey,
         { name: "HMAC", hash: { name: "SHA-256" } },
         false,
-        ["sign"]
+        ["verify"]
       );
-
-      const computedHMAC = await window.crypto.subtle.sign(
+    
+      // Verify the received HMAC against the computed HMAC
+      const receivedHMACArray = Uint8Array.from(this.hexStringToArrayBuffer(receivedHMAC));
+      const isValid = await window.crypto.subtle.verify(
         "HMAC",
         hmacKey,
-        arrayBuffer
+        receivedHMACArray,
+        hmacData
       );
-
-      // Convert computed HMAC to hex string
-      const computedHMACHex = Array.from(new Uint8Array(computedHMAC))
-        .map((byte) => byte.toString(16).padStart(2, "0"))
-        .join("");
-      
-        console.log('client computed hmac', computedHMACHex)
-
-      if (computedHMACHex === receivedHMAC) {
-        const decryptedData = decryptWithAESGCM();
-        console.log('decrypted server message: ', decryptedData);
+    
+      if (isValid) {
+        console.log('Message integrity verified. Decrypted message:', decryptedMessage);
+        // Process the decrypted message as needed
       } else {
         console.log("Message integrity check failed. Discarding message.");
         // Handle the case where the message may have been tampered with
@@ -276,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
       // Encrypt the data using AES-GCM
       const ciphertext = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv },
+        { name: 'AES-GCM', iv, tag },
         encryptionKey,
         data
       );
@@ -291,6 +308,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
     async decryptWithAESGCM(iv, ciphertextHex, tag) {
       try {
+        console.log("IV", iv);
+        console.log("ciphertextHex", ciphertextHex);
+        console.log("tag", tag);
+      
         // Convert hex strings to Uint8Arrays
         const ciphertext = Uint8Array.from(this.hexStringToArrayBuffer(ciphertextHex));
     
