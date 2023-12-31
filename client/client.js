@@ -247,20 +247,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async handleServerMessage(iv, encryptedMessage, tag, receivedHMAC) {
       console.log('got message from server: ', encryptedMessage, ' and hmac: ', receivedHMAC);
-    
-      // Convert hex strings to Uint8Arrays
-      const ivArray = this.hexStringToArrayBuffer(iv);
-      const tagArray = this.hexStringToArrayBuffer(tag);
-      const encryptedMessageArray = this.hexStringToArrayBuffer(encryptedMessage);
-    
+        
       // Decrypt the message using AES-GCM
-      const decryptedMessage = await this.decryptWithAESGCM(ivArray, encryptedMessageArray, tagArray);
+      const decryptedMessage = await this.decryptWithAESGCM(iv, encryptedMessage, tag);
+      console.log('decrypted message: ', decryptedMessage);
       
       // Calculate the HMAC using Web Crypto API
       const hmacData = new TextEncoder().encode(decryptedMessage); // Convert decrypted message to ArrayBuffer
+      const hexIntegrityKey = await this.cryptoKeyToHex(this.integrityKey);
+      const arrayInterityKey = this.hexStringToArrayBuffer(hexIntegrityKey);
       const hmacKey = await window.crypto.subtle.importKey(
         "raw",
-        this.integrityKey,
+        arrayInterityKey,
         { name: "HMAC", hash: { name: "SHA-256" } },
         false,
         ["verify"]
@@ -313,13 +311,13 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("tag", tag);
       
         // Convert hex strings to Uint8Arrays
-        const ciphertext = Uint8Array.from(this.hexStringToArrayBuffer(ciphertextHex));
+        const ciphertextArray = Uint8Array.from(this.hexStringToArrayBuffer(ciphertextHex + this.arrayBufferToHexString(tag)));
     
         // Decrypt the data using AES-GCM
         const decryptedData = await crypto.subtle.decrypt(
-          { name: 'AES-GCM', iv, tag },
+          { name: 'AES-GCM', iv },
           this.aesGcmKey,
-          ciphertext
+          ciphertextArray
         );
     
         // Convert the decrypted ArrayBuffer to a string
