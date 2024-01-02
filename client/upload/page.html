@@ -77,6 +77,8 @@
             const selectedFile = fileUploadInput.files[0];
             if (selectedFile) {
                 fileNameDisplay.textContent = `Selected file: ${selectedFile.name}`;
+                console.log("File: ", selectedFile);
+                console.log("File HREF", URL.createObjectURL(selectedFile));
                 downloadLink.style.display = "block";
                 downloadLink.setAttribute("href", URL.createObjectURL(selectedFile));
                 downloadLink.setAttribute("download", selectedFile.name);
