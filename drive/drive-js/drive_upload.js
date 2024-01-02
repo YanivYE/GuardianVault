@@ -22,6 +22,8 @@ const drive = google.drive({
 
 const filePath = path.join(__dirname, 'example.jpg');
 
+
+
 async function uploadFile(filePath) {
   try {
     // Get the file name and extension
@@ -102,6 +104,9 @@ async function showFiles() {
 async function main() {
   try {
     const filePath = path.join(__dirname, 'example.jpeg');
+
+    // encrypt 
+
     await uploadFile(filePath);
 
     fileIds = await showFiles();
