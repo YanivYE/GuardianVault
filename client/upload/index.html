@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="file-upload-container">
+        <!-- File upload interface -->
+        <h1>File Upload System</h1>
+        <p>Select a file to upload:</p>
+        <label for="file-upload" class="file-upload-label">Choose File</label>
+        <input type="file" id="file-upload" class="file-upload-input">
+        <div id="file-name">No file selected</div>
+        <a href="#" id="download-link" style="display: none;">Download File</a>
+    </div>
+
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
