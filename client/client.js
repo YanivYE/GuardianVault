@@ -251,9 +251,10 @@ document.addEventListener("DOMContentLoaded", () => {
       // Decrypt the message using AES-GCM
       const decryptedMessage = await this.decryptWithAESGCM(iv, encryptedMessage, tag);
       console.log('decrypted message: ', decryptedMessage);
-      
+    
+
       // Calculate the HMAC using Web Crypto API
-      const hmacData = new TextEncoder().encode(decryptedMessage); // Convert decrypted message to ArrayBuffer
+      const hmacData = new TextEncoder().encode(encryptedMessage); // Convert encrypted message to ArrayBuffer
       const hexIntegrityKey = await this.cryptoKeyToHex(this.integrityKey);
       const arrayInterityKey = this.hexStringToArrayBuffer(hexIntegrityKey);
       const hmacKey = await window.crypto.subtle.importKey(
@@ -335,13 +336,15 @@ document.addEventListener("DOMContentLoaded", () => {
     async handleSendMessage() {
       const messageInput = document.getElementById("message");
       const message = messageInput.value;
+        
+      const aesGcmKeyBytes = await this.exportAESKeyAsBytes(this.aesGcmKey);
     
       // Import the shared key using Web Crypto API
       const encryptionKey = await window.crypto.subtle.importKey(
         'raw',
-        this.aesGcmKey,
-        { name: 'AES-GCM' },
-        false,
+        aesGcmKeyBytes,
+        "AES-GCM",
+        true,
         ['encrypt']
       );
     
@@ -356,8 +359,6 @@ document.addEventListener("DOMContentLoaded", () => {
       // Calculate HMAC for message integrity using Web Crypto API
       const textEncoder = new TextEncoder();
 
-      console.log("integrity key", this.integrityKey);
-      console.log("integrity key", typeof(this.integrityKey));
       const keyData = textEncoder.encode(this.integrityKey); // Convert string to ArrayBuffer
       const hmacKey = await window.crypto.subtle.importKey(
         "raw",
@@ -388,6 +389,16 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       messageInput.value = "";
+    }
+
+    async exportAESKeyAsBytes(aesGcmKey) {
+      try {
+        const keyBytes = await crypto.subtle.exportKey('raw', aesGcmKey);
+        return new Uint8Array(keyBytes);
+      } catch (error) {
+        console.error('Error exporting AES key:', error);
+        throw error;
+      }
     }
 
     

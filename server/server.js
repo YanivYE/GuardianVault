@@ -133,21 +133,23 @@ async function sendMessageToClient(message) {
 }
 
 
-function receiveMessageFromClient() {
-  socket.on('client-message', async (encryptedData, receivedHMAC) => {
-    console.log("received:", encryptedData);
-    const decryptedText = decryptWithAESGCM(iv, ciphertext, tag);
+async function receiveMessageFromClient() {
+  socket.on('client-message', async (encryptedMessage, receivedIV, receivedHMAC) => {
+    console.log("Received encrypted message:", encryptedMessage);
+
+    const decryptedText = decryptWithAESGCM(receivedIV, Buffer.from(encryptedMessage, 'hex'), receivedHMAC);
 
     const computedHMAC = crypto.createHmac('sha256', integrityKey).update(decryptedText).digest('hex');
 
     if (computedHMAC === receivedHMAC) {
-      console.log('Message integrity verified. Decrypted data:', decryptedText.toString());
+      console.log('Message integrity verified. Decrypted data:', decryptedText);
     } else {
       console.log('Message integrity check failed. Discarding message.');
       // Handle the case where the message may have been tampered with
     }
   });
 }
+
 
 
 async function handleSocketConnection(socket) {
@@ -158,7 +160,7 @@ async function handleSocketConnection(socket) {
   const msgToClient = 'Hello, client!';
 
   await sendMessageToClient(msgToClient);
-  receiveMessageFromClient();
+  await receiveMessageFromClient();
 
   socket.on('disconnect', () => {
     console.log('A user disconnected');
