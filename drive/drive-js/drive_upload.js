@@ -20,25 +20,13 @@ const drive = google.drive({
   auth: oauth2Client,
 });
 
-const filePath = path.join(__dirname, 'example.jpg');
-
-
-
 async function uploadFile(filePath) {
   try {
-    // Get the file name and extension
+    // Get the file name
     const fileName = path.basename(filePath);
-    const fileExtension = path.extname(filePath).substr(1); // Remove the dot
 
-    // Determine the MIME type based on the file extension
-    const mimeType = {
-      jpg: 'image/jpeg',
-      jpeg: 'image/jpeg',
-      png: 'image/png',
-      pdf: 'application/pdf',
-      txt: 'text/plain',
-      // Add more extensions and corresponding MIME types as needed
-    }[fileExtension.toLowerCase()] || 'application/octet-stream'; // Default to binary data if not recognized
+    // Determine the MIME type
+    const mimeType = 'application/octet-stream'; // Default MIME type for unknown files
 
     const response = await drive.files.create({
       requestBody: {
@@ -103,7 +91,7 @@ async function showFiles() {
 
 async function main() {
   try {
-    const filePath = path.join(__dirname, 'example.jpeg');
+    const filePath = path.join(__dirname, 'test2.pptx');
 
     // encrypt 
 
