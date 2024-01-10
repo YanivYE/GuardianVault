@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         this.processMessageQueue(); // Process queued messages after key exchange
       });
 
-      document.getElementById("sendButton").addEventListener("click", () => {
+      document.getElementById("send-button").addEventListener("click", () => {
         this.handleSendMessage();
       });
 
@@ -334,74 +334,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async handleSendMessage() {
-      const messageInput = document.getElementById("message");
-      const message = messageInput.value;
-        
-      const aesGcmKeyBytes = await this.exportAESKeyAsBytes(this.aesGcmKey);
-    
-      // Import the shared key using Web Crypto API
-      const encryptionKey = await window.crypto.subtle.importKey(
-        'raw',
-        aesGcmKeyBytes,
-        "AES-GCM",
-        true,
-        ['encrypt']
-      );
-    
-      // Encrypt the message using the shared key
-      const iv = window.crypto.getRandomValues(new Uint8Array(16)); // Use a random IV
-      const cipherText = await window.crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv },
-        encryptionKey,
-        new TextEncoder().encode(message)
-      );
-    
-      // Calculate HMAC for message integrity using Web Crypto API
-      const textEncoder = new TextEncoder();
-
-      const keyData = textEncoder.encode(this.integrityKey); // Convert string to ArrayBuffer
-      const hmacKey = await window.crypto.subtle.importKey(
-        "raw",
-        keyData,
-        { name: "HMAC", hash: { name: "SHA-256" } },
-        false,
-        ["sign"]
-      );
-
-
-      const hmac = await window.crypto.subtle.sign(
-        "HMAC",
-        hmacKey,
-        cipherText
-      );
-
-      // Convert computed HMAC to hex string
-      const hmacHex = Array.from(new Uint8Array(hmac))
-        .map((byte) => byte.toString(16).padStart(2, "0"))
-        .join("");
-
-      // Send the encrypted message, IV, and HMAC to the server
-      this.socket.emit(
-        "client-message",
-        this.arrayBufferToHexString(cipherText),
-        this.arrayBufferToHexString(iv),
-        hmacHex
-      );
-
-      messageInput.value = "";
-    }
-
-    async exportAESKeyAsBytes(aesGcmKey) {
-      try {
-        const keyBytes = await crypto.subtle.exportKey('raw', aesGcmKey);
-        return new Uint8Array(keyBytes);
-      } catch (error) {
-        console.error('Error exporting AES key:', error);
-        throw error;
+      const selectedFile = fileUploadInput.files[0];
+  
+      if (selectedFile) {
+          const reader = new FileReader();
+  
+          reader.onload = (event) => {
+              const fileData = event.target.result;
+  
+              // Send the file data to the server using Socket.IO
+              this.socket.emit('send-file', { fileName: selectedFile.name, data: fileData });
+  
+              console.log('File data sent to the server:', selectedFile.name);
+          };
+  
+          reader.readAsDataURL(selectedFile);
       }
-    }
-
-    
+  }
+  
   }
 
   // Create an instance of the Client class when the DOM is loaded

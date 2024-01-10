@@ -156,11 +156,21 @@ async function handleSocketConnection(socket) {
   console.log('A user connected');
 
   await performKeyExchange(socket);
+  
 
-  const msgToClient = 'Hello, client!';
+  socket.on('send-file', async (fileInfo) => {
+    const { fileName, data } = fileInfo;
 
-  await sendMessageToClient(msgToClient);
-  await receiveMessageFromClient();
+    // Handle the file data received from the client
+    // You can save it to disk, process it, etc.
+    console.log('Received file from client:', fileName, '\n' , "data: " , data);
+
+    // Example: Save the file to disk
+    // const filePath = path.join(__dirname, 'uploads', fileName);
+    // fs.writeFileSync(filePath, Buffer.from(data, 'base64'));
+
+    // Now you can do whatever you need with the file data
+});
 
   socket.on('disconnect', () => {
     console.log('A user disconnected');
