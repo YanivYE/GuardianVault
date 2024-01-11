@@ -8,6 +8,7 @@ const http = require('http');
 const path = require('path');
 const socketIO = require('socket.io');
 const crypto = require('crypto');
+const fs = require('fs');
 
 // create app & server
 const app = express();
@@ -161,18 +162,19 @@ async function handleSocketConnection(socket) {
   socket.on('send-file', async (fileInfo) => {
     const { fileName, data } = fileInfo;
 
-    // Handle the file data received from the client
-    // You can save it to disk, process it, etc.
-    console.log('Received file from client:', fileName, '\n' , "data: " , data);
+    console.log('Got file from client:', fileName, '\n', 'data:', data);
 
-    // Example: Save the file to disk
-    // const filePath = path.join(__dirname, 'uploads', fileName);
-    // fs.writeFileSync(filePath, Buffer.from(data, 'base64'));
+    // Save the file to the server script's directory
+    const filePath = path.join(__dirname, fileName);
+    fs.writeFileSync(filePath, Buffer.from(data.split(';base64,').pop(), 'base64'));
 
-    // Now you can do whatever you need with the file data
-});
+    console.log('File saved at:', filePath);
 
-  socket.on('disconnect', () => {
+    // Additional processing if needed
+  });
+
+
+  socket.on('disconnect', async () => {
     console.log('A user disconnected');
   });
 }

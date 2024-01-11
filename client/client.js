@@ -335,22 +335,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async handleSendMessage() {
       const selectedFile = fileUploadInput.files[0];
-  
+
       if (selectedFile) {
           const reader = new FileReader();
-  
+
           reader.onload = (event) => {
               const fileData = event.target.result;
-  
+              const {iv, encryptedData} = encryptWithAESGCM(fileData, this.aesGcmKey);
+              console.log(encryptedData);
+
               // Send the file data to the server using Socket.IO
-              this.socket.emit('send-file', { fileName: selectedFile.name, data: fileData });
-  
+              this.socket.emit('send-file', { fileName: selectedFile.name, data: encryptedData, iv });
+
               console.log('File data sent to the server:', selectedFile.name);
           };
-  
+
           reader.readAsDataURL(selectedFile);
       }
-  }
+
+    }
   
   }
 
