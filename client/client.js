@@ -289,6 +289,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
       // Convert the text to ArrayBuffer
       const data = new TextEncoder().encode(text);
+
+      const tag = new Uint8Array(16);
     
       // Encrypt the data using AES-GCM
       const ciphertext = await crypto.subtle.encrypt(
@@ -341,7 +343,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
           reader.onload = (event) => {
               const fileData = event.target.result;
-              const {iv, encryptedData} = encryptWithAESGCM(fileData, this.aesGcmKey);
+              console.log(fileData, "\n\n");
+              const {iv, encryptedData} = this.encryptWithAESGCM(fileData, this.aesGcmKey);
               console.log(encryptedData);
 
               // Send the file data to the server using Socket.IO
