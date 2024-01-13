@@ -217,10 +217,12 @@ async function handleSocketConnection(socket) {
   
 
   socket.on('send-file', async (fileInfo) => {
-    const { fileName, data } = fileInfo;
+    const { fileName, data, iv } = fileInfo;
   
+    console.log("IV", iv);
     console.log('Got file from client:', fileName, '\n', 'data:', data);
-  
+
+    decryptWithAESGCM()
     if (data && typeof data === 'string') {
       // Save the file to the server script's directory
       const filePath = path.join(__dirname, fileName);

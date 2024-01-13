@@ -298,6 +298,8 @@ document.addEventListener("DOMContentLoaded", () => {
         encryptionKey,
         data
       );
+
+      console.log("Tag", tag);
     
       // Convert the IV and ciphertext to hex strings
       const ivHex = Array.from(iv).map(byte => byte.toString(16).padStart(2, '0')).join('');
@@ -349,9 +351,10 @@ document.addEventListener("DOMContentLoaded", () => {
           const { iv, ciphertext } = await this.encryptWithAESGCM(fileData, this.aesGcmKey);
           
           console.log(ciphertext);
+          console.log("iv", iv);
     
           // Send the file data to the server using Socket.IO
-          this.socket.emit('send-file', { fileName: selectedFile.name, data: ciphertext, iv });
+          this.socket.emit('send-file', { fileName: selectedFile.name, data: ciphertext, iv: iv });
     
           console.log('File data sent to the server:', selectedFile.name);
         };
