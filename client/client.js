@@ -289,40 +289,46 @@ document.addEventListener("DOMContentLoaded", () => {
     
       // Convert the text to ArrayBuffer
       const data = new TextEncoder().encode(text);
-
-      const tag = new Uint8Array(16);
     
       // Encrypt the data using AES-GCM
       const ciphertext = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv, tag },
+        { name: 'AES-GCM', iv },
         encryptionKey,
         data
       );
-
-      console.log("Tag", tag);
+    
+      // Get the authentication tag
+      const tag = new Uint8Array(ciphertext.slice(-16));
     
       // Convert the IV and ciphertext to hex strings
       const ivHex = Array.from(iv).map(byte => byte.toString(16).padStart(2, '0')).join('');
       const ciphertextHex = Array.from(new Uint8Array(ciphertext)).map(byte => byte.toString(16).padStart(2, '0')).join('');
     
-      // Return the IV and ciphertext
-      return { iv: ivHex, ciphertext: ciphertextHex };
+      // Return the IV, ciphertext, and tag
+      return { iv: ivHex, ciphertext: ciphertextHex, tag: Array.from(tag).map(byte => byte.toString(16).padStart(2, '0')).join('') };
     }
+    
     
     async decryptWithAESGCM(iv, ciphertextHex, tag) {
       try {
         console.log("IV", iv);
         console.log("ciphertextHex", ciphertextHex);
         console.log("tag", tag);
-      
+    
         // Convert hex strings to Uint8Arrays
-        const ciphertextArray = Uint8Array.from(this.hexStringToArrayBuffer(ciphertextHex + this.arrayBufferToHexString(tag)));
+        const ciphertextArray = Uint8Array.from(this.hexStringToArrayBuffer(ciphertextHex));
+        const tagArray = Uint8Array.from(this.hexStringToArrayBuffer(tag));
+    
+        // Concatenate ciphertext and tag arrays
+        const concatenatedArray = new Uint8Array(ciphertextArray.length + tagArray.length);
+        concatenatedArray.set(ciphertextArray, 0);
+        concatenatedArray.set(tagArray, ciphertextArray.length);
     
         // Decrypt the data using AES-GCM
         const decryptedData = await crypto.subtle.decrypt(
           { name: 'AES-GCM', iv },
           this.aesGcmKey,
-          ciphertextArray
+          concatenatedArray
         );
     
         // Convert the decrypted ArrayBuffer to a string
@@ -336,6 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
         throw error;
       }
     }
+    
 
     async handleSendMessage() {
       const selectedFile = fileUploadInput.files[0];
