@@ -2,41 +2,46 @@ const crypto = require('crypto');
 
 class Cryptography 
 {
-    constructor()
+    constructor(encryptionKey)
     {
-        this.aesGcmKey = null;
-        this.integrityKey = null;
+        this.aesGcmKey = encryptionKey;
     }
 
-    async encryptWithAESGCM(text) 
+    async encryptData(data) 
     {
-    // Generate a random IV (Initialization Vector)
-    const iv = crypto.randomBytes(12);
+        // Generate a random IV (Initialization Vector)
+        const iv = crypto.randomBytes(16);
 
-    // Create the AES-GCM cipher
-    const cipher = crypto.createCipheriv('aes-256-gcm', aesGcmKey, iv);
+        // Create the AES-GCM cipher
+        const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(this.aesGcmKey, 'hex'), iv);
 
-    // Update the cipher with the plaintext
-    const encryptedBuffer = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
+        // Update the cipher with the plaintext
+        const encryptedData = cipher.update(data, 'utf-8', 'hex');
 
-    // Get the authentication tag
-    const tag = cipher.getAuthTag();
+        encryptedData += cipher.final('hex');
 
-    // Return the IV, ciphertext, and authentication tag
-    return { iv, ciphertext: encryptedBuffer, tag };
+        // Get the authentication tag
+        const tag = cipher.getAuthTag().toString('hex');
+
+        // Return the IV, ciphertext, and authentication tag
+        return {iv, encryptedData, tag };
     }
 
-    async decryptWithAESGCM(iv, ciphertext, tag) {
-    // Create the AES-GCM decipher
-    const decipher = crypto.createDecipheriv('aes-256-gcm', aesGcmKey, iv);
+    async decryptData(iv, ciphertext, tag) 
+    {
+        // Create the AES-GCM decipher
+        const decipher = crypto.createDecipheriv('aes-256-gcm', Buffer.from(this.aesGcmKey, 'hex'), Buffer.from(iv, 'hex'));
 
-    // Set the authentication tag
-    decipher.setAuthTag(tag);
+        // Set the authentication tag
+        decipher.setAuthTag(Buffer.from(tag, 'hex'));
 
-    // Update the decipher with the ciphertext
-    const decryptedBuffer = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
+        // Update the decipher with the ciphertext
+        const decryptedData = decipher.update(ciphertext, 'hex', 'utf-8');
+        decryptedData += decipher.final('utf-8');
 
-    // Return the decrypted plaintext
-    return decryptedBuffer.toString('utf8');
+        // Return the decrypted plaintext
+        return decryptedData;
     }
 }
+
+module.exports = {Cryptography};
