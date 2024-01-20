@@ -1,15 +1,16 @@
+const keyExchange = require("./keyExchange");
+
 class SocketHandler {
     constructor(socket) {
       this.socket = socket;
     }
   
-    async handleSocketConnection(socket) {
+    async handleSocketConnection() {
         console.log('A user connected');
       
-        await performKeyExchange(socket);
+        await keyExchange.performKeyExchange(this.socket);
         
-      
-        socket.on('send-file', async (fileInfo) => {
+        this.socket.on('send-file', async (fileInfo) => {
           const { fileName, data, iv } = fileInfo;
         
           console.log("IV", iv);
@@ -43,7 +44,7 @@ class SocketHandler {
         });
       
       
-        socket.on('disconnect', async () => {
+        this.socket.on('disconnect', async () => {
           console.log('A user disconnected');
         });
     }
@@ -55,25 +56,25 @@ class SocketHandler {
         const hmac = crypto.createHmac('sha256', integrityKey).update(encryptedMessage).digest('hex');
       
         console.log('Sent encrypted message to client: ', encryptedMessage, ' and hmac: ', hmac);
-        socket.emit('server-message', iv, encryptedMessage, tag, hmac);
-      }
+        this.socket.emit('server-message', iv, encryptedMessage, tag, hmac);
+    }
       
       
-      async receiveMessageFromClient() {
-        socket.on('client-message', async (encryptedMessage, receivedIV, receivedHMAC) => {
-          console.log("Received encrypted message:", encryptedMessage);
-      
-          const decryptedText = decryptWithAESGCM(receivedIV, Buffer.from(encryptedMessage, 'hex'), receivedHMAC);
-      
-          const computedHMAC = crypto.createHmac('sha256', integrityKey).update(decryptedText).digest('hex');
-      
-          if (computedHMAC === receivedHMAC) {
-            console.log('Message integrity verified. Decrypted data:', decryptedText);
-          } else {
-            console.log('Message integrity check failed. Discarding message.');
-            // Handle the case where the message may have been tampered with
-          }
-        });
+    async receiveMessageFromClient() {
+    this.socket.on('client-message', async (encryptedMessage, receivedIV, receivedHMAC) => {
+        console.log("Received encrypted message:", encryptedMessage);
+    
+        const decryptedText = decryptWithAESGCM(receivedIV, Buffer.from(encryptedMessage, 'hex'), receivedHMAC);
+    
+        const computedHMAC = crypto.createHmac('sha256', integrityKey).update(decryptedText).digest('hex');
+    
+        if (computedHMAC === receivedHMAC) {
+        console.log('Message integrity verified. Decrypted data:', decryptedText);
+        } else {
+        console.log('Message integrity check failed. Discarding message.');
+        // Handle the case where the message may have been tampered with
+        }
+    });
     }
 }
 

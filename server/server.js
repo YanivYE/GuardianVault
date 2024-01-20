@@ -3,7 +3,7 @@ const http = require('http');
 const path = require('path');
 const socketIO = require('socket.io');
 const config = require('./config');
-const SocketHandler = require('./SocketHandler');
+const Handler = require('./SocketHandler');
 
 // create app & server
 const app = express();
@@ -41,7 +41,8 @@ function startServer() {
   });
 
   socket.on('connection', (socket) => {
-    
+    const socketHandler = new Handler.SocketHandler(socket);
+    socketHandler.handleSocketConnection();
   });
 }
 
