@@ -1,12 +1,10 @@
-let clientDH;
+const keyExchange = require("./ClientKeyExchange");
 
 document.addEventListener("DOMContentLoaded", () => {
   class Client {
     constructor() {
       this.socket = io();
-      this.aesGcmKey = null;
-      this.integrityKey = null;
-      this.serverSalt = null;
+      this.sharedKey = null;
       this.keyExchangeComplete = false; // Flag to track key exchange completion
       this.messageQueue = []; // Queue to store server messages before key exchange completion
 
@@ -15,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setupEventListeners() {
       this.socket.on('server-public-key', async (serverPublicKeyBase64) => {
-        await this.performKeyExchange(serverPublicKeyBase64);
+        this.sharedKey = await keyExchange.performKeyExchange(this.socket, serverPublicKeyBase64);
         this.processMessageQueue(); // Process queued messages after key exchange
       });
 
@@ -32,132 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
           this.messageQueue.push({ iv, encryptedMessage, tag, receivedHMAC });
         }
       });
-    }
-
-    async performKeyExchange(serverPublicKeyBase64) {
-      console.log('Exchanging Keys');
-
-      console.log("received server public key:", serverPublicKeyBase64);
-
-      const keyPair = await window.crypto.subtle.generateKey(
-        {
-          name: "ECDH",
-          namedCurve: "P-256"
-        },
-        true,
-        ["deriveKey", "deriveBits"]
-      );
-
-      const clientPublicKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
-
-      const clientPublicKeyBase64 = this.arrayBufferToBase64(clientPublicKey);
-
-      console.log('sent to server:', clientPublicKeyBase64);
-      this.socket.emit('client-public-key', clientPublicKeyBase64);
-
-      const importedServerPublicKey = await window.crypto.subtle.importKey(
-        "raw",
-        this.base64ToArrayBuffer(serverPublicKeyBase64),
-        {
-          name: "ECDH",
-          namedCurve: "P-256"
-        },
-        true,
-        []
-      );
-
-      const sharedSecretAlgorithm = {
-        name: 'ECDH',
-        namedCurve: 'P-256',
-        public: importedServerPublicKey
-      };
-
-      let sharedSecret = await window.crypto.subtle.deriveBits(
-        sharedSecretAlgorithm,
-        keyPair.privateKey,
-        256
-      );
-
-      sharedSecret = this.arrayBufferToHexString(sharedSecret);
-      // hex type
-      console.log("Computed shared secret:", sharedSecret);
-
-      sharedSecret = new TextEncoder().encode(sharedSecret);
-
-      this.serverSalt = await this.receiveSaltFromServer();
-
-      const keyMaterial = await crypto.subtle.importKey(
-        'raw',
-        sharedSecret,
-        { name: 'PBKDF2' },
-        false,
-        ['deriveBits', 'deriveKey']
-      );
-
-    
-      const derivedKeyMaterial = await crypto.subtle.deriveBits(
-        {
-          name: 'PBKDF2',
-          salt: this.serverSalt,
-          iterations: 100000,
-          hash: 'SHA-256',
-        },
-        keyMaterial,
-        256 // Specify the length in bits
-      );
-
-      console.log('material: ', this.arrayBufferToHexString(derivedKeyMaterial));
-    
-      const importedEncryptionKey = await crypto.subtle.importKey(
-        'raw',
-        derivedKeyMaterial,
-        { name: 'PBKDF2' },
-        false,
-        ['deriveBits', 'deriveKey']
-      );
-      
-      this.aesGcmKey = await crypto.subtle.deriveKey(
-        {
-          name: 'PBKDF2',
-          salt: Uint8Array.from(''), // Empty salt
-          iterations: 1,
-          hash: 'SHA-256',
-        },
-        importedEncryptionKey,
-        { name: 'AES-GCM', length: 256 },
-        true,
-        ['encrypt', 'decrypt']
-      );
-    
-      const importedIntegrityKey = await crypto.subtle.importKey(
-        'raw',
-        derivedKeyMaterial,
-        { name: 'PBKDF2' },
-        false,
-        ['deriveBits', 'deriveKey']
-      );
-      
-      // Derive key using PBKDF2
-      this.integrityKey = await crypto.subtle.deriveKey(
-        {
-          name: 'PBKDF2',
-          salt: Uint8Array.from(''), // Empty salt
-          iterations: 1,
-          hash: 'SHA-256',
-        },
-        importedIntegrityKey,
-        { name: 'HMAC', hash: { name: 'SHA-256' } , length: 256 },
-        true,
-        ['sign', 'verify']
-      );
-
-      console.log('Encryption Key(AES-GCM):', await this.cryptoKeyToHex(this.aesGcmKey));
-      console.log('Integrity Key:', await this.cryptoKeyToHex(this.integrityKey));
-
-      // Once the key exchange is complete, set the flag to true
-      this.keyExchangeComplete = true;
-
-      console.log('Key exchange completed.');
     } 
 
     async processMessageQueue() {
@@ -211,40 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return Array.from(byteArray, byte => byte.toString(16).padStart(2, '0')).join('');
     }
 
-    async receiveSaltFromServer() {
-      // Check if the salt has already been received
-      if (this.serverSalt) {
-        return this.serverSalt;
-      }
-    
-      // If not, set up an event listener to handle the salt when received
-      return new Promise((resolve) => {
-        this.socket.once('salt', (serverSalt) => {
-          try {
-            const parsedMessage = JSON.parse(serverSalt);
-    
-            if (parsedMessage.type === 'salt') {
-              const receivedSaltHex = parsedMessage.salt; // Assuming it's already in hex format
-              const receivedSalt = this.hexStringToArrayBuffer(receivedSaltHex);
-    
-              // Save the received salt for future use
-              this.serverSalt = receivedSalt;
-    
-              // Use the received salt in your application
-              console.log('Received Salt:', this.arrayBufferToHexString(receivedSalt));
-    
-              // Resolve the promise with the received salt
-              resolve(receivedSalt);
-            }
-          } catch (error) {
-            console.error('Error parsing server salt:', error.message);
-            // Reject the promise if there's an error
-            resolve(Promise.reject(error));
-          }
-        });
-      });
-    }
-
     async handleServerMessage(iv, encryptedMessage, tag, receivedHMAC) {
       console.log('got message from server: ', encryptedMessage, ' and hmac: ', receivedHMAC);
         
@@ -283,65 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    async encryptWithAESGCM(text, encryptionKey) {
-      // Generate a random IV (Initialization Vector)
-      const iv = crypto.getRandomValues(new Uint8Array(12));
     
-      // Convert the text to ArrayBuffer
-      const data = new TextEncoder().encode(text);
-    
-      // Encrypt the data using AES-GCM
-      const ciphertext = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv },
-        encryptionKey,
-        data
-      );
-    
-      // Get the authentication tag (use only the first 16 bytes)
-      const tag = new Uint8Array(ciphertext.slice(-16));
-    
-      // Convert the IV and ciphertext to hex strings
-      const ivHex = Array.from(iv).map(byte => byte.toString(16).padStart(2, '0')).join('');
-      const ciphertextHex = Array.from(new Uint8Array(ciphertext)).map(byte => byte.toString(16).padStart(2, '0')).join('');
-    
-      // Return the IV, ciphertext, and tag
-      return { iv: ivHex, ciphertext: ciphertextHex, tag: Array.from(tag).map(byte => byte.toString(16).padStart(2, '0')).join('') };
-    }
-    
-    
-    async decryptWithAESGCM(iv, ciphertextHex, tag) {
-      try {
-        console.log("IV", iv);
-        console.log("ciphertextHex", ciphertextHex);
-        console.log("tag", tag);
-    
-        // Convert hex strings to Uint8Arrays
-        const ciphertextArray = Uint8Array.from(this.hexStringToArrayBuffer(ciphertextHex));
-        const tagArray = Uint8Array.from(this.hexStringToArrayBuffer(tag));
-    
-        // Concatenate ciphertext and tag arrays
-        const concatenatedArray = new Uint8Array(ciphertextArray.length + tagArray.length);
-        concatenatedArray.set(ciphertextArray, 0);
-        concatenatedArray.set(tagArray, ciphertextArray.length);
-    
-        // Decrypt the data using AES-GCM
-        const decryptedData = await crypto.subtle.decrypt(
-          { name: 'AES-GCM', iv },
-          this.aesGcmKey,
-          concatenatedArray
-        );
-    
-        // Convert the decrypted ArrayBuffer to a string
-        const decryptedText = new TextDecoder().decode(decryptedData);
-    
-        // Return the decrypted plaintext
-        return decryptedText;
-      } catch (error) {
-        // Handle decryption errors
-        console.error('Decryption error:', error);
-        throw error;
-      }
-    }
     
 
     async handleSendMessage() {
@@ -370,8 +150,6 @@ document.addEventListener("DOMContentLoaded", () => {
         reader.readAsDataURL(selectedFile);
       }
     }
-    
-  
   }
 
   // Create an instance of the Client class when the DOM is loaded

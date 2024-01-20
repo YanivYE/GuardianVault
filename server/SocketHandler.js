@@ -1,4 +1,4 @@
-const keyExchange = require("./keyExchange");
+const keyExchange = require("./ServerKeyExchange");
 const Cryptography = require("./Cryptography");
 
 class SocketHandler {

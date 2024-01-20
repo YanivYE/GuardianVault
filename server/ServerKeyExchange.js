@@ -14,7 +14,7 @@ function performKeyExchange(socket) {
         try {
           const sharedSecret = serverDH.computeSecret(clientPublicKeyBase64, 'base64', 'hex');
 
-          console.log("Key Exchange complete!");
+          console.log("Key Exchange complete!\nShared secret key: ", sharedSecret);
 
           return sharedSecret;
   
