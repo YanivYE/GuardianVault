@@ -297,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
         data
       );
     
-      // Get the authentication tag
+      // Get the authentication tag (use only the first 16 bytes)
       const tag = new Uint8Array(ciphertext.slice(-16));
     
       // Convert the IV and ciphertext to hex strings
@@ -355,13 +355,14 @@ document.addEventListener("DOMContentLoaded", () => {
           console.log(fileData, "\n\n");
     
           // Wait for the encryption to complete before proceeding
-          const { iv, ciphertext } = await this.encryptWithAESGCM(fileData, this.aesGcmKey);
+          const { iv, ciphertext , tag} = await this.encryptWithAESGCM(fileData, this.aesGcmKey);
           
           console.log(ciphertext);
           console.log("iv", iv);
-    
+          console.log("tag", tag);
+
           // Send the file data to the server using Socket.IO
-          this.socket.emit('send-file', { fileName: selectedFile.name, data: ciphertext, iv: iv });
+          this.socket.emit('send-file', { fileName: selectedFile.name, data: ciphertext, iv: iv, tag: tag});
     
           console.log('File data sent to the server:', selectedFile.name);
         };

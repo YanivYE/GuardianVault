@@ -153,8 +153,8 @@ function encryptWithAESGCM(text)
   // Generate a random IV (Initialization Vector)
   const iv = crypto.randomBytes(12);
 
-  // Create the AES-GCM cipher
-  const cipher = crypto.createCipheriv('aes-256-gcm', aesGcmKey, iv);
+  // Create the AES-GCM cipher with a 16-byte authentication tag
+  const cipher = crypto.createCipheriv('aes-256-gcm', aesGcmKey, iv, { authTagLength: 16 });
 
   // Update the cipher with the plaintext
   const encryptedBuffer = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
@@ -217,12 +217,13 @@ async function handleSocketConnection(socket) {
   
 
   socket.on('send-file', async (fileInfo) => {
-    const { fileName, data, iv } = fileInfo;
+    const { fileName, data, iv, tag } = fileInfo;
   
     console.log("IV", iv);
     console.log('Got file from client:', fileName, '\n', 'data:', data);
 
-    decryptWithAESGCM()
+    decryptWithAESGCM(iv,data, tag);
+
     if (data && typeof data === 'string') {
       // Save the file to the server script's directory
       const filePath = path.join(__dirname, fileName);
