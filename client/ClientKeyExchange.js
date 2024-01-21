@@ -50,7 +50,6 @@ class KeyExchange
 
       console.log("Computed shared secret:", sharedSecret);
       // Once the key exchange is complete, set the flag to true
-      this.keyExchangeComplete = true;
 
       console.log('Key exchange completed.');
 

@@ -23,12 +23,7 @@ class Cryptography
         // Get the authentication tag (use only the first 16 bytes)
         const tag = new Uint8Array(ciphertext.slice(-16));
         
-        // Convert the IV and ciphertext to hex strings
-        const ivHex = Array.from(iv).map(byte => byte.toString(16).padStart(2, '0')).join('');
-        const ciphertextHex = Array.from(new Uint8Array(ciphertext)).map(byte => byte.toString(16).padStart(2, '0')).join('');
-        
-        // Return the IV, ciphertext, and tag
-        return {ivHex, ciphertextHex, tag: Array.from(tag).map(byte => byte.toString(16).padStart(2, '0')).join('') };
+        return { iv, ciphertext, tag };
     }
       
     async decryptData(iv, ciphertextHex, tag) {
