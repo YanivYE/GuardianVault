@@ -1,5 +1,6 @@
-const keyExchange = require("./ClientKeyExchange");
 const processor = require("./MessageProcessing");
+const keyExchange = require("./ClientKeyExchange");
+
 
 document.addEventListener("DOMContentLoaded", () => {
   class Client {
