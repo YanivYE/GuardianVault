@@ -14,11 +14,9 @@ function performKeyExchange(socket) {
         try {
           const sharedSecret = serverDH.computeSecret(clientPublicKeyBase64, 'base64', 'hex');
 
-          console.log("Key Exchange complete!\nShared secret key: ", sharedSecret);
-
-          return sharedSecret;
+          console.log("Shared secret key: ", sharedSecret);
   
-          resolve(); // Resolve the promise once key exchange is complete
+          resolve(sharedSecret); // Resolve the promise once key exchange is complete
         } catch (err) {
           reject(err); // Reject the promise if any error occurs
         }

@@ -11,17 +11,17 @@ class SocketHandler {
         console.log('A user connected');
       
         const sharedKey = await keyExchange.performKeyExchange(this.socket);
-
+        
         const cryptography = new Cryptography.Cryptography(sharedKey);
 
-        receiveFileFromClient(cryptography);
+        this.receiveFileFromClient(cryptography);
 
         this.socket.on('disconnect', async () => {
           console.log('A user disconnected');
         });
     }
 
-    async sendFileToClient(cryptography, data) {
+    sendFileToClient(cryptography, data) {
         const { iv, ciphertext, authTag } = cryptography.encryptData(data);
         const payload = iv.toString('hex') + ciphertext + authTag;
         const payloadBase64 = Buffer.from(payload, 'hex').toString('base64');
@@ -29,7 +29,7 @@ class SocketHandler {
         this.socket.emit('server-send-file', payloadBase64);
     }
        
-    async receiveFileFromClient(cryptography) {
+    receiveFileFromClient(cryptography) {
         const fileHandler = new FileHandler.FileHandler();
         this.socket.on('client-send-file', async (encryptedFilePayloadBase64) => {
             const filePayload = Buffer.from(encryptedFilePayloadBase64, 'base64').toString('hex');
@@ -38,12 +38,13 @@ class SocketHandler {
             const encryptedData = filePayload.substr(32, filePayload.length - 64);
             const authTag = filePayload.substr(filePayload.length - 32, 32);
             
-            const decryptedData = cryptography.decryptData(iv, encryptedData, authTag);
+            const decryptedData = await cryptography.decryptData(iv, encryptedData, authTag);
 
             const [fileName, fileContent] = decryptedData.split('$');
 
             console.log('got file: ' +  fileName + ' from client: ', fileContent);
 
+            fileHandler.saveFileToDisk(fileName, fileContent);
 
         });
     }

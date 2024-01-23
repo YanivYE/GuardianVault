@@ -1,3 +1,6 @@
+const path = require('path');
+const fs = require('fs');
+
 class FileHandler 
 {
     constructor()
@@ -55,25 +58,27 @@ class FileHandler
         }
       }
 
-      async saveFileToDisk(fileName)
+      async saveFileToDisk(fileName, fileData)
       {
         const filePath = path.join(__dirname, fileName);
-        fs.writeFileSync(filePath, Buffer.from(data.split(';base64,').pop(), 'base64'));
+        fs.writeFileSync(filePath, Buffer.from(fileData.split(';base64,').pop(), 'base64'));
     
         console.log('File saved at:', filePath);
 
-        await uploadFile(filePath);
+        // GOOGLE DRIVE 
+        
+        // await uploadFile(filePath);
 
-        fileIds = await showFiles();
-        console.log('File IDs in Google Drive:', fileIds);
+        // fileIds = await showFiles();
+        // console.log('File IDs in Google Drive:', fileIds);
 
         // Delete the file
-        fs.unlink(filePath, (err) => {
-        if (err) {
-            console.error(`Error deleting file: ${err.message}`);
-        } else {
-            console.log(`File ${filePath} has been deleted`);
-        }});
+        // fs.unlink(filePath, (err) => {
+        // if (err) {
+        //     console.error(`Error deleting file: ${err.message}`);
+        // } else {
+        //     console.log(`File ${filePath} has been deleted`);
+        // }});
       }
 }
 

@@ -11,7 +11,15 @@ const server = http.createServer(app);
 const socket = socketIO(server);
 
 function serveStaticFiles() {
-  app.use(express.static(__dirname));
+  const staticFilesPath = path.join(__dirname, '../client');
+
+  app.use(express.static(staticFilesPath, {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+      }
+    }
+  }));
 }
 
 function serveClientPage() {

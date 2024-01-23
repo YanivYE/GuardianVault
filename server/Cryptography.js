@@ -18,8 +18,6 @@ class Cryptography
         // Update the cipher with the plaintext
         const encryptedData = cipher.update(data, 'utf-8', 'hex');
 
-        encryptedData += cipher.final('hex');
-
         // Get the authentication tag
         const tag = cipher.getAuthTag().toString('hex');
 
@@ -37,7 +35,6 @@ class Cryptography
 
         // Update the decipher with the ciphertext
         const decryptedData = decipher.update(ciphertext, 'hex', 'utf-8');
-        decryptedData += decipher.final('utf-8');
 
         // Return the decrypted plaintext
         return decryptedData;
