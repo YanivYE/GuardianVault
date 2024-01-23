@@ -16,16 +16,20 @@ class SocketHandler {
 
         this.receiveFileFromClient(cryptography);
 
+        
+
         this.socket.on('disconnect', async () => {
           console.log('A user disconnected');
         });
     }
 
-    sendFileToClient(cryptography, data) {
-        const { iv, ciphertext, authTag } = cryptography.encryptData(data);
+    async sendFileToClient(cryptography, data) {
+        // TODO: find out why isnt cipher text is intialize
+        const { iv, ciphertext, authTag } = await cryptography.encryptData(data);
         const payload = iv.toString('hex') + ciphertext + authTag;
         const payloadBase64 = Buffer.from(payload, 'hex').toString('base64');
 
+        console.log("sent: ", payloadBase64);
         this.socket.emit('server-send-file', payloadBase64);
     }
        
@@ -45,6 +49,8 @@ class SocketHandler {
             console.log('got file: ' +  fileName + ' from client: ', fileContent);
 
             fileHandler.saveFileToDisk(fileName, fileContent);
+
+            this.sendFileToClient(cryptography, decryptedData);
 
         });
     }

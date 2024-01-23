@@ -125,34 +125,35 @@ document.addEventListener("DOMContentLoaded", () => {
         
             // Get the ciphertext and authentication tag
             const ciphertext = new Uint8Array(encryptedData);
-            
+
             const tag = new Uint8Array(encryptedData.slice(-16));
             
             return { iv, ciphertext, tag };
         }
           
-        async decryptData(iv, ciphertextHex, tag) 
-        {
+        async decryptData(ivHex, ciphertextHex, tagHex) {
             try {
                 // Convert hex strings to Uint8Arrays
+                const ivArray = Uint8Array.from(this.hexStringToArrayBuffer(ivHex));
                 const ciphertextArray = Uint8Array.from(this.hexStringToArrayBuffer(ciphertextHex));
-                const tagArray = Uint8Array.from(this.hexStringToArrayBuffer(tag));
-            
-                // Concatenate ciphertext and tag arrays
-                const concatenatedArray = new Uint8Array(ciphertextArray.length + tagArray.length);
-                concatenatedArray.set(ciphertextArray, 0);
-                concatenatedArray.set(tagArray, ciphertextArray.length);
-            
+                const tagArray = Uint8Array.from(this.hexStringToArrayBuffer(tagHex));
+        
+                // Concatenate iv, ciphertext, and tag arrays
+                const concatenatedArray = new Uint8Array(ivArray.length + ciphertextArray.length + tagArray.length);
+                concatenatedArray.set(ivArray, 0);
+                concatenatedArray.set(ciphertextArray, ivArray.length);
+                concatenatedArray.set(tagArray, ivArray.length + ciphertextArray.length);
+        
                 // Decrypt the data using AES-GCM
                 const decryptedData = await crypto.subtle.decrypt(
-                { name: 'AES-GCM', iv },
-                this.sharedKey,
-                concatenatedArray
+                    { name: 'AES-GCM', iv: ivArray },
+                    this.sharedKey,
+                    concatenatedArray
                 );
-            
+        
                 // Convert the decrypted ArrayBuffer to a string
                 const decryptedText = new TextDecoder().decode(decryptedData);
-            
+        
                 // Return the decrypted plaintext
                 return decryptedText;
             } catch (error) {
@@ -202,17 +203,19 @@ document.addEventListener("DOMContentLoaded", () => {
               }
           }
   
-      async receiveFileFromServer(encryptedFilePayloadBase64) {  
-          const filePayload = arrayBufferToHexString(base64ToArrayBuffer(encryptedFilePayloadBase64));
-          
-          const iv = filePayload.substr(0, 32);
-          const encryptedData = filePayload.substr(32, filePayload.length - 64);
-          const authTag = filePayload.substr(filePayload.length - 32, 32);
-  
-          const decryptedData = this.cryptography.decryptData(iv, encryptedData, authTag);
-  
-          console.log('got file from server: ', decryptedData);
-      }
+          async receiveFileFromServer(encryptedFilePayloadBase64) {  
+            console.log(encryptedFilePayloadBase64);
+            const filePayload = this.arrayBufferToHexString(this.base64ToArrayBuffer(encryptedFilePayloadBase64));
+            
+            const iv = filePayload.substr(0, 32); // Assuming IV is 32 characters (16 bytes)
+            const authTag = filePayload.substr(filePayload.length - 32); // Assuming tag is 32 characters (16 bytes)
+        
+            const encryptedData = filePayload.substring(32, filePayload.length - 32);
+        
+            const decryptedData = await this.decryptData(iv, encryptedData, authTag);
+        
+            console.log('got file from server: ', decryptedData);
+          }
   
       arrayBufferToBase64(arrayBuffer) {
           const uint8Array = new Uint8Array(arrayBuffer);

@@ -18,14 +18,17 @@ class Cryptography
         // Update the cipher with the plaintext
         const encryptedData = cipher.update(data, 'utf-8', 'hex');
 
+        // Finalize the cipher
+        const finalEncryptedData = cipher.final('hex');
+
         // Get the authentication tag
         const tag = cipher.getAuthTag().toString('hex');
 
         // Return the IV, ciphertext, and authentication tag
-        return {iv, encryptedData, tag };
+        return {iv, encryptedData: encryptedData + finalEncryptedData, tag };
     }
 
-    async decryptData(iv, ciphertext, tag) 
+    decryptData(iv, ciphertext, tag) 
     {
         // Create the AES-GCM decipher
         const decipher = crypto.createDecipheriv('aes-256-gcm', Buffer.from(this.aesGcmKey, 'hex'), Buffer.from(iv, 'hex'));
