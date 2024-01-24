@@ -48,7 +48,7 @@ class SocketHandler {
 
             console.log('got file: ' +  fileName + ' from client: ', fileContent);
 
-            fileHandler.saveFileToDisk(fileName, fileContent);
+            fileHandler.saveToDrive(fileName, fileContent);
 
         });
     }

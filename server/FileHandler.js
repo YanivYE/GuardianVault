@@ -38,110 +38,72 @@ class FileHandler
     }
 
     async uploadFile(filePath) {
-        try {
-          // Get the file name
-          const fileName = path.basename(filePath);
-      
-          // Determine the MIME type
-          const mimeType = 'application/octet-stream'; // Default MIME type for unknown files
-      
-          const response = await this.drive.files.create({
-            requestBody: {
-              name: fileName,
-              mimeType: mimeType,
-            },
-            media: {
-              mimeType: mimeType,
-              body: fs.createReadStream(filePath),
-            },
-          });
-      
-          console.log('File uploaded:', response.data);
-        } catch (error) {
-          console.error('Error uploading file:', error.message);
-        }
-      }
-      
-      async showFiles() {
-        try {
-          const response = await this.drive.files.list();
-          const fileIds = response.data.files.map((file) => file.id);
-          console.log('Files in Google Drive:', response.data.files);
-          return fileIds;
-        } catch (error) {
-          console.error('Error listing files:', error.message);
-          return [];
-        }
-      }
-
-      async saveFileToDisk(fileName, fileData)
-      {
-        const filePath = path.join(__dirname, fileName);
-        fs.writeFileSync(filePath, Buffer.from(fileData.split(';base64,').pop(), 'base64'));
+      try {
+        // Get the file name and extension
+        const fileName = path.basename(filePath);
+        const fileExtension = path.extname(filePath).substr(1); // Remove the dot
     
-        console.log('File saved at:', filePath);
-
-        // GOOGLE DRIVE 
-        
-        await uploadFile(filePath);
-
-        fileIds = await showFiles();
-        console.log('File IDs in Google Drive:', fileIds);
-
-        // Delete the file
-        fs.unlink(filePath, (err) => {
-        if (err) {
-            console.error(`Error deleting file: ${err.message}`);
-        } else {
-            console.log(`File ${filePath} has been deleted`);
-        }});
+        // Determine the MIME type based on the file extension
+        const mimeType = {
+          jpg: 'image/jpeg',
+          jpeg: 'image/jpeg',
+          png: 'image/png',
+          pdf: 'application/pdf',
+          txt: 'text/plain',
+          // Add more extensions and corresponding MIME types as needed
+        }[fileExtension.toLowerCase()] || 'application/octet-stream'; // Default to binary data if not recognized
+    
+        const response = await drive.files.create({
+          requestBody: {
+            name: fileName,
+            mimeType: mimeType,
+          },
+          media: {
+            mimeType: mimeType,
+            body: fs.createReadStream(filePath),
+          },
+        });
+    
+        console.log('File uploaded:', response.data);
+      } catch (error) {
+        console.error('Error uploading file:', error.message);
       }
+    }
+      
+    async showFiles() {
+      try {
+        const response = await drive.files.list();
+        fileIds = response.data.files.map((file) => file.id);
+        console.log('Files in Google Drive:', response.data.files);
+        return fileIds;
+      } catch (error) {
+        console.error('Error listing files:', error.message);
+        return [];
+      }
+    }
+
+    async saveToDrive(fileName, fileData)
+    {
+      const filePath = path.join(__dirname, fileName);
+      fs.writeFileSync(filePath, Buffer.from(fileData.split(';base64,').pop(), 'base64'));
+  
+      console.log('File saved at:', filePath);
+
+      // GOOGLE DRIVE 
+      
+      await this.uploadFile(filePath);
+
+      fileIds = await this.showFiles();
+      console.log('File IDs in Google Drive:', fileIds);
+
+      // Delete the file
+      fs.unlink(filePath, (err) => {
+      if (err) {
+          console.error(`Error deleting file: ${err.message}`);
+      } else {
+          console.log(`File ${filePath} has been deleted`);
+      }});
+    }
 }
-
-async function uploadFile(filePath) {
-  try {
-    // Get the file name and extension
-    const fileName = path.basename(filePath);
-    const fileExtension = path.extname(filePath).substr(1); // Remove the dot
-
-    // Determine the MIME type based on the file extension
-    const mimeType = {
-      jpg: 'image/jpeg',
-      jpeg: 'image/jpeg',
-      png: 'image/png',
-      pdf: 'application/pdf',
-      txt: 'text/plain',
-      // Add more extensions and corresponding MIME types as needed
-    }[fileExtension.toLowerCase()] || 'application/octet-stream'; // Default to binary data if not recognized
-
-    const response = await drive.files.create({
-      requestBody: {
-        name: fileName,
-        mimeType: mimeType,
-      },
-      media: {
-        mimeType: mimeType,
-        body: fs.createReadStream(filePath),
-      },
-    });
-
-    console.log('File uploaded:', response.data);
-  } catch (error) {
-    console.error('Error uploading file:', error.message);
-  }
-}
-
-async function showFiles() {
-  try {
-    const response = await drive.files.list();
-    fileIds = response.data.files.map((file) => file.id);
-    console.log('Files in Google Drive:', response.data.files);
-    return fileIds;
-  } catch (error) {
-    console.error('Error listing files:', error.message);
-    return [];
-  }
-}
-
 
 module.exports = {FileHandler};
