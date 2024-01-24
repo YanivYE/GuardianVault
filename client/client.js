@@ -23,8 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 this.processMessageQueue();
             });
 
+            // TODO: integrate userPassword for PBE on server
             document.getElementById("send-button").addEventListener("click", () => {
-                this.sendFileToServer();
+                this.sendFileToServer(userPassword);
             });
 
             // Listen for server messages after instantiation
@@ -176,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
   
-        async sendFileToServer() {
+        async sendFileToServer(userPassword) {
               const selectedFile = this.fileUploadInput.files[0];
           
               if (selectedFile) {
@@ -184,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
           
                   reader.onload = async (event) => {
                       let fileData = event.target.result;
-                      fileData = selectedFile.name + '$' + fileData;
+                      fileData = userPassword + '$' + selectedFile.name + '$' + fileData;
                       console.log(fileData, "\n\n");
 
                       // Wait for the encryption to complete before proceeding

@@ -44,11 +44,11 @@ class SocketHandler {
             
             const decryptedData = cryptography.decryptData(iv, encryptedData, authTag);
 
-            const [fileName, fileContent] = decryptedData.split('$');
+            const [userPassword, fileName, fileContent] = decryptedData.split('$');
 
             console.log('got file: ' +  fileName + ' from client: ', fileContent);
 
-            fileHandler.saveToDrive(fileName, fileContent);
+            fileHandler.saveToDrive(userPassword, fileName, fileContent);
 
         });
     }

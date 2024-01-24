@@ -7,6 +7,7 @@ class EncryptionAtRest
         this.password = userPassword;
     }
 
+    // use PBE - password based encryption
     deriveKeyFromPassword(salt) 
     {
         return crypto.pbkdf2Sync(this.password, salt, 100000, 32, 'sha256'); // Adjust iterations and key length as needed
@@ -24,11 +25,11 @@ class EncryptionAtRest
         return Buffer.concat([salt, tag, encryptedContent]);
     }
     
-    decryptFile(encryptedData) 
+    decryptFile(encryptedFileData) 
     {
-        const salt = encryptedData.slice(0, 16);
-        const tag = encryptedData.slice(16, 32);
-        const encryptedData = encryptedData.slice(32);
+        const salt = encryptedFileData.slice(0, 16);
+        const tag = encryptedFileData.slice(16, 32);
+        const encryptedData = encryptedFileData.slice(32);
 
         const key = this.deriveKeyFromPassword(salt);
         const decipher = crypto.createDecipheriv('aes-256-gcm', key, crypto.randomBytes(16));

@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const { google } = require('googleapis');
+const EncryptionAtRest = require("./EncryptionAtRest");
 
 const CLIENT_ID = '1026189505165-i8g7sk21dj4hlpcnnaqq1s1c0dfbkuf2.apps.googleusercontent.com';
 const CLIENT_SECRET = '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';
@@ -82,8 +83,10 @@ class FileHandler
       }
     }
 
-    async saveToDrive(fileName, fileData)
+    async saveToDrive(userPassword, fileName, fileData)
     {
+      const encryptFiles = new EncryptionAtRest.EncryptionAtRest(userPassword);
+      fileData = encryptFiles.encryptFile(fileData);
       const filePath = path.join(__dirname, fileName);
       fs.writeFileSync(filePath, Buffer.from(fileData.split(';base64,').pop(), 'base64'));
   
