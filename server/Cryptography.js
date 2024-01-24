@@ -7,7 +7,7 @@ class Cryptography
         this.aesGcmKey = encryptionKey;
     }
 
-    async encryptData(data) 
+    encryptData(data) 
     {
         // Generate a random IV (Initialization Vector)
         const iv = crypto.randomBytes(16);
@@ -16,16 +16,16 @@ class Cryptography
         const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(this.aesGcmKey, 'hex'), iv);
 
         // Update the cipher with the plaintext
-        const encryptedData = cipher.update(data, 'utf-8', 'hex');
+        const ciphertext = cipher.update(data, 'utf-8', 'hex');
 
         // Finalize the cipher
         const finalEncryptedData = cipher.final('hex');
 
         // Get the authentication tag
-        const tag = cipher.getAuthTag().toString('hex');
+        const authTag  = cipher.getAuthTag().toString('hex');
 
         // Return the IV, ciphertext, and authentication tag
-        return {iv, encryptedData: encryptedData + finalEncryptedData, tag };
+        return {iv, ciphertext: ciphertext + finalEncryptedData, authTag  };
     }
 
     decryptData(iv, ciphertext, tag) 

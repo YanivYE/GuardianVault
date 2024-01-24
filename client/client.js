@@ -107,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
           this.sharedKey = await this.hexToCryptoKey(this.sharedKey);
         }
         
-
         async encryptData(data) 
         {
             // Generate a random IV (Initialization Vector)
@@ -133,20 +132,25 @@ document.addEventListener("DOMContentLoaded", () => {
           
         async decryptData(ivHex, ciphertextHex, tagHex) {
             try {
-                // Convert hex strings to Uint8Arrays
-                const ivArray = Uint8Array.from(this.hexStringToArrayBuffer(ivHex));
-                const ciphertextArray = Uint8Array.from(this.hexStringToArrayBuffer(ciphertextHex));
-                const tagArray = Uint8Array.from(this.hexStringToArrayBuffer(tagHex));
+                const ivArray = this.hexStringToArrayBuffer(ivHex);
+                const ciphertextArray = this.hexStringToArrayBuffer(ciphertextHex);
+                const tagArray = this.hexStringToArrayBuffer(tagHex);
         
-                // Concatenate iv, ciphertext, and tag arrays
-                const concatenatedArray = new Uint8Array(ivArray.length + ciphertextArray.length + tagArray.length);
-                concatenatedArray.set(ivArray, 0);
-                concatenatedArray.set(ciphertextArray, ivArray.length);
-                concatenatedArray.set(tagArray, ivArray.length + ciphertextArray.length);
-        
+                // Convert ArrayBuffers to Uint8Arrays
+                const ciphertextUint8Array = new Uint8Array(ciphertextArray);
+                const tagUint8Array = new Uint8Array(tagArray);
+                
+                // Calculate total length
+                const totalLength = ciphertextUint8Array.length + tagUint8Array.length;
+                
+                // Concatenate iv, ciphertext, and tag Uint8Arrays
+                const concatenatedArray = new Uint8Array(totalLength);
+                concatenatedArray.set(ciphertextUint8Array, 0);
+                concatenatedArray.set(tagUint8Array, ciphertextUint8Array.length);
+
                 // Decrypt the data using AES-GCM
                 const decryptedData = await crypto.subtle.decrypt(
-                    { name: 'AES-GCM', iv: ivArray },
+                    { name: 'AES-GCM', iv: ivArray},
                     this.sharedKey,
                     concatenatedArray
                 );
@@ -158,10 +162,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 return decryptedText;
             } catch (error) {
                 // Handle decryption errors
-                console.error('Decryption error:', error);
+                console.error('Decryption error:', error.message);
                 throw error;
             }
         }
+      
 
         async processMessageQueue() {
           console.log('Processing queued messages...');

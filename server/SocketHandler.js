@@ -23,9 +23,9 @@ class SocketHandler {
         });
     }
 
-    async sendFileToClient(cryptography, data) {
-        // TODO: find out why isnt cipher text is intialize
-        const { iv, ciphertext, authTag } = await cryptography.encryptData(data);
+    sendFileToClient(cryptography, data) 
+    {
+        const { iv, ciphertext, authTag } = cryptography.encryptData(data);
         const payload = iv.toString('hex') + ciphertext + authTag;
         const payloadBase64 = Buffer.from(payload, 'hex').toString('base64');
 
@@ -42,15 +42,13 @@ class SocketHandler {
             const encryptedData = filePayload.substr(32, filePayload.length - 64);
             const authTag = filePayload.substr(filePayload.length - 32, 32);
             
-            const decryptedData = await cryptography.decryptData(iv, encryptedData, authTag);
+            const decryptedData = cryptography.decryptData(iv, encryptedData, authTag);
 
             const [fileName, fileContent] = decryptedData.split('$');
 
             console.log('got file: ' +  fileName + ' from client: ', fileContent);
 
             fileHandler.saveFileToDisk(fileName, fileContent);
-
-            this.sendFileToClient(cryptography, decryptedData);
 
         });
     }
