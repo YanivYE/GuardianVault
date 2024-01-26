@@ -2,40 +2,28 @@ const path = require('path');
 const fs = require('fs');
 const { google } = require('googleapis');
 const EncryptionAtRest = require("./EncryptionAtRest");
-
-const CLIENT_ID = '1026189505165-i8g7sk21dj4hlpcnnaqq1s1c0dfbkuf2.apps.googleusercontent.com';
-const CLIENT_SECRET = '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';
-const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
-const REFRESH_TOKEN = '1//0482zJi2qJq4KCgYIARAAGAQSNwF-L9Irfij_xtILWYix04rSY_gkaD7SHlKpY0dUN-2OAr-4kPoUOgVqeY_xeHokHG2sjnI7U1c';
-const oauth2Client = new google.auth.OAuth2(
-  CLIENT_ID,
-  CLIENT_SECRET,
-  REDIRECT_URI
-);
-
-oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
-
-const drive = google.drive({
-  version: 'v3',
-  auth: oauth2Client,
-});
+const Compressor = require("./Compressor");
+const config = require('./config');
 
 class FileHandler 
 {
-    constructor()
+    constructor(userPassword)
     {
         this.oauth2Client = new google.auth.OAuth2(
-            CLIENT_ID,
-            CLIENT_SECRET,
-            REDIRECT_URI
-          );
+          config.CLIENT_ID,
+          config.CLIENT_SECRET,
+          config.REDIRECT_URI
+        );
           
-          oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
-          
-          this.drive = google.drive({
-            version: 'v3',
-            auth: oauth2Client,
-          });
+        this.oauth2Client.setCredentials({ refresh_token: config.REFRESH_TOKEN });
+        
+        this.drive = google.drive({
+          version: 'v3',
+          auth: this.oauth2Client,
+        });
+
+        this.atRestCrypto = new EncryptionAtRest.EncryptionAtRest(userPassword);
+        this.compressor = new Compressor.Compressor();
     }
 
     async uploadFile(filePath) {
@@ -54,7 +42,7 @@ class FileHandler
           // Add more extensions and corresponding MIME types as needed
         }[fileExtension.toLowerCase()] || 'application/octet-stream'; // Default to binary data if not recognized
     
-        const response = await drive.files.create({
+        const response = await this.drive.files.create({
           requestBody: {
             name: fileName,
             mimeType: mimeType,
@@ -73,7 +61,7 @@ class FileHandler
       
     async showFiles() {
       try {
-        const response = await drive.files.list();
+        const response = await this.drive.files.list();
         fileIds = response.data.files.map((file) => file.id);
         console.log('Files in Google Drive:', response.data.files);
         return fileIds;
@@ -83,12 +71,13 @@ class FileHandler
       }
     }
 
-    async saveToDrive(userPassword, fileName, fileData)
+    async saveToDrive(fileName, fileData)
     {
-      const encryptFiles = new EncryptionAtRest.EncryptionAtRest(userPassword);
-      fileData = encryptFiles.encryptFile(fileData);
-      const filePath = path.join(__dirname, fileName);
-      fs.writeFileSync(filePath, Buffer.from(fileData.split(';base64,').pop(), 'base64'));
+      fileData = this.atRestCrypto.encryptFile(fileData);
+
+      const compressedData = this.compressor.compressFile(fileData);
+      const filePath = path.join(__dirname, fileName + '.gz');
+      fs.writeFileSync(filePath, compressedData);
   
       console.log('File saved at:', filePath);
 
@@ -106,6 +95,15 @@ class FileHandler
       } else {
           console.log(`File ${filePath} has been deleted`);
       }});
+    }
+
+    async getFromDrive()
+    {
+      // TODO: add a get from drive function that:
+      // downloads the file 
+      // decompresses it
+      // decrypts it
+      // returns it
     }
 }
 

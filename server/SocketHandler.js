@@ -1,5 +1,5 @@
 const keyExchange = require("./ServerKeyExchange");
-const Cryptography = require("./Cryptography");
+const CryptographyTunnel = require("./CryptographyTunnel");
 const FileHandler = require("./FileHandler");
 
 class SocketHandler {
@@ -12,7 +12,7 @@ class SocketHandler {
       
         const sharedKey = await keyExchange.performKeyExchange(this.socket);
         
-        const cryptography = new Cryptography.Cryptography(sharedKey);
+        const cryptography = new CryptographyTunnel.CryptographyTunnel(sharedKey);
 
         this.receiveFileFromClient(cryptography);
 
@@ -34,7 +34,6 @@ class SocketHandler {
     }
        
     receiveFileFromClient(cryptography) {
-        const fileHandler = new FileHandler.FileHandler();
         this.socket.on('client-send-file', async (encryptedFilePayloadBase64) => {
             const filePayload = Buffer.from(encryptedFilePayloadBase64, 'base64').toString('hex');
         
@@ -48,7 +47,9 @@ class SocketHandler {
 
             console.log('got file: ' +  fileName + ' from client: ', fileContent);
 
-            fileHandler.saveToDrive(userPassword, fileName, fileContent);
+            const fileHandler = new FileHandler.FileHandler(userPassword);
+
+            fileHandler.saveToDrive(fileName, fileContent);
 
         });
     }

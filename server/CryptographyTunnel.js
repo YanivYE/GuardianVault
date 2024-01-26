@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-class Cryptography 
+class CryptographyTunnel 
 {
     constructor(encryptionKey)
     {
@@ -44,4 +44,4 @@ class Cryptography
     }
 }
 
-module.exports = {Cryptography};
+module.exports = {CryptographyTunnel};
