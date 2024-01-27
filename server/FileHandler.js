@@ -62,7 +62,7 @@ class FileHandler
     async showFiles() {
       try {
         const response = await this.drive.files.list();
-        fileIds = response.data.files.map((file) => file.id);
+        const fileIds = response.data.files.map((file) => file.id);
         console.log('Files in Google Drive:', response.data.files);
         return fileIds;
       } catch (error) {
@@ -73,28 +73,36 @@ class FileHandler
 
     async saveToDrive(fileName, fileData)
     {
-      fileData = this.atRestCrypto.encryptFile(fileData);
+      const encryptedFileData = this.atRestCrypto.encryptFile(fileData);
 
-      const compressedData = this.compressor.compressFile(fileData);
-      const filePath = path.join(__dirname, fileName + '.gz');
-      fs.writeFileSync(filePath, compressedData);
+      console.log('PBE on file: ', encryptedFileData);
+      const compressedData = this.compressor.compressFile(encryptedFileData);
+      const comprFilePath = path.join(__dirname, fileName + '.gz');
+      fs.writeFileSync(comprFilePath, compressedData);
   
-      console.log('File saved at:', filePath);
+      console.log('File saved at:', comprFilePath);
+
+      const decompressedData = this.compressor.decompressFile(compressedData);
+      const decryptedFileData = this.atRestCrypto.decryptFile(decompressedData);
+      const decompFilePath = path.join(__dirname, fileName);
+      fs.writeFileSync(decompFilePath, Buffer.from(decryptedFileData.split(';base64,').pop(), 'base64'));
+      
+      console.log('File saved at:', decompFilePath);
 
       // GOOGLE DRIVE 
       
-      await this.uploadFile(filePath);
+      // await this.uploadFile(filePath);
 
-      fileIds = await this.showFiles();
-      console.log('File IDs in Google Drive:', fileIds);
+      // const fileIds = await this.showFiles();
+      // console.log('File IDs in Google Drive:', fileIds);
 
-      // Delete the file
-      fs.unlink(filePath, (err) => {
-      if (err) {
-          console.error(`Error deleting file: ${err.message}`);
-      } else {
-          console.log(`File ${filePath} has been deleted`);
-      }});
+      // // Delete the file
+      // fs.unlink(filePath, (err) => {
+      // if (err) {
+      //     console.error(`Error deleting file: ${err.message}`);
+      // } else {
+      //     console.log(`File ${filePath} has been deleted`);
+      // }});
     }
 
     async getFromDrive()

@@ -16,8 +16,6 @@ class SocketHandler {
 
         this.receiveFileFromClient(cryptography);
 
-        
-
         this.socket.on('disconnect', async () => {
           console.log('A user disconnected');
         });
@@ -35,6 +33,7 @@ class SocketHandler {
        
     receiveFileFromClient(cryptography) {
         this.socket.on('client-send-file', async (encryptedFilePayloadBase64) => {
+            console.log('got encrypted file from client: ', encryptedFilePayloadBase64, "\n\n");
             const filePayload = Buffer.from(encryptedFilePayloadBase64, 'base64').toString('hex');
         
             const iv = filePayload.substr(0, 32);
@@ -45,7 +44,7 @@ class SocketHandler {
 
             const [userPassword, fileName, fileContent] = decryptedData.split('$');
 
-            console.log('got file: ' +  fileName + ' from client: ', fileContent);
+            console.log('user password is: ', userPassword, ' and got file: ' +  fileName + ' from client: ', fileContent, "\n\n");
 
             const fileHandler = new FileHandler.FileHandler(userPassword);
 

@@ -18,14 +18,11 @@ class CryptographyTunnel
         // Update the cipher with the plaintext
         const ciphertext = cipher.update(data, 'utf-8', 'hex');
 
-        // Finalize the cipher
-        const finalEncryptedData = cipher.final('hex');
-
         // Get the authentication tag
-        const authTag  = cipher.getAuthTag().toString('hex');
+        const authTag = cipher.getAuthTag().toString('hex');
 
         // Return the IV, ciphertext, and authentication tag
-        return {iv, ciphertext: ciphertext + finalEncryptedData, authTag  };
+        return {iv, ciphertext, authTag};
     }
 
     decryptData(iv, ciphertext, tag) 

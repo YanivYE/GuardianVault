@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // TODO: integrate userPassword for PBE on server
             document.getElementById("send-button").addEventListener("click", () => {
+                const userPassword = "yanivyepass"; // remove, for example purpose
                 this.sendFileToServer(userPassword);
             });
 
@@ -170,7 +171,6 @@ document.addEventListener("DOMContentLoaded", () => {
       
 
         async processMessageQueue() {
-          console.log('Processing queued messages...');
           while (this.messageQueue.length > 0) {
             const encryptedFilePayloadBase64 = this.messageQueue.shift();
             await this.receiveFileFromServer(encryptedFilePayloadBase64);
@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   reader.onload = async (event) => {
                       let fileData = event.target.result;
                       fileData = userPassword + '$' + selectedFile.name + '$' + fileData;
-                      console.log(fileData, "\n\n");
+                      console.log("file data sent to server: " , fileData, "\n\n");
 
                       // Wait for the encryption to complete before proceeding
                       const { iv, ciphertext , tag} = await this.encryptData(fileData);
@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       // Send the file data to the server using Socket.IO
                       this.socket.emit('client-send-file', base64Payload);
 
-                      console.log('File sent to server: ', selectedFile.name, 'and content: ', base64Payload);
+                      console.log('encrypted file sent to server with content: ', base64Payload);
                   };
 
                   reader.readAsDataURL(selectedFile);
@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
   
           async receiveFileFromServer(encryptedFilePayloadBase64) {  
-            console.log(encryptedFilePayloadBase64);
+            console.log('encrypted file got from server with content: ', encryptedFilePayloadBase64);
             const filePayload = this.arrayBufferToHexString(this.base64ToArrayBuffer(encryptedFilePayloadBase64));
             
             const iv = filePayload.substr(0, 32); // Assuming IV is 32 characters (16 bytes)
