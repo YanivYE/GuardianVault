@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // TODO: integrate userPassword for PBE on server
             document.getElementById("send-button").addEventListener("click", () => {
-                const userPassword = "yanivyepass"; // remove, for example purpose
                 this.sendFileToServer(userPassword);
             });
 

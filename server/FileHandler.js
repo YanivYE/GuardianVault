@@ -82,36 +82,32 @@ class FileHandler
   
       console.log('File saved at:', comprFilePath);
 
+      // GOOGLE DRIVE 
+      
+      await this.uploadFile(filePath);
+
+      const fileIds = await this.showFiles();
+      console.log('File IDs in Google Drive:', fileIds);
+
+      // Delete the file
+      fs.unlink(filePath, (err) => {
+      if (err) {
+          console.error(`Error deleting file: ${err.message}`);
+      } else {
+          console.log(`File ${filePath} has been deleted`);
+      }});
+    }
+
+    async getFromDrive(fileName)
+    {
+      // TODO: add drive retrieve function
+      const compressedData = retrieveFromDrive(fileName);
       const decompressedData = this.compressor.decompressFile(compressedData);
       const decryptedFileData = this.atRestCrypto.decryptFile(decompressedData);
       const decompFilePath = path.join(__dirname, fileName);
       fs.writeFileSync(decompFilePath, Buffer.from(decryptedFileData.split(';base64,').pop(), 'base64'));
       
       console.log('File saved at:', decompFilePath);
-
-      // GOOGLE DRIVE 
-      
-      // await this.uploadFile(filePath);
-
-      // const fileIds = await this.showFiles();
-      // console.log('File IDs in Google Drive:', fileIds);
-
-      // // Delete the file
-      // fs.unlink(filePath, (err) => {
-      // if (err) {
-      //     console.error(`Error deleting file: ${err.message}`);
-      // } else {
-      //     console.log(`File ${filePath} has been deleted`);
-      // }});
-    }
-
-    async getFromDrive()
-    {
-      // TODO: add a get from drive function that:
-      // downloads the file 
-      // decompresses it
-      // decrypts it
-      // returns it
     }
 }
 
