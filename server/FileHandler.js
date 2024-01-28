@@ -84,17 +84,17 @@ class FileHandler
 
       // GOOGLE DRIVE 
       
-      await this.uploadFile(filePath);
+      await this.uploadFile(comprFilePath);
 
       const fileIds = await this.showFiles();
       console.log('File IDs in Google Drive:', fileIds);
 
       // Delete the file
-      fs.unlink(filePath, (err) => {
+      fs.unlink(comprFilePath, (err) => {
       if (err) {
           console.error(`Error deleting file: ${err.message}`);
       } else {
-          console.log(`File ${filePath} has been deleted`);
+          console.log(`File ${comprFilePath} has been deleted`);
       }});
     }
 
