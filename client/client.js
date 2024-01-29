@@ -1,3 +1,5 @@
+const { documentai } = require("googleapis/build/src/apis/documentai");
+
 document.addEventListener("DOMContentLoaded", () => {
     class Client {
           constructor() {
@@ -11,6 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
             this.fileNameDisplay = document.getElementById("file-name");
             this.downloadLink = document.getElementById("download-link");
             this.sendButton = document.getElementById("send-button");
+            this.userName = document.getElementById("Username");
+            this.userPassword = document.getElementById("password");
+            
 
             this.setupEventListeners();
             this.setupFileUpload();
@@ -26,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // TODO: integrate userPassword for PBE on server
             document.getElementById("send-button").addEventListener("click", () => {
                 // const userPassword = "yaniv";
-                this.sendFileToServer(userPassword);
+                this.sendFileToServer(this.userPassword);
             });
 
             // Listen for server messages after instantiation
