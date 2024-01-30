@@ -69,22 +69,19 @@
     /*==================================================================
     [ Show pass ]*/
     function togglePassword() {
-        var passwordInput = $('#password'); // Use jQuery to select the password input
-        var showPasswordBtn = $('#showPasswordBtn');
+        const eye = document.querySelector("#eye");
+        const passwordInput = document.querySelector("#password");
 
-        if (passwordInput.attr('type') === 'password') {
-            passwordInput.attr('type', 'text');
-            showPasswordBtn.text('Hide');
-        } else {
-            passwordInput.attr('type', 'password');
-            showPasswordBtn.text('Show');
-        }
+        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+        passwordInput.setAttribute("type", type);
+
+        // Toggle the eye icon class after setting the attribute
+        eye.classList.toggle("fa-eye-slash", type === "password");
     }
 
-    /* ... (your existing code) ... */
 
     // Add an event listener for the Show Password button
-    $('#showPasswordBtn').on('click', function () {
+    document.querySelector('.btn-show-pass').addEventListener('click', function () {
         togglePassword();
     });
 

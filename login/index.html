@@ -24,6 +24,7 @@
 	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css">
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 <!--===============================================================================================-->
 </head>
@@ -46,15 +47,9 @@
 						<input class="input100" type="password" name="pass" id="password" placeholder="Password">
 						<span class="focus-input100" data-placeholder="&#xe80f;"></span>
 						<span class="btn-show-pass">
-							<i class="zmdi zmdi-eye"></i>
+							<i class="fa-solid fa-eye" id="eye"></i>
 						</span>
 					  </div>
-
-					<div class="container-login100-form-btn m-t-32">
-						<button class="login100-form-btn">
-							Login
-						</button>
-					</div>
 
 					<div class="container-forgot100-form-btn m-t-32">
 						<button class="forgot100-form-btn">
@@ -62,9 +57,15 @@
 						</button>
 					</div>
 
+					<div class="container-login100-form-btn m-t-32">
+						<button class="login100-form-btn">
+							Login
+						</button>
+					</div>
+
 					<div class="container-signup100-form-btn m-t-32">
 						<button class="signup100-form-btn">
-							Sign Up
+							New Here? &nbsp;<span class="underline-text"> Sign Up</span>
 						</button>
 					</div>
 				</form>

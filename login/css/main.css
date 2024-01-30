@@ -404,17 +404,32 @@ iframe {
   opacity: 1;
 }
 
+.login100-container{
+  width: 400px;
+  position: relative;
+}
+.login100-container input[type="password"],
+.login100-container input[type="text"]{
+  width: 100%;
+  padding: 12px 36px 12px 12px;
+  box-sizing: border-box;
+}
+.fa-eye{
+  position: absolute;
+  top: 45%;
+  right: 8%;
+  cursor: pointer;
+  color: lightgray;
+}
+
 /*------------------------------------------------------------------
 [ Button ]*/
 .container-forgot100-form-btn {
   width: 100%;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-end; /* Align to the right */
+  align-items: flex-start; /* Align to the top */
+  padding-top: 10px; /* Add some top padding for spacing */
 }
 
 .forgot100-form-btn {
@@ -424,17 +439,8 @@ iframe {
   line-height: 1.2;
   text-transform: uppercase;
 
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0 20px;
-  min-width: 160px;
-  height: 22px;
-  border-radius: 10px;
+  padding: 5px 15px; /* Add padding for spacing */
+  border-radius: 5px;
 
   position: relative;
   z-index: 1;
@@ -518,6 +524,10 @@ iframe {
   transition: all 0.4s;
 }
 
+.underline-text {
+  text-decoration: underline; /* Add this line to underline the text */
+}
+
 .signup100-form-btn::before {
   content: "";
   display: block;
@@ -543,13 +553,21 @@ iframe {
   color: #fff;
 }
 
-.signup100-form-btn:hover:before {
+.signup100-form-btn:hover::before {
   opacity: 1;
   color: #fff;
 }
 
+/* Add styles for the container of the "Forgot Password" button */
+.container-forgot-password {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end; /* Align to the right */
+  align-items: flex-start; /* Align to the top */
+  padding-top: 10px; /* Add some top padding for spacing */
+}
 
-/*---------------------------------------------*/
+/* Adjust styles for the "Forgot Password" button */
 .show-password-btn {
   font-family: Ubuntu-Bold;
   font-size: 14px; /* Reduced font size to 16px */
@@ -558,15 +576,7 @@ iframe {
   text-transform: uppercase;
   text-decoration: underline; /* Added underline */
 
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: flex;
-  justify-content: center;
-  align-items: center; /* Changed to center for proper alignment */
-  min-width: 160px;
-  height: 22px;
+  padding: 10px 20px; /* Add padding for spacing */
   border-radius: 5px;
   margin-top: 10px;
 
