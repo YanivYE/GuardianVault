@@ -54,7 +54,7 @@ function serveClientPage() {
     try {
   
       if (true) {
-        res.redirect('/fileUpload.html'); // Redirect to fileUpload.html on successful login
+        res.redirect('/fileUpload.html'); 
       } else {
         res.redirect('/login');
       }

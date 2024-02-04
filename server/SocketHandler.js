@@ -31,7 +31,8 @@ class SocketHandler {
         this.socket.emit('server-send-file', payloadBase64);
     }
        
-    receiveFileFromClient(cryptography) {
+    receiveFileFromClient(cryptography) 
+    {
         this.socket.on('client-send-file', async (encryptedFilePayloadBase64) => {
             console.log('got encrypted file from client: ', encryptedFilePayloadBase64, "\n\n");
             const filePayload = Buffer.from(encryptedFilePayloadBase64, 'base64').toString('hex');

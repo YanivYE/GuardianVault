@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
             this.downloadLink = document.getElementById("download-link");
             this.sendButton = document.getElementById("send-button");
             this.userName = document.getElementById("Username");
-            this.userPassword = document.getElementById("password");
+            // this.userPassword = document.getElementById("password");
             
 
             this.setupEventListeners();
@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // TODO: integrate userPassword for PBE on server
             document.getElementById("send-button").addEventListener("click", () => {
-                // const userPassword = "yaniv";
-                this.sendFileToServer(this.userPassword);
+                const userPassword = "yaniv";
+                this.sendFileToServer(userPassword);
             });
 
             // Listen for server messages after instantiation
