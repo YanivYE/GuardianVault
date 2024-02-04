@@ -35,9 +35,19 @@ function serveStaticFiles() {
     }
   }));
 
-  const fileUploadStaticPath = path.join(__dirname, '../client/upload');
+  const uploadStaticPath = path.join(__dirname, '../client/upload');
 
-  app.use(express.static(fileUploadStaticPath, {
+  app.use(express.static(uploadStaticPath, {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+      }
+    }
+  }));
+
+  const menuStaticPath = path.join(__dirname, '../client/menu');
+
+  app.use(express.static(menuStaticPath, {
     setHeaders: (res, path) => {
       if (path.endsWith('.css')) {
         res.setHeader('Content-Type', 'text/css');
@@ -66,7 +76,7 @@ function serveClientPage() {
     try {
       // DB validation
       if (true) {
-        res.redirect('/upload.html'); 
+        res.redirect('/menu.html'); 
       } else {
         res.redirect('/login');
       }
@@ -88,7 +98,7 @@ function serveClientPage() {
     try {
   
       if (true) {
-        res.redirect('/upload.html'); 
+        res.redirect('/menu.html'); 
       } else {
         res.redirect('/signup');
       }
@@ -101,6 +111,12 @@ function serveClientPage() {
 
   app.get('/upload', (req, res) => {
     const filePath = path.join(__dirname, '../client/upload/upload.html');
+    res.setHeader('Content-Type', 'text/html');
+    res.sendFile(filePath);
+  });
+
+  app.get('/menu', (req, res) => {
+    const filePath = path.join(__dirname, '../client/menu/menu.html');
     res.setHeader('Content-Type', 'text/html');
     res.sendFile(filePath);
   });
