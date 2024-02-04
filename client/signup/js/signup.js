@@ -47,6 +47,15 @@
                 return false;
             }
         }
+        if ($(input).attr('type') == 'password') {
+            const password = $(input).val().trim();
+            const strengthText = document.getElementById('password-strength-text').textContent;
+
+            // Check if the password strength is "Strong" or "Excellent!"
+            if (strengthText !== 'Strong' && strengthText !== 'Excellent!') {
+                return false;
+            }
+        }
     }
 
     function showValidate(input) {
@@ -147,4 +156,5 @@
             return "Excellent!";
         }
     }
+
 })(jQuery);

@@ -83,4 +83,20 @@
         });
     });
 
+    document.getElementById('signupButton').addEventListener('click', async function() {
+        try {
+          const response = await fetch('/signup', { method: 'GET' });
+    
+          if (response.ok) {
+            // Redirect to the signup page
+            window.location.href = '/signup';
+          } else {
+            // Handle error responses
+            console.error('Failed to fetch signup page');
+          }
+        } catch (error) {
+          console.error('Error during fetch:', error);
+        }
+      });
+
 })(jQuery);

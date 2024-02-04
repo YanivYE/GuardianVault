@@ -14,6 +14,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 function serveStaticFiles() {
+
+  const signUpStaticPath = path.join(__dirname, '../client/signup');
+
+  app.use(express.static(signUpStaticPath, {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+      }
+    }
+  }));
+
   const loginStaticPath = path.join(__dirname, '../client/login');
 
   app.use(express.static(loginStaticPath, {
@@ -23,6 +34,8 @@ function serveStaticFiles() {
       }
     }
   }));
+
+  
 
   const fileUploadStaticPath = path.join(__dirname, '../client/fileUpload');
 
@@ -48,6 +61,8 @@ function serveClientPage() {
   //   res.sendFile(filePath);
   // });
 
+
+  // should be /login after
   app.post('/', async (req, res) => {
     const { username, password } = req.body;
     console.log(username, password);
@@ -63,6 +78,13 @@ function serveClientPage() {
       res.redirect('/login');
     }
   });
+
+  app.get('/signup', (req, res) => {
+    const filePath = path.join(__dirname, '../client/signup/signup.html');
+    res.setHeader('Content-Type', 'text/html');
+    res.sendFile(filePath);
+  });
+
 
   app.get('/fileUpload', (req, res) => {
     const filePath = path.join(__dirname, '../client/fileUpload/fileUpload.html');
