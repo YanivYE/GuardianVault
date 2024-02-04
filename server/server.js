@@ -35,7 +35,7 @@ function serveStaticFiles() {
     }
   }));
 
-  const fileUploadStaticPath = path.join(__dirname, '../client/fileUpload');
+  const fileUploadStaticPath = path.join(__dirname, '../client/upload');
 
   app.use(express.static(fileUploadStaticPath, {
     setHeaders: (res, path) => {
@@ -66,7 +66,7 @@ function serveClientPage() {
     try {
       // DB validation
       if (true) {
-        res.redirect('/fileUpload.html'); 
+        res.redirect('/upload.html'); 
       } else {
         res.redirect('/login');
       }
@@ -88,7 +88,7 @@ function serveClientPage() {
     try {
   
       if (true) {
-        res.redirect('/fileUpload.html'); 
+        res.redirect('/upload.html'); 
       } else {
         res.redirect('/signup');
       }
@@ -99,8 +99,8 @@ function serveClientPage() {
   });
 
 
-  app.get('/fileUpload', (req, res) => {
-    const filePath = path.join(__dirname, '../client/fileUpload/fileUpload.html');
+  app.get('/upload', (req, res) => {
+    const filePath = path.join(__dirname, '../client/upload/upload.html');
     res.setHeader('Content-Type', 'text/html');
     res.sendFile(filePath);
   });
