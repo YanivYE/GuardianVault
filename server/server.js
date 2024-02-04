@@ -10,10 +10,23 @@ const app = express();
 const server = http.createServer(app);
 const socket = socketIO(server);
 
-function serveStaticFiles() {
-  const staticFilesPath = path.join(__dirname, '../client');
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-  app.use(express.static(staticFilesPath, {
+function serveStaticFiles() {
+  const loginStaticPath = path.join(__dirname, '../client/login');
+
+  app.use(express.static(loginStaticPath, {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+      }
+    }
+  }));
+
+  const fileUploadStaticPath = path.join(__dirname, '../client/fileUpload');
+
+  app.use(express.static(fileUploadStaticPath, {
     setHeaders: (res, path) => {
       if (path.endsWith('.css')) {
         res.setHeader('Content-Type', 'text/css');
@@ -24,14 +37,39 @@ function serveStaticFiles() {
 
 function serveClientPage() {
   app.get('/', (req, res) => {
-    const filePath = path.join(__dirname, '../client/client.html');
+    const filePath = path.join(__dirname, '../client/login/login.html');
     res.setHeader('Content-Type', 'text/html');
     res.sendFile(filePath);
   });
 
-  app.get('/client.js', (req, res) => {
-    const filePath = path.join(__dirname, '../client/client.js');
-    res.setHeader('Content-Type', 'text/javascript');
+  // app.get('/login', (req, res) => {
+  //   const filePath = path.join(__dirname, '../client/login/login.html');
+  //   res.setHeader('Content-Type', 'text/html');
+  //   res.sendFile(filePath);
+  // });
+
+  app.post('/', async (req, res) => {
+    const { username, password } = req.body;
+    console.log(username, password);
+    try {
+      // Check if the user exists in the database
+      const user = await User.findOne({ username });
+  
+      if (user && user.password === password) {
+        req.session.user = { username }; // Store user information in the session
+        res.redirect('/fileUpload.html'); // Redirect to fileUpload.html on successful login
+      } else {
+        res.redirect('/login');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      res.redirect('/login');
+    }
+  });
+
+  app.get('/fileUpload', (req, res) => {
+    const filePath = path.join(__dirname, '../client/fileUpload/fileUpload.html');
+    res.setHeader('Content-Type', 'text/html');
     res.sendFile(filePath);
   });
 }
