@@ -127,8 +127,11 @@
             return "#FF0000"; // Red for weak
         } else if (strength < 0.6) {
             return "#FFD700"; // Yellow for medium
-        } else {
+        } else if(strength < 0.9)
+        {
             return "#00FF00"; // Green for strong
+        } else {
+            return "#006400"; // darker green
         }
     }
 
@@ -138,8 +141,10 @@
             return "Weak";
         } else if (strength < 0.6) {
             return "Medium";
-        } else {
+        }  else if (strength < 0.9) {
             return "Strong";
+        } else {
+            return "Excellent!";
         }
     }
 })(jQuery);
