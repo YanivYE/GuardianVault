@@ -1,0 +1,95 @@
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+  <style>
+    body {
+      background-image: url('background-image.jpg'); 
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container-login100 {
+      width: 100%;  
+      min-height: 100vh;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -moz-box;
+      display: -ms-flexbox;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      position: relative;
+      z-index: 1;  
+    }
+
+    .container-login100::before {
+      content: "";
+      display: block;
+      position: absolute;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background-color: rgba(0,0,0,0.65);
+    }
+
+    .container-login100-form-btn {
+      width: 100%;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -moz-box;
+      display: -ms-flexbox;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .container-login100 {
+      position: relative;
+    }
+
+    .container-login100-form-btn {
+      position: absolute;
+      bottom: 90px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .login100-form-btn {
+      background-color: #8B7500; /* Light gold color */
+      color: white;
+      padding: 15px 30px; /* Adjusted padding for larger button */
+      border: none;
+      border-radius: 8px; /* Slightly rounded corners */
+      cursor: pointer;
+      font-size: 18px; /* Adjusted font size */
+      transition: background-color 0.3s;
+    }
+
+    .login100-form-btn:hover {
+      background-color: #FFC700; /* Darker gold color on hover */
+    }
+  </style>
+</head>
+<body>
+  <div class="container-login100" style="background-image: url('images/bg-01.jpg');">
+    <div class="container-login100-form-btn">
+      <button onclick="location.href='../login/login.html'" class="login100-form-btn">
+        Continue
+      </button>
+    </div>
+  </div>
+</body>
+</html>

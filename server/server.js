@@ -70,21 +70,21 @@ function serveClientPage() {
     res.sendFile(filePath);
   });
 
-  app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    console.log(username, password);
-    try {
-      // DB validation
-      if (true) {
-        res.redirect('/menu.html'); 
-      } else {
-        res.redirect('/login');
-      }
-    } catch (error) {
-      console.error('Error during login:', error);
-      res.redirect('/login');
-    }
-  });
+  // app.post('/login', async (req, res) => {
+  //   const { username, password } = req.body;
+  //   console.log(username, password);
+  //   try {
+  //     // DB validation
+  //     if (true) {
+  //       res.redirect('/menu.html'); 
+  //     } else {
+  //       res.redirect('/login');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error during login:', error);
+  //     res.redirect('/login');
+  //   }
+  // });
 
   app.get('/signup', (req, res) => {
     const filePath = path.join(__dirname, '../client/signup/signup.html');
@@ -92,21 +92,21 @@ function serveClientPage() {
     res.sendFile(filePath);
   });
 
-  app.post('/signup', async (req, res) => {
-    const { username, email, password } = req.body;
-    console.log(username, email, password);
-    try {
+  // app.post('/signup', async (req, res) => {
+  //   const { username, email, password } = req.body;
+  //   console.log(username, email, password);
+  //   try {
   
-      if (true) {
-        res.redirect('/menu.html'); 
-      } else {
-        res.redirect('/signup');
-      }
-    } catch (error) {
-      console.error('Error during login:', error);
-      res.redirect('/login');
-    }
-  });
+  //     if (true) {
+  //       res.redirect('/menu.html'); 
+  //     } else {
+  //       res.redirect('/signup');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error during login:', error);
+  //     res.redirect('/login');
+  //   }
+  // });
 
 
   app.get('/upload', (req, res) => {
