@@ -10,9 +10,6 @@ const app = express();
 const server = http.createServer(app);
 const socket = socketIO(server);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 function serveStaticFiles() {
 
   const signUpStaticPath = path.join(__dirname, '../client/signup');
@@ -54,14 +51,23 @@ function serveStaticFiles() {
       }
     }
   }));
+
+  const indexStaticPath = path.join(__dirname, '../client/home');
+
+  app.use(express.static(indexStaticPath, {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+      }
+    }
+  }));
 }
 
 function serveClientPage() {
   app.get('/', (req, res) => {
-    // const filePath = path.join(__dirname, '../client/login/login.html');
-    // res.setHeader('Content-Type', 'text/html');
-    // res.sendFile(filePath);
-    res.redirect('/login');
+    const filePath = path.join(__dirname, '../client/home/index.html');
+    res.setHeader('Content-Type', 'text/html');
+    res.sendFile(filePath);
   });
 
   app.get('/login', (req, res) => {
