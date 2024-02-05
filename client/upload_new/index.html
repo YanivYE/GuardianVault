@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Upload File</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="main.css">
+</head>
+<body>
+    <div class="upload-container">
+        <h2>Upload File</h2>
+        <form id="uploadForm" class="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="fileName">File Name:</label>
+                <input type="text" id="fileName" name="fileName" placeholder="Enter file name">
+            </div>
+
+            <div class="form-group">
+                <label for="fileStatus">File Status:</label>
+                <select id="fileStatus" name="fileStatus">
+                    <option value="private">Private</option>
+                    <option value="public">Public</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="shareWith">Share With:</label>
+                <input type="text" id="shareWith" name="shareWith" placeholder="Search or enter email">
+            </div>
+
+            <div class="form-group">
+                <label for="fileUpload">Choose or Upload File:</label>
+                <input type="file" id="fileUpload" name="fileUpload">
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="upload-btn">Upload</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
