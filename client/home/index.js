@@ -14,6 +14,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 this.performKeyExchange(serverPublicKeyBase64);
                 this.keyExchangeComplete = true;
             });
+
+            
+        }
+
+        login(username, password)
+        {
+          console.log(username, password);
         }
 
         async performKeyExchange(serverPublicKeyBase64) {        
