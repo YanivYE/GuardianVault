@@ -1,6 +1,7 @@
 const keyExchange = require("./ServerKeyExchange");
 const CryptographyTunnel = require("./CryptographyTunnel");
 const FileHandler = require("./FileHandler");
+const fs = require('fs');
 
 class SocketHandler {
     constructor(socket) {
@@ -14,10 +15,41 @@ class SocketHandler {
         
         const cryptography = new CryptographyTunnel.CryptographyTunnel(sharedKey);
 
-        this.receiveFileFromClient(cryptography);
+        this.setUpEventListeners();
 
-        this.socket.on('disconnect', async () => {
-          console.log('A user disconnected');
+        // this.receiveFileFromClient(cryptography);
+
+        // this.socket.on('reconnect', async () => {
+        //   console.log('A user reconnected');
+        // });
+
+        // this.socket.on('disconnect', async () => {
+        //     console.log('A user disconnected');
+        //   });
+    }
+
+    setUpEventListeners()
+    {
+        this.socket.on('Continue', async (text) =>{
+            fs.readFile('client/login/login.html', 'utf8', (err, data) => {
+                if (err) {
+                    console.error('Error reading HTML file:', err);
+                    return;
+                }
+                // Emit the HTML content to the client
+                this.socket.emit('LoginHtmlContent', data);
+            });
+        });
+
+        this.socket.on('Login', async (text) =>{
+            fs.readFile('client/menu/menu.html', 'utf8', (err, data2) => {
+                if (err) {
+                    console.error('Error reading HTML file:', err);
+                    return;
+                }
+                // Emit the HTML content to the client
+                this.socket.emit('MenuHtmlContent', data2);
+            });
         });
     }
 

@@ -91,21 +91,21 @@
         }
     }
 
-    // Retrieve the socket connection from session storage
-    const storedSocket = sessionStorage.getItem('socketId');
-    if (storedSocket) {
-        // Reconnect to the socket using its ID
-        socket = io({ query: { socketId: storedSocket } });
-    } else {
-        console.error('Socket connection not found in session storage.');
-    }
-
-    // Add event listener to login button
-    document.getElementById('loginButton').addEventListener('click', async function() {
-        const username = document.getElementsByName("username")[0].value;
-        const password = document.getElementsByName("password")[0].value;
-        console.log(username, password);
-        login(username, password);
+    document.getElementById('loginButton').addEventListener('click', () => {
+        // Emit an event to the server
+        window.socket.emit('Login', 'clicked on login button');
     });
+
+    window.socket.on('MenuHtmlContent', (html) => {
+      document.body.innerHTML = html;
+    });
+
+    // // Add event listener to login button
+    // document.getElementById('loginButton').addEventListener('click', async function() {
+    //     const username = document.getElementsByName("username")[0].value;
+    //     const password = document.getElementsByName("password")[0].value;
+    //     console.log(username, password);
+    //     login(username, password);
+    // });
 
 })(jQuery);

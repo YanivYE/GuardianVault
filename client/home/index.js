@@ -1,21 +1,34 @@
 document.addEventListener("DOMContentLoaded", () => {
     class Client {
           constructor() {
-            this.socket = null;
+            window.socket = io();
             this.sharedKey = null;
             this.keyExchangeComplete = false; // Flag to track key exchange completion
-            this.setupSocketConnection();
+            // this.setupSocketConnection();
             this.setupEventListeners();
         }
 
         setupEventListeners() {
-            this.socket.on('server-public-key', async (serverPublicKeyBase64) => {
+            window.socket.on('connect', () =>{
+              console.log('Connected to server');
+            });
+
+            window.socket.on('server-public-key', async (serverPublicKeyBase64) => {
                 this.performKeyExchange(serverPublicKeyBase64);
                 this.keyExchangeComplete = true;
             });
 
-            
+            document.getElementById('Continue').addEventListener('click', () => {
+                // Emit an event to the server
+                window.socket.emit('Continue', 'clicked on continue button');
+            });
+
+            window.socket.on('LoginHtmlContent', (html) => {
+              document.body.innerHTML = html;
+            });
+
         }
+
 
         setupSocketConnection() {
           // Check if there's a socket connection stored in session storage
@@ -29,12 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
               // Store the socket ID in session storage
               sessionStorage.setItem('socketId', this.socket.id);
           }
-      
-          // Handle disconnection events
-          this.socket.on('disconnect', () => {
-              // Remove the stored socket ID from session storage on disconnect
-              sessionStorage.removeItem('socketId');
-          });
       }
       
 
@@ -53,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const clientPublicKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
           const clientPublicKeyBase64 = this.arrayBufferToBase64(clientPublicKey);
         
-          this.socket.emit('client-public-key', clientPublicKeyBase64);
+          window.socket.emit('client-public-key', clientPublicKeyBase64);
         
           // Import server public key
           const importedServerPublicKey = await window.crypto.subtle.importKey(
