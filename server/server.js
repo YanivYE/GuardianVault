@@ -10,62 +10,32 @@ const app = express();
 const server = http.createServer(app);
 const socket = socketIO(server);
 
+app.use((req, res, next) => {
+  if (req.url.endsWith('.js')) {
+    res.setHeader('Content-Type', 'text/javascript');
+  }
+  next();
+});
+
+// Serve static files
 function serveStaticFiles() {
+  const staticPaths = [
+    '../client/signup',
+    '../client/login',
+    '../client/upload',
+    '../client/menu',
+    '../client/index'
+  ];
 
-  const signUpStaticPath = path.join(__dirname, '../client/signup');
-
-  app.use(express.static(signUpStaticPath, {
-    setHeaders: (res, path) => {
-      if (path.endsWith('.css')) {
-        res.setHeader('Content-Type', 'text/css');
-      }
-    }
-  }));
-
-  const loginStaticPath = path.join(__dirname, '../client/login');
-
-  app.use(express.static(loginStaticPath, {
-    setHeaders: (res, path) => {
-      if (path.endsWith('.css')) {
-        res.setHeader('Content-Type', 'text/css');
-      }
-    }
-  }));
-
-  const uploadStaticPath = path.join(__dirname, '../client/upload');
-
-  app.use(express.static(uploadStaticPath, {
-    setHeaders: (res, path) => {
-      if (path.endsWith('.css')) {
-        res.setHeader('Content-Type', 'text/css');
-      }
-    }
-  }));
-
-  const menuStaticPath = path.join(__dirname, '../client/menu');
-
-  app.use(express.static(menuStaticPath, {
-    setHeaders: (res, path) => {
-      if (path.endsWith('.css')) {
-        res.setHeader('Content-Type', 'text/css');
-      }
-    }
-  }));
-
-  const indexStaticPath = path.join(__dirname, '../client/home');
-
-  app.use(express.static(indexStaticPath, {
-    setHeaders: (res, path) => {
-      if (path.endsWith('.css')) {
-        res.setHeader('Content-Type', 'text/css');
-      }
-    }
-  }));
+  staticPaths.forEach(staticPath => {
+    const fullPath = path.join(__dirname, staticPath);
+    app.use(express.static(fullPath));
+  });
 }
 
 function serveClientPage() {
   app.get('/', (req, res) => {
-    const filePath = path.join(__dirname, '../client/home/index.html');
+    const filePath = path.join(__dirname, '../client/index/index.html');
     res.setHeader('Content-Type', 'text/html');
     res.sendFile(filePath);
   });

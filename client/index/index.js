@@ -2,9 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
     class Client {
           constructor() {
             window.socket = io();
-            this.sharedKey = null;
+            window.sharedKey = null;
             this.keyExchangeComplete = false; // Flag to track key exchange completion
-            // this.setupSocketConnection();
             this.setupEventListeners();
         }
 
@@ -19,30 +18,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             document.getElementById('Continue').addEventListener('click', () => {
-                // Emit an event to the server
-                window.socket.emit('Continue', 'clicked on continue button');
-            });
-
-            window.socket.on('LoginHtmlContent', (html) => {
-              document.body.innerHTML = html;
+              window.location.href = '/login';
             });
 
         }
 
-
-        setupSocketConnection() {
-          // Check if there's a socket connection stored in session storage
-          const storedSocketId = sessionStorage.getItem('socketId');
-          if (storedSocketId) {
-              // Reconnect to the existing socket using its ID
-              this.socket = io({ query: { socketId: storedSocketId } });
-          } else {
-              // If no stored connection, create a new one
-              this.socket = io();
-              // Store the socket ID in session storage
-              sessionStorage.setItem('socketId', this.socket.id);
-          }
-      }
       
 
         async performKeyExchange(serverPublicKeyBase64) {        
@@ -81,17 +61,17 @@ document.addEventListener("DOMContentLoaded", () => {
             public: importedServerPublicKey
           };
         
-          this.sharedKey = await window.crypto.subtle.deriveBits(
+          window.sharedKey = await window.crypto.subtle.deriveBits(
             sharedSecretAlgorithm,
             keyPair.privateKey,
             256
           );
         
           // Convert shared secret to hex
-          this.sharedKey = this.arrayBufferToHexString(this.sharedKey);
-          console.log("Computed shared secret:", this.sharedKey);
+          window.sharedKey = this.arrayBufferToHexString(window.sharedKey);
+          console.log("Computed shared secret:", window.sharedKey);
 
-          this.sharedKey = await this.hexToCryptoKey(this.sharedKey);
+          window.sharedKey = await this.hexToCryptoKey(window.sharedKey);
         }
   
       arrayBufferToBase64(arrayBuffer) {

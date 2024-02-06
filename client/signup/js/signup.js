@@ -157,4 +157,12 @@
         }
     }
 
+    document.getElementById('signupButton').addEventListener('click', () => {
+        const username = document.getElementsByName("username")[0].value;
+        const email = document.getElementsByName("email")[0].value;
+        const password = document.getElementsByName("password")[0].value;
+        window.socket.emit('signup', (username, email, password));        
+        window.location.href = '/menu';
+    });
+
 })(jQuery);

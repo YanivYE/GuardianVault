@@ -2,6 +2,8 @@ const keyExchange = require("./ServerKeyExchange");
 const CryptographyTunnel = require("./CryptographyTunnel");
 const FileHandler = require("./FileHandler");
 const fs = require('fs');
+const { userInfo } = require("os");
+const { PassThrough } = require("stream");
 
 class SocketHandler {
     constructor(socket) {
@@ -30,26 +32,12 @@ class SocketHandler {
 
     setUpEventListeners()
     {
-        this.socket.on('Continue', async (text) =>{
-            fs.readFile('client/login/login.html', 'utf8', (err, data) => {
-                if (err) {
-                    console.error('Error reading HTML file:', err);
-                    return;
-                }
-                // Emit the HTML content to the client
-                this.socket.emit('LoginHtmlContent', data);
-            });
+        this.socket.on('login', async (username, password) => {
+            console.log(username, password);
         });
 
-        this.socket.on('Login', async (text) =>{
-            fs.readFile('client/menu/menu.html', 'utf8', (err, data2) => {
-                if (err) {
-                    console.error('Error reading HTML file:', err);
-                    return;
-                }
-                // Emit the HTML content to the client
-                this.socket.emit('MenuHtmlContent', data2);
-            });
+        this.socket.on('signup', async (username, email, password) => {
+            console.log(username, email, password);
         });
     }
 

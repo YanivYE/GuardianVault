@@ -1,8 +1,5 @@
 (function ($) {
     "use strict";
-
-    let socket;
-
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function(){
@@ -80,32 +77,15 @@
         });
     });
 
-    // Function to handle login
-    async function login(username, password) {
-        // Ensure that the socket connection exists
-        if (socket) {
-            // Example: sending login information to the server via the socket
-            socket.emit('login', { username, password });
-        } else {
-            console.error('Socket connection not available.');
-        }
-    }
-
     document.getElementById('loginButton').addEventListener('click', () => {
-        // Emit an event to the server
-        window.socket.emit('Login', 'clicked on login button');
+        const username = document.getElementsByName("username")[0].value;
+        const password = document.getElementsByName("password")[0].value;
+        window.socket.emit('login', (username, password));        
+        // window.location.href = '/menu';
     });
 
-    window.socket.on('MenuHtmlContent', (html) => {
-      document.body.innerHTML = html;
+    document.getElementById('signupButton').addEventListener('click', () => {
+        window.location.href = '/signup';
     });
-
-    // // Add event listener to login button
-    // document.getElementById('loginButton').addEventListener('click', async function() {
-    //     const username = document.getElementsByName("username")[0].value;
-    //     const password = document.getElementsByName("password")[0].value;
-    //     console.log(username, password);
-    //     login(username, password);
-    // });
 
 })(jQuery);
