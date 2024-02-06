@@ -23,14 +23,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.socket.emit('Continue', 'clicked on continue button');
             });
 
-            window.socket.on('LoginContent', ({ html, css }) => {
-              document.body.innerHTML = html; // Set HTML content
-          
-              // Add CSS content to the document
-              const styleElement = document.createElement('style');
-              styleElement.innerHTML = css;
-              document.head.appendChild(styleElement);
-          });
+            window.socket.on('LoginHtmlContent', (html) => {
+              document.body.innerHTML = html;
+            });
+
         }
 
 
