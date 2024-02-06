@@ -30,14 +30,22 @@ class SocketHandler {
 
     setUpEventListeners()
     {
-        this.socket.on('Continue', async (text) =>{
-            fs.readFile('client/login/login.html', 'utf8', (err, data) => {
-                if (err) {
-                    console.error('Error reading HTML file:', err);
+        this.socket.on('Continue', async (text) => {
+            // Read HTML file
+            fs.readFile('client/login/login.html', 'utf8', (errHtml, htmlData) => {
+                if (errHtml) {
+                    console.error('Error reading HTML file:', errHtml);
                     return;
                 }
-                // Emit the HTML content to the client
-                this.socket.emit('LoginHtmlContent', data);
+                // Read CSS file
+                fs.readFile('client/login/css/main.css', 'utf8', (errCss, cssData) => {
+                    if (errCss) {
+                        console.error('Error reading CSS file:', errCss);
+                        return;
+                    }
+                    // Emit HTML and CSS content to the client
+                    this.socket.emit('LoginContent', { html: htmlData, css: cssData });
+                });
             });
         });
 
