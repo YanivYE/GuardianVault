@@ -1,6 +1,8 @@
 (function ($) {
     "use strict";
 
+    let socket;
+
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function(){
@@ -78,10 +80,32 @@
         });
     });
 
-    document.getElementById('signupButton').addEventListener('click', async function() {
+    // Function to handle login
+    async function login(username, password) {
+        // Ensure that the socket connection exists
+        if (socket) {
+            // Example: sending login information to the server via the socket
+            socket.emit('login', { username, password });
+        } else {
+            console.error('Socket connection not available.');
+        }
+    }
+
+    // Retrieve the socket connection from session storage
+    const storedSocket = sessionStorage.getItem('socketId');
+    if (storedSocket) {
+        // Reconnect to the socket using its ID
+        socket = io({ query: { socketId: storedSocket } });
+    } else {
+        console.error('Socket connection not found in session storage.');
+    }
+
+    // Add event listener to login button
+    document.getElementById('loginButton').addEventListener('click', async function() {
         const username = document.getElementsByName("username")[0].value;
         const password = document.getElementsByName("password")[0].value;
+        console.log(username, password);
         login(username, password);
-      });
+    });
 
 })(jQuery);

@@ -1,11 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
     class Client {
           constructor() {
-            this.socket = io();
+            this.socket = null;
             this.sharedKey = null;
             this.keyExchangeComplete = false; // Flag to track key exchange completion
-            
-
+            this.setupSocketConnection();
             this.setupEventListeners();
         }
 
@@ -18,10 +17,26 @@ document.addEventListener("DOMContentLoaded", () => {
             
         }
 
-        login(username, password)
-        {
-          console.log(username, password);
-        }
+        setupSocketConnection() {
+          // Check if there's a socket connection stored in session storage
+          const storedSocketId = sessionStorage.getItem('socketId');
+          if (storedSocketId) {
+              // Reconnect to the existing socket using its ID
+              this.socket = io({ query: { socketId: storedSocketId } });
+          } else {
+              // If no stored connection, create a new one
+              this.socket = io();
+              // Store the socket ID in session storage
+              sessionStorage.setItem('socketId', this.socket.id);
+          }
+      
+          // Handle disconnection events
+          this.socket.on('disconnect', () => {
+              // Remove the stored socket ID from session storage on disconnect
+              sessionStorage.removeItem('socketId');
+          });
+      }
+      
 
         async performKeyExchange(serverPublicKeyBase64) {        
           // Generate client key pair

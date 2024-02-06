@@ -3,6 +3,7 @@
 	<title>Login</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="/socket.io/socket.io.js"></script>
 <!--===============================================================================================-->	
 	<link rel="icon" type="image/png" href="images/icons/logo.png"/>
 <!--===============================================================================================-->
@@ -57,7 +58,7 @@
 					</div>
 
 					<div class="container-login100-form-btn m-t-32">
-						<button type="submit" class="login100-form-btn">
+						<button id="loginButton" type="submit" class="login100-form-btn">
 							Login
 						</button>
 					</div>
@@ -90,7 +91,7 @@
 	<script src="vendor/countdowntime/countdowntime.js"></script>
 <!--===============================================================================================-->
 	<script src="js/login.js"></script>
-	<script src="../home/index.js"></script>
-	<script src="/socket.io/socket.io.js"></script>
+	<!-- <script src="../home/index.js"></script> -->
+	
 </body>
 </html>
