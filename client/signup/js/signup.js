@@ -1,6 +1,12 @@
 (function ($) {
     "use strict";
 
+    const socket = io({
+        query: {
+          newUser: false
+        }
+      });
+
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function(){
@@ -18,7 +24,9 @@
     [ Validate ]*/
     var input = $('.validate-input .input100');
 
-    $('.validate-form').on('submit', function(){
+    $('.validate-form').on('submit', function(event){
+        event.preventDefault(); // Prevent default form submission
+
         var check = true;
 
         for(var i=0; i<input.length; i++) {
@@ -28,7 +36,10 @@
             }
         }
 
-        return check;
+        if(check)
+        {
+            signingUp();
+        }
     });
 
     $('.validate-form .input100').each(function(){
@@ -157,12 +168,13 @@
         }
     }
 
-    document.getElementById('signupButton').addEventListener('click', () => {
+    function signingUp() 
+    {
         const username = document.getElementsByName("username")[0].value;
         const email = document.getElementsByName("email")[0].value;
         const password = document.getElementsByName("password")[0].value;
-        window.socket.emit('signup', (username, email, password));        
+        socket.emit('signup', {username: username, email: email, password: password});        
         window.location.href = '/menu';
-    });
+    }
 
 })(jQuery);

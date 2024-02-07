@@ -1,5 +1,12 @@
 (function ($) {
     "use strict";
+
+    const socket = io({
+        query: {
+          newUser: false
+        }
+      });
+
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function(){
@@ -17,7 +24,9 @@
     [ Validate ]*/
     var input = $('.validate-input .input100');
 
-    $('.validate-form').on('submit', function(){
+    $('.validate-form').on('submit', function(event){
+        event.preventDefault(); // Prevent default form submission
+
         var check = true;
 
         for(var i=0; i<input.length; i++) {
@@ -26,8 +35,10 @@
                 check=false;
             }
         }
-
-        return check;
+        if(check)
+        {
+            logging(); // Call the logging function if validation passes
+        }
     });
 
     $('.validate-form .input100').each(function(){
@@ -40,7 +51,7 @@
         if($(input).val().trim() == ''){
             return false;
         }
-        
+        return true; // Add more specific validation rules if needed
     }
 
     function showValidate(input) {
@@ -77,12 +88,20 @@
         });
     });
 
-    document.getElementById('loginButton').addEventListener('click', () => {
+    function logging() {
         const username = document.getElementsByName("username")[0].value;
         const password = document.getElementsByName("password")[0].value;
-        window.socket.emit('login', (username, password));        
-        // window.location.href = '/menu';
-    });
+        
+        // Send login information to the server
+        socket.emit('login', { username: username, password: password });     
+        
+        // Wait for acknowledgement from the server
+        // socket.on('loginSuccess', function() {
+        //     // Redirect user to the menu page after successful login
+        //     window.location.href = '/menu';
+        // });
+        window.location.href = '/menu';
+    }
 
     document.getElementById('signupButton').addEventListener('click', () => {
         window.location.href = '/signup';

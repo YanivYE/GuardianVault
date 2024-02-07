@@ -8,35 +8,33 @@ const { PassThrough } = require("stream");
 class SocketHandler {
     constructor(socket) {
       this.socket = socket;
+      this.sharedKey = null;
     }
   
     async handleSocketConnection() {
         console.log('A user connected');
       
-        const sharedKey = await keyExchange.performKeyExchange(this.socket);
-        
-        const cryptography = new CryptographyTunnel.CryptographyTunnel(sharedKey);
+        this.sharedKey = await keyExchange.performKeyExchange(this.socket);
 
-        this.setUpEventListeners();
-
-        // this.receiveFileFromClient(cryptography);
-
-        // this.socket.on('reconnect', async () => {
-        //   console.log('A user reconnected');
-        // });
-
-        // this.socket.on('disconnect', async () => {
-        //     console.log('A user disconnected');
-        //   });
+        this.socket.on('disconnect', async () => {
+            console.log('A user disconnected');
+          });
     }
 
     setUpEventListeners()
     {
-        this.socket.on('login', async (username, password) => {
+        const cryptography = new CryptographyTunnel.CryptographyTunnel(this.sharedKey);
+
+        this.socket.on('login', async (loginData) => {
+            const username = loginData.username;
+            const password = loginData.password;
             console.log(username, password);
         });
 
-        this.socket.on('signup', async (username, email, password) => {
+        this.socket.on('signup', async (signupData) => {
+            const username = signupData.username;
+            const email = signupData.email;
+            const password = signupData.password;
             console.log(username, email, password);
         });
     }

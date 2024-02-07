@@ -1,18 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
     class Client {
           constructor() {
-            window.socket = io();
-            window.sharedKey = null;
+            this.socket = io({
+              query: {
+                newUser: true
+              }
+            });
+            this.sharedKey = null;
             this.keyExchangeComplete = false; // Flag to track key exchange completion
             this.setupEventListeners();
         }
 
-        setupEventListeners() {
-            window.socket.on('connect', () =>{
+        setupEventListeners() {            
+            this.socket.on('connect', () =>{
               console.log('Connected to server');
             });
 
-            window.socket.on('server-public-key', async (serverPublicKeyBase64) => {
+            this.socket.on('server-public-key', async (serverPublicKeyBase64) => {
                 this.performKeyExchange(serverPublicKeyBase64);
                 this.keyExchangeComplete = true;
             });
@@ -22,9 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
         }
-
-      
-
+        
         async performKeyExchange(serverPublicKeyBase64) {        
           // Generate client key pair
           const keyPair = await window.crypto.subtle.generateKey(
@@ -40,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const clientPublicKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
           const clientPublicKeyBase64 = this.arrayBufferToBase64(clientPublicKey);
         
-          window.socket.emit('client-public-key', clientPublicKeyBase64);
+          this.socket.emit('client-public-key', clientPublicKeyBase64);
         
           // Import server public key
           const importedServerPublicKey = await window.crypto.subtle.importKey(

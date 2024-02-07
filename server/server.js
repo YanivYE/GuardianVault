@@ -24,7 +24,9 @@ function serveStaticFiles() {
     '../client/login',
     '../client/upload',
     '../client/menu',
-    '../client/index'
+    '../client/index',
+    '../client/socket.io-client',
+    '../client'
   ];
 
   staticPaths.forEach(staticPath => {
@@ -80,7 +82,16 @@ function startServer() {
 
   socket.on('connection', (socket) => {
     const socketHandler = new Handler.SocketHandler(socket);
-    socketHandler.handleSocketConnection();
+    const isNewUser = socket.handshake.query.newUser === 'true'; 
+    if(isNewUser)
+    {
+      socketHandler.handleSocketConnection();
+    }
+    else
+    {
+      socketHandler.setUpEventListeners();
+    }
+    
   });
 }
 
