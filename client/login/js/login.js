@@ -88,12 +88,13 @@
         });
     });
 
-    function logging() {
+    async function logging() {
         const username = document.getElementsByName("username")[0].value;
         const password = document.getElementsByName("password")[0].value;
-        
+        const encryptedData = await encryptData(username + '$' + password);
+        console.log(encryptedData);
         // Send login information to the server
-        socket.emit('login', { username: username, password: password });     
+        socket.emit('login', encryptedData);     
         
         // Wait for acknowledgement from the server
         // socket.on('loginSuccess', function() {

@@ -17,7 +17,7 @@ class SocketHandler {
         this.sharedKey = await keyExchange.performKeyExchange(this.socket);
 
         this.socket.on('disconnect', async () => {
-            console.log('A user disconnected');
+            console.log('Key Exchange complete');
           });
     }
 

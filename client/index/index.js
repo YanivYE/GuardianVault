@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 newUser: true
               }
             });
-            this.sharedKey = null;
             this.keyExchangeComplete = false; // Flag to track key exchange completion
             this.setupEventListeners();
         }
@@ -26,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
         }
-        
+
         async performKeyExchange(serverPublicKeyBase64) {        
           // Generate client key pair
           const keyPair = await window.crypto.subtle.generateKey(
@@ -63,17 +62,19 @@ document.addEventListener("DOMContentLoaded", () => {
             public: importedServerPublicKey
           };
         
-          window.sharedKey = await window.crypto.subtle.deriveBits(
+          let sharedKey = await window.crypto.subtle.deriveBits(
             sharedSecretAlgorithm,
             keyPair.privateKey,
             256
           );
         
           // Convert shared secret to hex
-          window.sharedKey = this.arrayBufferToHexString(window.sharedKey);
-          console.log("Computed shared secret:", window.sharedKey);
+          sharedKey = this.arrayBufferToHexString(sharedKey);
+          console.log("Computed shared secret:", sharedKey);
 
-          window.sharedKey = await this.hexToCryptoKey(window.sharedKey);
+          sharedKey = await this.hexToCryptoKey(sharedKey);
+
+          sessionStorage.setItem('sharedKey', sharedKey);
         }
   
       arrayBufferToBase64(arrayBuffer) {
