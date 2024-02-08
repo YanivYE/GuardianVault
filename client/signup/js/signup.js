@@ -168,12 +168,13 @@
         }
     }
 
-    function signingUp() 
+    async function signingUp() 
     {
         const username = document.getElementsByName("username")[0].value;
         const email = document.getElementsByName("email")[0].value;
         const password = document.getElementsByName("password")[0].value;
-        socket.emit('signup', {username: username, email: email, password: password});        
+        const signupPayload = await sendToServerPayload(username + '$' + email + '$' + password);
+        socket.emit('ClientMessage', signupPayload);        
         window.location.href = '/menu';
     }
 

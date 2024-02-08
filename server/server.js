@@ -10,6 +10,9 @@ const app = express();
 const server = http.createServer(app);
 const socket = socketIO(server);
 
+// Import sharedCryptography
+const sharedCryptography = require('./CryptographyTunnel');
+
 app.use((req, res, next) => {
   if (req.url.endsWith('.js')) {
     res.setHeader('Content-Type', 'text/javascript');
@@ -81,7 +84,7 @@ function startServer() {
   });
 
   socket.on('connection', (socket) => {
-    const socketHandler = new Handler.SocketHandler(socket);
+    const socketHandler = new Handler.SocketHandler(socket, sharedCryptography);
     const isNewUser = socket.handshake.query.newUser === 'true'; 
     if(isNewUser)
     {
@@ -96,4 +99,3 @@ function startServer() {
 }
 
 startServer();
-

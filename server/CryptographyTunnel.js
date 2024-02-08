@@ -1,14 +1,15 @@
 const crypto = require('crypto');
 
-class CryptographyTunnel 
-{
-    constructor(encryptionKey)
-    {
+class CryptographyTunnel {
+    constructor() {
+        this.aesGcmKey = null;
+    }
+
+    setEncryptionKey(encryptionKey) {
         this.aesGcmKey = encryptionKey;
     }
 
-    encryptData(data) 
-    {
+    encryptData(data) {
         // Generate a random IV (Initialization Vector)
         const iv = crypto.randomBytes(16);
 
@@ -22,11 +23,10 @@ class CryptographyTunnel
         const authTag = cipher.getAuthTag().toString('hex');
 
         // Return the IV, ciphertext, and authentication tag
-        return {iv, ciphertext, authTag};
+        return { iv, ciphertext, authTag };
     }
 
-    decryptData(iv, ciphertext, tag) 
-    {
+    decryptData(iv, ciphertext, tag) {
         // Create the AES-GCM decipher
         const decipher = crypto.createDecipheriv('aes-256-gcm', Buffer.from(this.aesGcmKey, 'hex'), Buffer.from(iv, 'hex'));
 
@@ -41,4 +41,5 @@ class CryptographyTunnel
     }
 }
 
-module.exports = {CryptographyTunnel};
+// Export an instance of CryptographyTunnel directly
+module.exports = new CryptographyTunnel();

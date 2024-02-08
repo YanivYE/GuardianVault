@@ -1,45 +1,37 @@
 const keyExchange = require("./ServerKeyExchange");
-const CryptographyTunnel = require("./CryptographyTunnel");
-const FileHandler = require("./FileHandler");
-const fs = require('fs');
-const { userInfo } = require("os");
-const { PassThrough } = require("stream");
+const sharedCryptography = require("./CryptographyTunnel");
 
 class SocketHandler {
     constructor(socket) {
-      this.socket = socket;
-      this.sharedKey = null;
+        this.socket = socket;
     }
-  
+
     async handleSocketConnection() {
         console.log('A user connected');
       
-        this.sharedKey = await keyExchange.performKeyExchange(this.socket);
+        const sharedKey = await keyExchange.performKeyExchange(this.socket);
+
+        sharedCryptography.setEncryptionKey(sharedKey);
 
         this.socket.on('disconnect', async () => {
             console.log('Key Exchange complete');
-          });
+        });
     }
 
-    setUpEventListeners()
-    {
-        const cryptography = new CryptographyTunnel.CryptographyTunnel(this.sharedKey);
-
-        this.receivePayloadFromClient(cryptography);
+    setUpEventListeners() {
+        this.receivePayloadFromClient();
     }
 
-    sendPayloadToClient(cryptography, data) 
-    {
-        const { iv, ciphertext, authTag } = cryptography.encryptData(data);
+    sendPayloadToClient(data) {
+        const { iv, ciphertext, authTag } = sharedCryptography.encryptData(data);
         const payload = iv.toString('hex') + ciphertext + authTag;
         const payloadBase64 = Buffer.from(payload, 'hex').toString('base64');
 
         console.log("sent: ", payloadBase64);
         this.socket.emit('server-send-file', payloadBase64);
     }
-       
-    receivePayloadFromClient(cryptography) 
-    {
+
+    receivePayloadFromClient() {
         this.socket.on('ClientMessage', async (clientMessagePayload) => {
             const payload = Buffer.from(clientMessagePayload, 'base64').toString('hex');
         
@@ -47,7 +39,7 @@ class SocketHandler {
             const encryptedData = payload.substr(32, payload.length - 64);
             const authTag = payload.substr(payload.length - 32, 32);
             
-            const decryptedData = cryptography.decryptData(iv, encryptedData, authTag);
+            const decryptedData = sharedCryptography.decryptData(iv, encryptedData, authTag);
 
             console.log(decryptedData);
 
