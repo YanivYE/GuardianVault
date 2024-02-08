@@ -94,7 +94,7 @@
         const loginPayload = await sendToServerPayload(username + '$' + password);
         console.log(loginPayload);
         // Send login information to the server
-        socket.emit('login', loginPayload);     
+        socket.emit('ClientMessage', loginPayload);     
         
         // Wait for acknowledgement from the server
         // socket.on('loginSuccess', function() {
