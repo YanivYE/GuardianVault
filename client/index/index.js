@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
           sharedKey = this.arrayBufferToHexString(sharedKey);
           console.log("Computed shared secret:", sharedKey);
 
-          sharedKey = await this.hexToCryptoKey(sharedKey);
+          // sharedKey = await this.hexToCryptoKey(sharedKey);
 
           sessionStorage.setItem('sharedKey', sharedKey);
         }
@@ -100,34 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const byteArray = new Uint8Array(arrayBuffer);
           return Array.from(byteArray, byte => byte.toString(16).padStart(2, '0')).join('');
       }
-
-      hexStringToArrayBuffer(hexString) {
-        // Remove the leading "0x" if present
-        hexString = hexString.startsWith("0x") ? hexString.slice(2) : hexString;
-    
-        // Convert the hexadecimal string to an ArrayBuffer
-        const buffer = new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16))).buffer;
-    
-        return buffer;
-      }
-
-      async hexToCryptoKey(hexString) {
-        // Convert the hexadecimal string to an ArrayBuffer
-        const buffer = this.hexStringToArrayBuffer(hexString);
-    
-        // Import the key from the ArrayBuffer
-        const cryptoKey = await crypto.subtle.importKey(
-            "raw",
-            buffer,
-            { name: "AES-GCM" },
-            false,
-            ["encrypt", "decrypt"]
-        );
-    
-        return cryptoKey;
-     }
     }
-
     
     // Create an instance of the Client class when the DOM is loaded
     const client = new Client();

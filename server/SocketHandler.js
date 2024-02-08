@@ -26,6 +26,7 @@ class SocketHandler {
         const cryptography = new CryptographyTunnel.CryptographyTunnel(this.sharedKey);
 
         this.socket.on('login', async (loginData) => {
+            console.log(loginData);
             const username = loginData.username;
             const password = loginData.password;
             console.log(username, password);
