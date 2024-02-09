@@ -37,7 +37,6 @@ class Parser{
         {
             operationResult = "Success";
         }
-        console.log(operationResult);
         this.socket.emit('loginResult', operationResult);
     }
 

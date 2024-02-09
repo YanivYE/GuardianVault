@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const config = require("./config");
-
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
     username: String,
@@ -27,16 +27,26 @@ class DataBaseHandler{
         }
     }
 
-    async validateUserLogin(username, password)
-    {
-        const user = await User.findOne({ username, password });
+    async validateUserLogin(username, password) {
+        const user = await User.findOne({ username });
+    
+        // If user exists
         if (user) {
-            console.log("user found");
-            return true;
-        }
-        else {
-            console.log("User does not exist");
-            return false; // User not found or password incorrect
+            // Hash the input password
+            const hashedPassword = await bcrypt.hash(password, 10);
+    
+            // Compare the hashed password from the database with the hashed version of the input password
+            const passwordMatch = await bcrypt.compare(hashedPassword, user.passwordHash);
+            if (passwordMatch) {
+                console.log("User found and password is correct");
+                return true;
+            } else {
+                console.log("Password incorrect");
+                return false;
+            }
+        } else {
+            console.log("User not found");
+            return false;
         }
     }
 
