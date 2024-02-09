@@ -174,8 +174,26 @@
         const email = document.getElementsByName("email")[0].value;
         const password = document.getElementsByName("password")[0].value;
         const signupPayload = await sendToServerPayload('SignUp$' + username + '$' + email + '$' + password);
-        socket.emit('ClientMessage', signupPayload);        
-        window.location.href = '/menu';
+        socket.emit('ClientMessage', signupPayload);   
+        
+        socket.on('signupResult', async (operationResult) => {
+            if(operationResult === "UsernameFail")
+            {
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.textContent = "SignUp failed. Username already exists";
+                errorMessage.style.display = 'block';
+            }
+            else if(operationResult === "EmailFail")
+            {
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.textContent = "SignUp failed. Email already exists";
+                errorMessage.style.display = 'block';
+            }
+            else
+            {
+                window.location.href = '/menu';   
+            }
+        });
     }
 
 })(jQuery);

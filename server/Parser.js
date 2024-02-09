@@ -28,7 +28,7 @@ class Parser{
 
     async parseLoginMessage(loginMessage)
     {
-        var operationResult = "Fail";
+        let operationResult = "Fail";
         const [username, password] = loginMessage.split('$');
 
         console.log(username, password);
@@ -40,11 +40,15 @@ class Parser{
         this.socket.emit('loginResult', operationResult);
     }
 
-    parseSignupMessage(signupMessage)
+    async parseSignupMessage(signupMessage)
     {
         const [username, email, password] = signupMessage.split('$');
 
         console.log(username, email, password);
+
+        const operationResult = await this.DBHandler.validateUserSignup(username, email, password);
+
+        this.socket.emit('signupResult', operationResult);
     }
 }
 

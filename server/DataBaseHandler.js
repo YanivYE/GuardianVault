@@ -31,12 +31,9 @@ class DataBaseHandler{
         const user = await User.findOne({ username });
     
         // If user exists
-        if (user) {
-            // Hash the input password
-            const hashedPassword = await bcrypt.hash(password, 10);
-    
+        if (user) {    
             // Compare the hashed password from the database with the hashed version of the input password
-            const passwordMatch = await bcrypt.compare(hashedPassword, user.passwordHash);
+            const passwordMatch = await bcrypt.compare(password, user.password);
             if (passwordMatch) {
                 console.log("User found and password is correct");
                 return true;
@@ -50,17 +47,42 @@ class DataBaseHandler{
         }
     }
 
-    async getAllUsers() {
-        try {
-            // Find all user documents in the User collection
-            const users = await User.find();
+    async validateUserSignup(username, email, password)
+    {
+        // Check if the username is already taken
+        const existingUsername = await User.findOne({ username });
+        if (existingUsername) {
+            // Username is already taken
+            console.log("Username is already taken");
+            return "UsernameFail";
+        }
 
-            // Print each user's username
-            users.forEach(user => {
-                console.log("Username:", user.username);
-            });
+        // Check if the email is already taken
+        const existingEmail = await User.findOne({ email });
+        if (existingEmail) {
+            // Email is already taken
+            console.log("Email is already taken");
+            return "EmailFail";
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create a new user with the hashed password
+        await User.create({ username, email, password: hashedPassword });
+
+        // If both username and email are available, return true to indicate successful validation
+        return "Success";
+    }
+
+
+    async deleteAllUsers() {
+        try {
+            // Delete all user documents from the Users collection
+            const deleteResult = await User.deleteMany({});
+            console.log(`${deleteResult.deletedCount} users deleted`);
         } catch (error) {
-            console.error("Error fetching users:", error);
+            console.error("Error deleting users:", error);
         }
     }
 }
