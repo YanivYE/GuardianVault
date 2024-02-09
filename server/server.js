@@ -13,13 +13,6 @@ const socket = socketIO(server);
 // Import sharedCryptography
 const sharedCryptography = require('./CryptographyTunnel');
 
-app.use((req, res, next) => {
-  if (req.url.endsWith('.js')) {
-    res.setHeader('Content-Type', 'text/javascript');
-  }
-  next();
-});
-
 // Serve static files
 function serveStaticFiles() {
   const staticPaths = [
@@ -92,7 +85,7 @@ function startServer() {
     }
     else
     {
-      socketHandler.setUpEventListeners();
+      socketHandler.receivePayloadFromClient();
     }
     
   });

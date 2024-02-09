@@ -1,11 +1,9 @@
 let sharedKey = sessionStorage.getItem('sharedKey');
-console.log(sharedKey);
 
 // Call async function within an async context
 (async () => {
     sharedKey = await hexToCryptoKey(sharedKey);
     // Now `sharedKey` is a CryptoKey
-    console.log(sharedKey);
 })();
 
 

@@ -173,7 +173,7 @@
         const username = document.getElementsByName("username")[0].value;
         const email = document.getElementsByName("email")[0].value;
         const password = document.getElementsByName("password")[0].value;
-        const signupPayload = await sendToServerPayload(username + '$' + email + '$' + password);
+        const signupPayload = await sendToServerPayload('SignUp$' + username + '$' + email + '$' + password);
         socket.emit('ClientMessage', signupPayload);        
         window.location.href = '/menu';
     }
