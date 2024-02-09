@@ -1,5 +1,6 @@
 const keyExchange = require("./ServerKeyExchange");
 const sharedCryptography = require("./CryptographyTunnel");
+const Parser = require("./Parser");
 
 class SocketHandler {
     constructor(socket) {
@@ -28,6 +29,7 @@ class SocketHandler {
     }
 
     receivePayloadFromClient() {
+        const parser = new Parser.Parser();
         this.socket.on('ClientMessage', async (clientMessagePayload) => {
             const payload = Buffer.from(clientMessagePayload, 'base64').toString('hex');
         
@@ -37,7 +39,7 @@ class SocketHandler {
             
             const decryptedData = sharedCryptography.decryptData(iv, encryptedData, authTag);
 
-            console.log(decryptedData);
+            parser.parseClientMessage(decryptedData);
 
             // PARSER!!!
 
