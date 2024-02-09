@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 newUser: true
               }
             });
-            this.keyExchangeComplete = false; // Flag to track key exchange completion
             this.setupEventListeners();
         }
 
@@ -17,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             this.socket.on('server-public-key', async (serverPublicKeyBase64) => {
                 this.performKeyExchange(serverPublicKeyBase64);
-                this.keyExchangeComplete = true;
             });
 
             document.getElementById('Continue').addEventListener('click', () => {
@@ -71,8 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
           // Convert shared secret to hex
           sharedKey = this.arrayBufferToHexString(sharedKey);
           console.log("Computed shared secret:", sharedKey);
-
-          // sharedKey = await this.hexToCryptoKey(sharedKey);
 
           sessionStorage.setItem('sharedKey', sharedKey);
         }

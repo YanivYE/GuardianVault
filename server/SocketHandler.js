@@ -41,8 +41,6 @@ class SocketHandler {
 
             parser.parseClientMessage(decryptedData);
 
-            // PARSER!!!
-
             // const [userPassword, fileName, fileContent] = decryptedData.split('$');
 
             // console.log('user password is: ', userPassword, ' and got file: ' +  fileName + ' from client: ', fileContent, "\n\n");
