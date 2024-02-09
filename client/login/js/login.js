@@ -97,12 +97,18 @@
         socket.emit('ClientMessage', loginPayload);     
         
         // Wait for acknowledgement from the server
-        // socket.on('loginResult', async (operationResult) {
-        //     if(operationResult === Success)
-        //     // Redirect user to the menu page after successful login
-        //     window.location.href = '/menu';
-        // });
-        window.location.href = '/menu';
+        socket.on('loginResult', async (operationResult) => {
+            if(operationResult === "Success")
+            {
+                // Redirect user to the menu page after successful login
+                window.location.href = '/menu';
+            }
+            else{
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.textContent = "Login failed. Username or password are incorrect";
+                errorMessage.style.display = 'block';
+            }
+        });
     }
 
     document.getElementById('signupButton').addEventListener('click', () => {

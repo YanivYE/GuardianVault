@@ -26,19 +26,18 @@ class Parser{
         }
     }
 
-    parseLoginMessage(loginMessage)
+    async parseLoginMessage(loginMessage)
     {
-        const operationResult = "Fail";
+        var operationResult = "Fail";
         const [username, password] = loginMessage.split('$');
 
         console.log(username, password);
 
-        // TODO: validate login using DB
-        
-        if(DBHandler.ValidateUserLogin())
+        if(await this.DBHandler.validateUserLogin(username, password))
         {
             operationResult = "Success";
         }
+        console.log(operationResult);
         this.socket.emit('loginResult', operationResult);
     }
 
