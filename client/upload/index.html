@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="upload.js"></script>
+</head>
+<body>
+    
+    <div class="container-login100" style="background-image: url('images/bg-01.jpg');">
+		<div class="wrap-login100 p-t-30 p-b-50">
+            <span class="upload100-form-title p-b-41">
+                Upload FIle
+            </span>
+            <div class="upload-container">
+                <form id="uploadForm" class="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="fileName">File Name:</label>
+                        <input type="text" id="fileName" name="fileName" placeholder="Enter file name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fileStatus">File Status:</label><br>
+                        <input type="radio" id="private" name="fileStatus" value="private">
+                        <label for="private">Private</label><br>
+                        <input type="radio" id="public" name="fileStatus" value="public">
+                        <label for="public">Public</label><br>
+                    </div>
+
+                    <div class="form-group" id="shareWithGroup">
+                        <label for="shareWith">Share With:</label>
+                        <input type="text" id="shareWith" name="shareWith" placeholder="Search or enter email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fileUploadText">Choose or drag File:</label>
+                    </div>
+                    <div id="uploadedFile"></div>
+                    <input type="file" id="fileUpload" name="fileUpload" onchange="displayUploadedFile()">
+
+                    <div class="form-group">
+                        <button type="submit" class="upload-btn">Upload</button>
+                    </div>
+                </form>
+            </div>
+    </div>
+</body>
+</html>
