@@ -97,7 +97,8 @@
         socket.emit('ClientMessage', loginPayload);     
         
         // Wait for acknowledgement from the server
-        // socket.on('loginSuccess', function() {
+        // socket.on('loginResult', async (operationResult) {
+        //     if(operationResult === Success)
         //     // Redirect user to the menu page after successful login
         //     window.location.href = '/menu';
         // });

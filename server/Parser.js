@@ -1,6 +1,10 @@
+const DBHandler = require("./DataBaseHandler");
+
 class Parser{
-    constructor()
+    constructor(socket)
     {
+        this.socket = socket;
+        this.DBHandler = new DBHandler.DataBaseHandler();
     }
 
     parseClientMessage(message)
@@ -24,9 +28,18 @@ class Parser{
 
     parseLoginMessage(loginMessage)
     {
+        const operationResult = "Fail";
         const [username, password] = loginMessage.split('$');
 
         console.log(username, password);
+
+        // TODO: validate login using DB
+        
+        if(DBHandler.ValidateUserLogin())
+        {
+            operationResult = "Success";
+        }
+        this.socket.emit('loginResult', operationResult);
     }
 
     parseSignupMessage(signupMessage)
