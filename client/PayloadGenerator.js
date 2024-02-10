@@ -1,11 +1,23 @@
-let sharedKey = sessionStorage.getItem('sharedKey');
+var script = document.createElement('script');
 
-// Call async function within an async context
-(async () => {
+// Set the source attribute to the CryptoJS library URL
+script.src = 'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js';
+
+// Append the <script> element to the document's <head> or <body>
+document.head.appendChild(script);
+let sharedKey = null;
+script.onload = function() {
+    var encryptedSharedKey = sessionStorage.getItem('sharedKey');
+
+    var decryptedSharedKey = CryptoJS.AES.decrypt(encryptedSharedKey, "GuardianVaultSharedKeyEncryption");
+
+    sharedKey = decryptedSharedKey.toString(CryptoJS.enc.Utf8);
+    // Call async function within an async context
+    (async () => {
     sharedKey = await hexToCryptoKey(sharedKey);
     // Now `sharedKey` is a CryptoKey
-})();
-
+    })();  
+};
 
 async function sendToServerPayload(data) {
     // Wait for the encryption to complete before proceeding
@@ -34,7 +46,7 @@ async function receivePayloadFromServer(ServerPaylaod) {
     const decryptedData = await decryptData(iv, encryptedData, authTag);
 
     console.log('got file from server: ', decryptedData);
-  }
+}
 
 async function encryptData(data) {    
     // Generate a random IV (Initialization Vector)
@@ -102,7 +114,7 @@ function hexStringToArrayBuffer(hexString) {
     const buffer = new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16))).buffer;
 
     return buffer;
-  }
+}
 
 async function hexToCryptoKey(hexString) {
     // Convert the hexadecimal string to an ArrayBuffer
@@ -118,9 +130,9 @@ async function hexToCryptoKey(hexString) {
     );
 
     return cryptoKey;
- }
+}
 
- function arrayBufferToBase64(arrayBuffer) {
+function arrayBufferToBase64(arrayBuffer) {
     const uint8Array = new Uint8Array(arrayBuffer);
     const binaryString = Array.from(uint8Array, byte => String.fromCharCode(byte)).join('');
     return btoa(binaryString);
@@ -131,11 +143,11 @@ function base64ToArrayBuffer(base64) {
     const length = binaryString.length;
     const arrayBuffer = new ArrayBuffer(length);
     const uint8Array = new Uint8Array(arrayBuffer);
-  
+
     for (let i = 0; i < length; i++) {
-      uint8Array[i] = binaryString.charCodeAt(i);
+    uint8Array[i] = binaryString.charCodeAt(i);
     }
-  
+
     return arrayBuffer;
 }
 
@@ -143,3 +155,4 @@ function arrayBufferToHexString(arrayBuffer) {
     const byteArray = new Uint8Array(arrayBuffer);
     return Array.from(byteArray, byte => byte.toString(16).padStart(2, '0')).join('');
 }
+

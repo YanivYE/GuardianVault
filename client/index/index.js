@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
-        async performKeyExchange(serverPublicKeyBase64) {        
+        async performKeyExchange(serverPublicKeyBase64) {     
           // Generate client key pair
           const keyPair = await window.crypto.subtle.generateKey(
             {
@@ -69,8 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
           // Convert shared secret to hex
           sharedKey = this.arrayBufferToHexString(sharedKey);
           console.log("Computed shared secret:", sharedKey);
-
-          sessionStorage.setItem('sharedKey', sharedKey);
+          sessionStorage.setItem('sharedKey', CryptoJS.AES.encrypt(sharedKey, "GuardianVaultSharedKeyEncryption").toString());
         }
   
       arrayBufferToBase64(arrayBuffer) {
