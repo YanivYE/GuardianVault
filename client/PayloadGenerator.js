@@ -15,6 +15,7 @@ script.onload = function() {
     // Call async function within an async context
     (async () => {
     sharedKey = await hexToCryptoKey(sharedKey);
+    console.log(sharedKey);
     // Now `sharedKey` is a CryptoKey
     })();  
 };

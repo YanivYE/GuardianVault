@@ -1,4 +1,5 @@
 const DBHandler = require("./DataBaseHandler");
+// const sessionStorage = require('express-session');
 
 class Parser{
     constructor(socket)
@@ -43,6 +44,7 @@ class Parser{
         if(await this.DBHandler.validateUserLogin(username, password))
         {
             operationResult = "Success";
+            // sessionStorage.Session = username + '$' + password;
         }
         this.socket.emit('loginResult', operationResult);
     }
@@ -55,11 +57,17 @@ class Parser{
 
         const operationResult = await this.DBHandler.validateUserSignup(username, email, password);
 
+        if(operationResult === "Success")
+        {
+            // sessionStorage.Session = username + '$' + password;
+        }
+
         this.socket.emit('signupResult', operationResult);
     }
 
     async getUsersList()
     {
+        // console.log(sessionStorage);
         const usersList = await this.DBHandler.getUsersList();
         this.socket.emit('usersListResult', usersList);
     }
