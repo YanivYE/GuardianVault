@@ -26,21 +26,52 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Add event listener for file selection
+    var fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', displayUploadedFile);
+
     // Function to display the uploaded file
     function displayUploadedFile() {
-        const fileInput = document.getElementById('fileUpload');
-        const uploadedFileContainer = document.getElementById('uploadedFile');
+        const uploadedFileContainer = document.querySelector('.file-upload-text');
         
         // Check if a file is selected
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
             const fileName = file.name;
             
-            // Display the file name in the container
-            uploadedFileContainer.innerHTML = `Uploaded File: ${fileName}`;
+            // Display the file name in the file-upload-text span
+            uploadedFileContainer.innerText = fileName;
         } else {
             // If no file is selected, clear the container
-            uploadedFileContainer.innerHTML = '';
+            uploadedFileContainer.innerText = 'Drag and drop files here or click to select';
         }
-    }   
+    }
+
+    // Add event listener for drag and drop functionality
+    var fileUpload = document.getElementById("fileUpload");
+    fileUpload.addEventListener('click', function() {
+        // Trigger click event on the input element
+        fileInput.click();
+    });
+
+    fileUpload.addEventListener('dragover', function(event) {
+        event.preventDefault();
+        fileUpload.classList.add('drag-over');
+    });
+
+    fileUpload.addEventListener('dragleave', function() {
+        fileUpload.classList.remove('drag-over');
+    });
+
+    fileUpload.addEventListener('drop', function(event) {
+        event.preventDefault();
+        fileUpload.classList.remove('drag-over');
+        
+        const fileList = event.dataTransfer.files;
+        // Display the first file name in the file-upload-text span
+        if (fileList.length > 0) {
+            const fileName = fileList[0].name;
+            document.querySelector('.file-upload-text').innerText = fileName;
+        }
+    });
 });
