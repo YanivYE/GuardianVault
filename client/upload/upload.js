@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (fileName !== '' && fileStatus && users && files) {
             // All inputs are valid, proceed with form submission
             console.log("Form submission successful!");
-            uploadForm.submit(); // Submit the form
+            uploadFile(fileName, users, files);
         } else {
             // Display error message
             errorMessage.style.display = "block"; // Show error message
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Dummy list of users
-    var users = ["User1", "User2", "User3", "User4", "User5"];
+    var users = getUsersListFromServer();
 
     // Dynamically generate checkboxes for each user
     var userCheckboxContainer = document.getElementById("userCheckboxContainer");
@@ -132,5 +132,15 @@ document.addEventListener('DOMContentLoaded', function () {
         checkboxes.forEach(function(checkbox) {
             checkbox.checked = false;
         });
+    }
+
+    function uploadFile(fileName, users, files)
+    {
+
+    }
+
+    function getUsersListFromServer()
+    {
+        
     }
 });

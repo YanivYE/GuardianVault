@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <link rel="stylesheet" type="text/css" href="css/fileSelect.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="icon" type="image/png" href="../menu/images/upload.png"/>
     <script src="upload.js"></script>
 </head>
 <body>
@@ -17,7 +18,7 @@
             </span>
             <div class="upload-container">
                 
-                <form id="uploadForm" class="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+                <form id="uploadForm" class="upload-form" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="fileName">File Name(without extension):</label>
                         <input type="text" id="fileName" name="fileName" placeholder="Enter file name">
@@ -35,7 +36,6 @@
                     <div class="form-group" id="userSelectGroup" style="display: none; margin-top: 10px;">
                         <label for="userSelect">Select Users:</label>
                         <div id="userCheckboxContainer">
-                            <!-- Checkboxes will be dynamically added using JavaScript -->
                         </div>
                     </div>
 
