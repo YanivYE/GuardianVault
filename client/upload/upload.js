@@ -1,29 +1,51 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var publicRadio = document.getElementById("public");
-    var shareWithGroup = document.getElementById("shareWithGroup");
+    var publicButton = document.getElementById("publicButton");
+    var privateButton = document.getElementById("privateButton");
+    var userSelectGroup = document.getElementById("userSelectGroup");
 
-    // Hide the shareWith field initially
-    shareWithGroup.style.display = "none";
+    // Hide the userSelectGroup field initially
+    userSelectGroup.style.display = "none";
 
-    // Add event listener to publicRadio
-    publicRadio.addEventListener("change", function() {
-        if (this.checked) {
-            if (this.value === "public") {
-                // Show the shareWith field if public option is selected
-                shareWithGroup.style.display = "block";
-            } else {
-                // Hide the shareWith field if private option is selected
-                shareWithGroup.style.display = "none";
-            }
-        }
+    // Add event listener to public button
+    publicButton.addEventListener("click", function() {
+        // Show the userSelectGroup field when the public button is clicked
+        userSelectGroup.style.display = "block";
+        // Add "active" class to public button and remove it from private button
+        publicButton.classList.add("active");
+        privateButton.classList.remove("active");
     });
 
-    // Additional event listener for the "Private" radio button to hide the share-with field
-    var privateRadio = document.getElementById("private");
-    privateRadio.addEventListener("change", function() {
-        if (this.checked) {
-            shareWithGroup.style.display = "none";
-        }
+    // Add event listener to private button
+    privateButton.addEventListener("click", function() {
+        // Hide the userSelectGroup field when the private button is clicked
+        userSelectGroup.style.display = "none";
+        // Add "active" class to private button and remove it from public button
+        privateButton.classList.add("active");
+        publicButton.classList.remove("active");
+    });
+
+    // Dummy list of users
+    var users = ["User1", "User2", "User3", "User4", "User5"];
+
+    // Dynamically generate checkboxes for each user
+    var userCheckboxContainer = document.getElementById("userCheckboxContainer");
+    users.forEach(function(user) {
+        var checkboxDiv = document.createElement("div");
+        checkboxDiv.classList.add("checkbox-item");
+
+        var checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.name = "users";
+        checkbox.value = user;
+        checkbox.id = user;
+        
+        var label = document.createElement("label");
+        label.htmlFor = user;
+        label.appendChild(document.createTextNode(user));
+
+        checkboxDiv.appendChild(checkbox);
+        checkboxDiv.appendChild(label);
+        userCheckboxContainer.appendChild(checkboxDiv);
     });
 
     // Add event listener for file selection
@@ -43,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
             uploadedFileContainer.innerText = fileName;
         } else {
             // If no file is selected, clear the container
-            uploadedFileContainer.innerText = 'Drag and drop files here or click to select';
+            uploadedFileContainer.innerText = 'Drag or select files';
         }
     }
 

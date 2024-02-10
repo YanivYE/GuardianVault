@@ -13,27 +13,26 @@
     <div class="container-login100" style="background-image: url('images/bg-01.jpg');">
 		<div class="wrap-login100 p-t-30 p-b-50">
             <span class="upload100-form-title p-b-41">
-                Upload FIle
+                Upload File
             </span>
             <div class="upload-container">
                 
                 <form id="uploadForm" class="upload-form" action="/upload" method="post" enctype="multipart/form-data">
                     <div class="form-group">
-                        <label for="fileName">File Name:</label>
+                        <label for="fileName">File Name(without extension):</label>
                         <input type="text" id="fileName" name="fileName" placeholder="Enter file name">
                     </div>
 
-                    <div class="form-group">
-                        <label for="fileStatus">File Status:</label><br>
-                        <input type="radio" id="private" name="fileStatus" value="private">
-                        <label for="private">Private</label><br>
-                        <input type="radio" id="public" name="fileStatus" value="public">
-                        <label for="public">Public</label><br>
+                    <div class="file-status-buttons">
+                        <button type="button" id="publicButton" class="file-status-button">Public</button>
+                        <button type="button" id="privateButton" class="file-status-button">Private</button>
                     </div>
 
-                    <div class="form-group" id="shareWithGroup">
-                        <label for="shareWith">Share With:</label>
-                        <input type="search" id="shareWith" name="shareWith" placeholder="Search or enter email">
+                    <div class="form-group" id="userSelectGroup" style="display: none; margin-top: 10px;">
+                        <label for="userSelect">Select Users:</label>
+                        <div id="userCheckboxContainer">
+                            <!-- Checkboxes will be dynamically added using JavaScript -->
+                        </div>
                     </div>
 
                     <div class="file-upload" id="fileUpload">

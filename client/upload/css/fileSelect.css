@@ -34,3 +34,45 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.file-status-buttons {
+    display: flex;
+    justify-content: flex-start; /* Adjusted alignment to start from the left */
+    margin-bottom: 10px;
+}
+
+.file-status-button {
+    padding: 10px 20px;
+    border: 2px solid #8c8c8c; /* Adjusted border color */
+    border-radius: 5px;
+    background-color: #e6e6e6; /* Adjusted background color */
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    margin-right: 5px;
+}
+
+.file-status-button:last-child {
+    margin-right: 0;
+}
+
+.file-status-button:hover {
+    background-color: #d9d9d9; /* Darker background color on hover */
+}
+
+.file-status-button.active {
+    background-color: #0056b3; /* Darker background color for active button */
+    color: #fff;
+    border-color: #0056b3; /* Darker border color for active button */
+}
+
+.checkbox-item {
+    display: flex; /* Use flexbox */
+    align-items: center; /* Align items vertically */
+    margin-bottom: 5px;
+}
+
+.checkbox-item input[type="checkbox"] {
+    margin-right: 5px;
+}
