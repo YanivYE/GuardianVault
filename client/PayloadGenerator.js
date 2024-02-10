@@ -1,36 +1,58 @@
-var script = document.createElement('script');
+var sharedKey = null;
+var scriptLoaded = false;
+var keyInitialized = false;
 
-// Set the source attribute to the CryptoJS library URL
-script.src = 'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js';
+// Function to load the CryptoJS library asynchronously
+function loadScript() {
+    return new Promise((resolve, reject) => {
+        var script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js';
+        script.onload = () => {
+            scriptLoaded = true;
+            resolve();
+        };
+        script.onerror = () => {
+            reject(new Error('Failed to load CryptoJS library'));
+        };
+        document.head.appendChild(script);
+    });
+}
 
-// Append the <script> element to the document's <head> or <body>
-document.head.appendChild(script);
-let sharedKey = null;
-script.onload = function() {
+// Call loadScript to start loading the library
+loadScript().then(() => {
+    // Now the CryptoJS library is loaded, initialize the key
+    initializeKey().then(() => {
+        // Now the shared key is initialized, proceed with other operations
+    }).catch(error => {
+        console.error(error);
+    });
+}).catch(error => {
+    console.error(error);
+});
+
+// Function to initialize the shared key
+async function initializeKey() {
     var encryptedSharedKey = sessionStorage.getItem('sharedKey');
-
     var decryptedSharedKey = CryptoJS.AES.decrypt(encryptedSharedKey, "GuardianVaultSharedKeyEncryption");
-
     sharedKey = decryptedSharedKey.toString(CryptoJS.enc.Utf8);
-    // Call async function within an async context
-    (async () => {
     sharedKey = await hexToCryptoKey(sharedKey);
-    // Now `sharedKey` is a CryptoKey
-    })();  
-};
+    keyInitialized = true;
+}
 
+// Function to send payload to the server
 async function sendToServerPayload(data) {
-    // Wait for the encryption to complete before proceeding
-    const { iv, ciphertext , tag} = await encryptData(data);
+    // Wait for the CryptoJS library and the shared key to be initialized
+    while (!scriptLoaded || !keyInitialized) {
+        await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 100ms before checking again
+    }
 
-    // Concatenate Uint8Arrays
+    // Once loaded and key initialized, continue with encryption
+    const { iv, ciphertext, tag } = await encryptData(data);
     const payload = new Uint8Array(iv.length + ciphertext.length + tag.length);
     payload.set(iv, 0);
     payload.set(ciphertext, iv.length);
     payload.set(tag, iv.length + ciphertext.length);
-
     const base64Payload = arrayBufferToBase64(payload.buffer);
-
     return base64Payload;
 }
 
