@@ -1,4 +1,10 @@
-document.addEventListener('DOMContentLoaded', function () {
+const socket = io({
+    query: {
+      newUser: false
+    }
+  });
+
+document.addEventListener('DOMContentLoaded', async function () {
     var publicButton = document.getElementById("publicButton");
     var privateButton = document.getElementById("privateButton");
     var userSelectGroup = document.getElementById("userSelectGroup");
@@ -54,7 +60,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Dummy list of users
-    var users = getUsersListFromServer();
+    var users = await getUsersListFromServer();
+
+    console.log(users);
 
     // Dynamically generate checkboxes for each user
     var userCheckboxContainer = document.getElementById("userCheckboxContainer");
@@ -139,8 +147,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
-    function getUsersListFromServer()
-    {
-        
+    async function getUsersListFromServer() {
+        try {
+            const userListPayload = await sendToServerPayload('UsersList$');
+            socket.emit('ClientMessage', userListPayload); // Not sure why you're emitting here, but you can handle it based on your application's logic
+    
+            return new Promise((resolve, reject) => {
+                socket.on('usersListResult', (usersList) => {
+                    resolve(usersList);
+                });
+    
+                // Optionally, handle any errors that might occur while receiving the users list
+                socket.on('error', (error) => {
+                    reject(error);
+                });
+            }).then((usersList) => {
+                return usersList; // Return the usersList after resolving the promise
+            });
+        } catch (error) {
+            console.error("Error getting users list from server:", error);
+            // Handle the error as needed
+        }
     }
 });

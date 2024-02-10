@@ -1,3 +1,9 @@
+const socket = io({
+    query: {
+      newUser: false
+    }
+  });
+
 // Sample file data
 var files = [
     { name: "File 1", sharedWith: ["User 1", "User 2"] },

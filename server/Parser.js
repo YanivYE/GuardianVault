@@ -23,6 +23,13 @@ class Parser{
             case "SignUp":
                 this.parseSignupMessage(additionalData);
                 break;
+
+
+
+
+            case "UsersList":
+                this.getUsersList();
+                break;
         }
     }
 
@@ -49,6 +56,12 @@ class Parser{
         const operationResult = await this.DBHandler.validateUserSignup(username, email, password);
 
         this.socket.emit('signupResult', operationResult);
+    }
+
+    async getUsersList()
+    {
+        const usersList = await this.DBHandler.getUsersList();
+        this.socket.emit('usersListResult', usersList);
     }
 }
 

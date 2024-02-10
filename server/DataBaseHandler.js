@@ -75,6 +75,20 @@ class DataBaseHandler{
         return "Success";
     }
 
+    async getUsersList()
+    {
+        try {
+            // Retrieve all users from the Users collection
+            const users = await User.find({}, 'username');
+            // Extract usernames from the retrieved users
+            const usersList = users.map(user => user.username);
+            return usersList;
+        } catch (error) {
+            console.error("Error getting users list:", error);
+            return [];
+        }
+    }
+
 
     async deleteAllUsers() {
         try {
