@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var publicButton = document.getElementById("publicButton");
     var privateButton = document.getElementById("privateButton");
     var userSelectGroup = document.getElementById("userSelectGroup");
+    var uploadForm = document.getElementById("uploadForm");
+    var errorMessage = document.getElementById("error-message"); // Error message element
 
     // Hide the userSelectGroup field initially
     userSelectGroup.style.display = "none";
@@ -22,6 +24,33 @@ document.addEventListener('DOMContentLoaded', function () {
         // Add "active" class to private button and remove it from public button
         privateButton.classList.add("active");
         publicButton.classList.remove("active");
+        // Clear user selection if "Private" is chosen
+        clearUserSelection();
+    });
+
+    // Add event listener for form submission
+    uploadForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+        
+        // Validate inputs
+        var fileName = document.getElementById("fileName").value.trim();
+        var fileStatus = publicButton.classList.contains("active") || privateButton.classList.contains("active");
+        var users = true; // Assume users are selected by default
+        if (publicButton.classList.contains("active")) {
+            users = document.querySelectorAll('input[name="users"]:checked').length > 0;
+        }
+        var files = document.getElementById('fileInput').files.length > 0;
+
+        // Check if all inputs are valid
+        if (fileName !== '' && fileStatus && users && files) {
+            // All inputs are valid, proceed with form submission
+            console.log("Form submission successful!");
+            uploadForm.submit(); // Submit the form
+        } else {
+            // Display error message
+            errorMessage.style.display = "block"; // Show error message
+            errorMessage.innerText = "Please fill out all required fields."; // Set error message text
+        }
     });
 
     // Dummy list of users
@@ -96,4 +125,12 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelector('.file-upload-text').innerText = fileName;
         }
     });
+
+    // Function to clear user selection
+    function clearUserSelection() {
+        var checkboxes = document.querySelectorAll('input[name="users"]');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+    }
 });

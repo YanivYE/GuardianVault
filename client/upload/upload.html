@@ -23,6 +23,10 @@
                         <input type="text" id="fileName" name="fileName" placeholder="Enter file name">
                     </div>
 
+                    <div class="form-group">
+                        <label for="fileStatus">File Status:</label>
+                    </div>
+
                     <div class="file-status-buttons">
                         <button type="button" id="publicButton" class="file-status-button">Public</button>
                         <button type="button" id="privateButton" class="file-status-button">Private</button>
@@ -44,6 +48,8 @@
                     <div class="form-group">
                         <button type="submit" class="upload-btn">Upload</button>
                     </div>
+
+                    <div id="error-message" style="color: red; display: none;"></div> 
                 </form>
             </div>
     </div>
