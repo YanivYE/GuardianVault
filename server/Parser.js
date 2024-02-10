@@ -24,7 +24,9 @@ class Parser{
             case "SignUp":
                 this.parseSignupMessage(additionalData);
                 break;
-
+            case "UploadFile":
+                this.parseUploadFileMessage(additionalData);
+                break;
 
 
 
@@ -63,6 +65,15 @@ class Parser{
         }
 
         this.socket.emit('signupResult', operationResult);
+    }
+
+    async parseUploadFileMessage(uploadFileMessage)
+    {
+        const [fileName, fileContent, users] = uploadFileMessage.split('$');
+
+        console.log(fileName, fileContent, users);
+
+        // TODO
     }
 
     async getUsersList()

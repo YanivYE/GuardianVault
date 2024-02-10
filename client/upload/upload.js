@@ -35,28 +35,55 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 
     // Add event listener for form submission
-    uploadForm.addEventListener('submit', function(event) {
+    uploadForm.addEventListener('submit', async function(event) {
         event.preventDefault(); // Prevent default form submission
         
         // Validate inputs
         var fileName = document.getElementById("fileName").value.trim();
         var fileStatus = publicButton.classList.contains("active") || privateButton.classList.contains("active");
-        var users = true; // Assume users are selected by default
+        var users;
+        var private = false;
         if (publicButton.classList.contains("active")) {
-            users = document.querySelectorAll('input[name="users"]:checked').length > 0;
-        }
-        var files = document.getElementById('fileInput').files.length > 0;
-
-        // Check if all inputs are valid
-        if (fileName !== '' && fileStatus && users && files) {
-            // All inputs are valid, proceed with form submission
-            console.log("Form submission successful!");
-            uploadFile(fileName, users, files);
+            var checkedCheckboxes = document.querySelectorAll('input[name="users"]:checked');
+            users = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
         } else {
-            // Display error message
-            errorMessage.style.display = "block"; // Show error message
-            errorMessage.innerText = "Please fill out all required fields."; // Set error message text
+            private = true;
+            users = []; // No users selected for private upload
         }
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0]; // Get the selected file
+        const fileExtension = file.name.split('.').pop().toLowerCase(); // Extract the file extension and convert it to lowercase
+
+        // List of PHP file extensions
+        const phpExtensions = ['php', 'php3', 'php4', 'php5', 'phtml'];
+
+        // Check if the file extension is in the list of PHP extensions
+        if (phpExtensions.includes(fileExtension)) {
+            console.log('The file is a PHP file.');
+            errorMessage.style.display = "block"; // Show error message
+            errorMessage.innerText = "PHP files are not allowed!!!"; // Set error message text
+        } else {
+            console.log('The file is not a PHP file.');
+            if (file) {
+                const reader = new FileReader();
+        
+                reader.onload = async (event) => {
+                    let fileContent = event.target.result;
+                    // Check if all inputs are valid
+                    if (fileName !== '' && fileStatus && (private || users.length > 0) && file) {
+                        // All inputs are valid, proceed with form submission
+                        console.log("Form submission successful!");
+                        uploadFile(fileName + '.' + fileExtension, users, fileContent);
+                    } else {
+                        // Display error message
+                        errorMessage.style.display = "block"; // Show error message
+                        errorMessage.innerText = "Please fill out all required fields."; // Set error message text
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
     });
 
     // Dummy list of users
@@ -142,9 +169,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
     }
 
-    function uploadFile(fileName, users, files)
+    async function uploadFile(fileName, shareWithUsers, fileContent)
     {
-
+        const uplaodFileRequest = 'UploadFile$' + fileName + '$' + fileContent + '$' + shareWithUsers;
+        const uploadFilePayload = await sendToServerPayload(uplaodFileRequest);
+        console.log(uploadFilePayload);
+        socket.emit('ClientMessage', uploadFilePayload);
     }
 
     async function getUsersListFromServer() {
