@@ -88,6 +88,8 @@ class Parser{
 
         this.DBHandler.setUsersPermissions(users, fileName, username);
 
+        // TODO: save to drive in the users spesified directory!
+        
         // this.FileHandler.saveToDrive(fileName, fileContent);
     }
 
