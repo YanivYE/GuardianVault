@@ -1,4 +1,5 @@
 const DBHandler = require("./DataBaseHandler");
+const FileHandler = require("./FileHandler");
 const sessionStorage = require('express-session');
 
 class Parser{
@@ -26,6 +27,9 @@ class Parser{
                 break;
             case "UploadFile":
                 this.parseUploadFileMessage(additionalData);
+                break;
+            case "FileName":
+                this.parseFileNameValidationMessage(additionalData);
                 break;
 
 
@@ -73,13 +77,26 @@ class Parser{
 
         console.log(fileName, fileContent, users);
 
-        // TODO
+        // const fileHandler = new FileHandler.FileHandler(userPassword);
+
+        // fileHandler.saveToDrive(fileName, fileContent);
+    }
+
+    async parseFileNameValidationMessage(fileNameMessage)
+    {
+        const fileName = fileNameMessage;
+
+        const {username} = this.getConnectedUserDetails();
+
+        const operationResult = await this.DBHandler.validateFileName(fileName, username);
+
+        this.socket.emit('FileNameValidationResult', operationResult);
     }
 
     async getUsersList()
     {
         const usersList = await this.DBHandler.getUsersList();
-        const {username, password} = this.getConnectedUserDetails();
+        const {username} = this.getConnectedUserDetails();
         usersList.splice(usersList.indexOf(username), 1);
         this.socket.emit('usersListResult', usersList);
     }

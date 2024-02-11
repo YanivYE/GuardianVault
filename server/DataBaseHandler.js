@@ -10,6 +10,14 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('Users', userSchema);
 
+const fileSchema = new mongoose.Schema({
+    name: String,
+    owner: {type: mongoose.Schema.Types.ObjectId, ref: 'Users'}
+});
+
+const File = mongoose.model('Files', fileSchema);
+
+
 class DataBaseHandler{
     constructor()
     {
@@ -74,6 +82,36 @@ class DataBaseHandler{
         // If both username and email are available, return true to indicate successful validation
         return "Success";
     }
+
+    async validateFileName(fileName, connectedUserName)
+    {
+        const user = await User.findOne({ username: connectedUserName });
+
+        // Find a file with the given name and owned by the user's ObjectId
+        const file = await File.findOne({
+            name: fileName,
+            owner: user._id // Pass the ObjectId of the user
+        });
+
+        // If a file is found, it means the fileName is already taken by the connected user
+        if (file) {
+            return "Fail"; // fileName is not valid
+        } else {
+            return "Success"; // fileName is valid
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     async getUsersList()
     {

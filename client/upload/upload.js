@@ -171,10 +171,33 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     async function uploadFile(fileName, shareWithUsers, fileContent)
     {
-        const uplaodFileRequest = 'UploadFile$' + fileName + '$' + fileContent + '$' + shareWithUsers;
-        const uploadFilePayload = await sendToServerPayload(uplaodFileRequest);
-        console.log(uploadFilePayload);
-        socket.emit('ClientMessage', uploadFilePayload);
+        const validateFileNameRequest = 'FileName$' + fileName;
+        const validateFileNamePayload = await sendToServerPayload(validateFileNameRequest);
+        socket.emit('ClientMessage', validateFileNamePayload);
+        socket.on('FileNameValidationResult', async (fileNameResult) => {
+            if(fileNameResult === 'Success')
+            {
+                console.log('no file with this name was found');
+                const uplaodFileRequest = 'UploadFile$' + fileName + '$' + fileContent + '$' + shareWithUsers;
+                const uploadFilePayload = await sendToServerPayload(uplaodFileRequest);
+                socket.emit('ClientMessage', uploadFilePayload);
+                socket.on('FileUploadResult', async (fileUplaodResult) => {
+                    if(fileUplaodResult === 'Success')
+                    {
+                        // ALERT UPLOAD WAS SUCCE
+                    }
+                    else{
+                        // UPLOAD WAS UNSUCCESFUL
+                    }
+                });
+            }
+            else{
+                // Display error message
+                errorMessage.style.display = "block"; // Show error message
+                errorMessage.innerText = "File name is already taken"; // Set error message text
+            }
+
+        });
     }
 
     async function getUsersListFromServer() {

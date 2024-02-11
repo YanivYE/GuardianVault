@@ -40,15 +40,6 @@ class SocketHandler {
             const decryptedData = sharedCryptography.decryptData(iv, encryptedData, authTag);
 
             parser.parseClientMessage(decryptedData);
-
-            // const [userPassword, fileName, fileContent] = decryptedData.split('$');
-
-            // console.log('user password is: ', userPassword, ' and got file: ' +  fileName + ' from client: ', fileContent, "\n\n");
-
-            // const fileHandler = new FileHandler.FileHandler(userPassword);
-
-            // fileHandler.saveToDrive(fileName, fileContent);
-
         });
     }
 }
