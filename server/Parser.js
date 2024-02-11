@@ -7,6 +7,7 @@ class Parser{
     {
         this.socket = socket;
         this.DBHandler = new DBHandler.DataBaseHandler();
+        this.FileHandler = null;
     }
 
     parseClientMessage(message)
@@ -51,6 +52,7 @@ class Parser{
         {
             operationResult = "Success";
             sessionStorage.Session = username + '#' + password;
+            this.FileHandler = new FileHandler.FileHandler(password);
         }
         this.socket.emit('loginResult', operationResult);
     }
@@ -66,6 +68,7 @@ class Parser{
         if(operationResult === "Success")
         {
             sessionStorage.Session = username + '#' + password;
+            this.FileHandler = new FileHandler.FileHandler(password);
         }
 
         this.socket.emit('signupResult', operationResult);
@@ -73,13 +76,19 @@ class Parser{
 
     async parseUploadFileMessage(uploadFileMessage)
     {
-        const [fileName, fileContent, users] = uploadFileMessage.split('$');
+        const [fileName, fileContent, usersString] = uploadFileMessage.split('$');
 
-        console.log(fileName, fileContent, users);
+        const {username} = this.getConnectedUserDetails();
 
-        // const fileHandler = new FileHandler.FileHandler(userPassword);
+        console.log(fileName, fileContent, usersString);
 
-        // fileHandler.saveToDrive(fileName, fileContent);
+        const users = usersString.split(',');
+
+        console.log(users);
+
+        this.DBHandler.setUsersPermissions(users, fileName, username);
+
+        // this.FileHandler.saveToDrive(fileName, fileContent);
     }
 
     async parseFileNameValidationMessage(fileNameMessage)

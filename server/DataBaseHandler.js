@@ -17,6 +17,12 @@ const fileSchema = new mongoose.Schema({
 
 const File = mongoose.model('Files', fileSchema);
 
+const permissionSchema = mongoose.Schema({
+    file: {type: mongoose.Schema.Types.ObjectId, ref: 'Files'},
+    sharedUserNames: Array
+});
+
+const Permission = mongoose.model('Permissions', permissionSchema);
 
 class DataBaseHandler{
     constructor()
@@ -97,7 +103,39 @@ class DataBaseHandler{
         if (file) {
             return "Fail"; // fileName is not valid
         } else {
-            return "Success"; // fileName is valid
+            await File.create({
+                name: fileName,
+                owner: user._id
+            });
+            return "Success"; 
+        }
+    }
+
+    async setUsersPermissions(sharedUsers, fileName, connectedUserName) {
+        try {
+            const user = await User.findOne({ username: connectedUserName });
+    
+            if (!user) {
+                console.error('User not found.');
+                return;
+            }
+    
+            const file = await File.findOne({ name: fileName, owner: user._id });
+    
+            if (!file) {
+                console.error('File not found.');
+                return;
+            }
+    
+            // Create a new permission entry directly using create()
+            await Permission.create({
+                file: file._id,
+                sharedUserNames: sharedUsers
+            });
+    
+            console.log('Permission set successfully.');
+        } catch (error) {
+            console.error('Error occurred while setting users permissions:', error);
         }
     }
 

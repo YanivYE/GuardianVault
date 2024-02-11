@@ -41,22 +41,22 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Validate inputs
         var fileName = document.getElementById("fileName").value.trim();
         var fileStatus = publicButton.classList.contains("active") || privateButton.classList.contains("active");
-        var users;
-        var private = false;
+        var users = []; // Initialize users as an empty array
+        var privateUpload = true;
+    
         if (publicButton.classList.contains("active")) {
+            privateUpload = false;
             var checkedCheckboxes = document.querySelectorAll('input[name="users"]:checked');
             users = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
-        } else {
-            private = true;
-            users = []; // No users selected for private upload
         }
+    
         var fileInput = document.getElementById('fileInput');
         var file = fileInput.files[0]; // Get the selected file
         const fileExtension = file.name.split('.').pop().toLowerCase(); // Extract the file extension and convert it to lowercase
-
+    
         // List of PHP file extensions
         const phpExtensions = ['php', 'php3', 'php4', 'php5', 'phtml'];
-
+    
         // Check if the file extension is in the list of PHP extensions
         if (phpExtensions.includes(fileExtension)) {
             console.log('The file is a PHP file.');
@@ -70,9 +70,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                 reader.onload = async (event) => {
                     let fileContent = event.target.result;
                     // Check if all inputs are valid
-                    if (fileName !== '' && fileStatus && (private || users.length > 0) && file) {
+                    if (fileName !== '' && fileStatus && (privateUpload || users.length > 0) && file) {
                         // All inputs are valid, proceed with form submission
-                        console.log("Form submission successful!");
                         uploadFile(fileName + '.' + fileExtension, users, fileContent);
                     } else {
                         // Display error message
@@ -83,13 +82,11 @@ document.addEventListener('DOMContentLoaded', async function () {
                 reader.readAsDataURL(file);
             }
         }
-        
     });
+    
 
     // Dummy list of users
     var users = await getUsersListFromServer();
-
-    console.log(users);
 
     // Dynamically generate checkboxes for each user
     var userCheckboxContainer = document.getElementById("userCheckboxContainer");
@@ -181,15 +178,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const uplaodFileRequest = 'UploadFile$' + fileName + '$' + fileContent + '$' + shareWithUsers;
                 const uploadFilePayload = await sendToServerPayload(uplaodFileRequest);
                 socket.emit('ClientMessage', uploadFilePayload);
-                socket.on('FileUploadResult', async (fileUplaodResult) => {
-                    if(fileUplaodResult === 'Success')
-                    {
-                        // ALERT UPLOAD WAS SUCCE
-                    }
-                    else{
-                        // UPLOAD WAS UNSUCCESFUL
-                    }
-                });
+                // ALERT SUCCESSFUL UPLOAD
             }
             else{
                 // Display error message
