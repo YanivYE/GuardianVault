@@ -24,15 +24,16 @@ class FileHandler
 
         this.atRestCrypto = new EncryptionAtRest.EncryptionAtRest(userPassword);
         this.compressor = new Compressor.Compressor();
+        this.dirName = username;
 
         // create folder
-        this.createFolder(username);
+        this.createFolder();
     }
 
-    async createFolder(username) {
+    async createFolder() {
       try {
           // Check if folder already exists
-          const existingFolder = await this.findFolderIdByUsername(username);
+          const existingFolder = await this.findFolderIdByUsername();
           
           if (existingFolder) {
               console.log('Folder already exists:', existingFolder);
@@ -42,7 +43,7 @@ class FileHandler
           // If folder doesn't exist, create it
           const response = await this.drive.files.create({
               requestBody: {
-                  name: username,
+                  name: this.dirName,
                   mimeType: 'application/vnd.google-apps.folder',
               },
           });
@@ -54,7 +55,7 @@ class FileHandler
   }
 
   
-    async uploadFile(filePath, username) {
+    async uploadFile(filePath) {
       try {
           // Get the file name and extension
           const fileName = path.basename(filePath);
@@ -71,10 +72,10 @@ class FileHandler
           }[fileExtension.toLowerCase()] || 'application/octet-stream'; // Default to binary data if not recognized
   
           // Find the folder ID of the specified username
-          const folderId = await this.findFolderIdByUsername(username);
+          const folderId = await this.findFolderIdByUsername();
   
           if (!folderId) {
-              throw new Error(`Folder not found for username: ${username}`);
+              throw new Error(`Folder not found for username: ${this.dirName}`);
           }
   
           const response = await this.drive.files.create({
@@ -95,10 +96,10 @@ class FileHandler
       }
     }
   
-    async findFolderIdByUsername(username) {
+    async findFolderIdByUsername() {
       try {
           const response = await this.drive.files.list({
-              q: `name='${username}' and mimeType='application/vnd.google-apps.folder'`,
+              q: `name='${this.dirName}' and mimeType='application/vnd.google-apps.folder'`,
           });
   
           if (response.data.files.length > 0) {
@@ -124,7 +125,7 @@ class FileHandler
       }
     }
 
-    async saveToDrive(fileName, fileData, username)
+    async saveToDrive(fileName, fileData)
     {
       const encryptedFileData = this.atRestCrypto.encryptFile(fileData);
 
@@ -137,7 +138,7 @@ class FileHandler
 
       // GOOGLE DRIVE 
       
-      await this.uploadFile(comprFilePath, username);
+      await this.uploadFile(comprFilePath);
 
       const fileIds = await this.showFiles();
       console.log('File IDs in Google Drive:', fileIds);
