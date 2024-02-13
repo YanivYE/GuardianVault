@@ -175,6 +175,33 @@ class DataBaseHandler{
             console.error("Error deleting users:", error);
         }
     }
+
+    async deleteAllFiles() {
+        try {
+            // Delete all file documents from the Files collection
+            const deleteResult = await File.deleteMany({});
+            console.log(`${deleteResult.deletedCount} files deleted`);
+        } catch (error) {
+            console.error("Error deleting files:", error);
+        }
+    }
+    
+    async deleteAllPermissions() {
+        try {
+            // Delete all permission documents from the Permissions collection
+            const deleteResult = await Permission.deleteMany({});
+            console.log(`${deleteResult.deletedCount} permissions deleted`);
+        } catch (error) {
+            console.error("Error deleting permissions:", error);
+        }
+    }
+
+    async initDataBase()
+    {
+        this.deleteAllUsers();
+        this.deleteAllFiles();
+        this.deleteAllPermissions();
+    }   
 }
 
 module.exports = {DataBaseHandler};
