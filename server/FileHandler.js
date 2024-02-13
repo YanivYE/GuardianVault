@@ -55,46 +55,48 @@ class FileHandler
   }
 
   
-    async uploadFile(filePath) {
-      try {
-          // Get the file name and extension
-          const fileName = path.basename(filePath);
-          const fileExtension = path.extname(filePath).substr(1); // Remove the dot
-  
-          // Determine the MIME type based on the file extension
-          const mimeType = {
-              jpg: 'image/jpeg',
-              jpeg: 'image/jpeg',
-              png: 'image/png',
-              pdf: 'application/pdf',
-              txt: 'text/plain',
-              // Add more extensions and corresponding MIME types as needed
-          }[fileExtension.toLowerCase()] || 'application/octet-stream'; // Default to binary data if not recognized
-  
-          // Find the folder ID of the specified username
-          const folderId = await this.findFolderIdByUsername();
-  
-          if (!folderId) {
-              throw new Error(`Folder not found for username: ${this.dirName}`);
-          }
-  
-          const response = await this.drive.files.create({
-              requestBody: {
-                  name: fileName,
-                  mimeType: mimeType,
-                  parents: [folderId], // Set the parent folder ID
-              },
-              media: {
-                  mimeType: mimeType,
-                  body: fs.createReadStream(filePath),
-              },
-          });
-  
-          console.log('File uploaded:', response.data);
-      } catch (error) {
-          console.error('Error uploading file:', error.message);
-      }
+  async uploadFile(filePath) {
+    try {
+        // Get the file name and extension
+        const fileName = path.basename(filePath);
+        const fileExtension = path.extname(filePath).substr(1); // Remove the dot
+
+        // Determine the MIME type based on the file extension
+        const mimeType = {
+            jpg: 'image/jpeg',
+            jpeg: 'image/jpeg',
+            png: 'image/png',
+            pdf: 'application/pdf',
+            txt: 'text/plain',
+            // Add more extensions and corresponding MIME types as needed
+        }[fileExtension.toLowerCase()] || 'application/octet-stream'; // Default to binary data if not recognized
+
+        // Find the folder ID of the specified username
+        const folderId = await this.findFolderIdByUsername();
+
+        if (!folderId) {
+            throw new Error(`Folder not found for username: ${this.dirName}`);
+        }
+
+        // Ensure that the file is uploaded to the directory named after the username
+        const response = await this.drive.files.create({
+            requestBody: {
+                name: fileName,
+                mimeType: mimeType,
+                parents: [folderId], // Set the parent folder ID
+            },
+            media: {
+                mimeType: mimeType,
+                body: fs.createReadStream(filePath),
+            },
+        });
+
+        console.log('File uploaded:', response.data);
+    } catch (error) {
+        console.error('Error uploading file:', error.message);
     }
+}
+
   
     async findFolderIdByUsername() {
       try {
@@ -125,7 +127,7 @@ class FileHandler
       }
     }
 
-    async saveToDrive(fileName, fileData)
+    async handleFileUpload(fileName, fileData)
     {
       const encryptedFileData = this.atRestCrypto.encryptFile(fileData);
 

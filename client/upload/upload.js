@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     var privateButton = document.getElementById("privateButton");
     var userSelectGroup = document.getElementById("userSelectGroup");
     var uploadForm = document.getElementById("uploadForm");
-    var errorMessage = document.getElementById("error-message"); // Error message element
+    var message = document.getElementById("message"); // Error message element
 
     // Hide the userSelectGroup field initially
     userSelectGroup.style.display = "none";
@@ -60,8 +60,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Check if the file extension is in the list of PHP extensions
         if (phpExtensions.includes(fileExtension)) {
             console.log('The file is a PHP file.');
-            errorMessage.style.display = "block"; // Show error message
-            errorMessage.innerText = "PHP files are not allowed!!!"; // Set error message text
+            message.style.display = "block"; // Show error message
+            message.innerText = "PHP files are not allowed!!!"; // Set error message text
         } else {
             console.log('The file is not a PHP file.');
             if (file) {
@@ -75,8 +75,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                         uploadFile(fileName + '.' + fileExtension, users, fileContent);
                     } else {
                         // Display error message
-                        errorMessage.style.display = "block"; // Show error message
-                        errorMessage.innerText = "Please fill out all required fields."; // Set error message text
+                        message.style.display = "block"; // Show error message
+                        message.innerText = "Please fill out all required fields."; // Set error message text
                     }
                 };
                 reader.readAsDataURL(file);
@@ -179,13 +179,15 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const uploadFilePayload = await sendToServerPayload(uplaodFileRequest);
                 socket.emit('ClientMessage', uploadFilePayload);
                 // ALERT SUCCESSFUL UPLOAD
+                message.style.display = "block"; // Show error message
+                message.style.color = "green";
+                message.innerText = "File uploaded successfuly!"; // Set error message text
             }
             else{
                 // Display error message
-                errorMessage.style.display = "block"; // Show error message
-                errorMessage.innerText = "File name is already taken"; // Set error message text
+                message.style.display = "block"; // Show error message
+                message.innerText = "File name is already taken"; // Set error message text
             }
-
         });
     }
 

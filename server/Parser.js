@@ -83,7 +83,7 @@ class Parser{
 
         this.FileHandler = new FileHandler.FileHandler(username, password);
 
-        await this.FileHandler.saveToDrive(fileName, fileContent); // Ensure to await if saveToDrive is an asynchronous method
+        await this.FileHandler.handleFileUpload(fileName, fileContent); 
     }
 
     async parseFileNameValidationMessage(fileNameMessage)
