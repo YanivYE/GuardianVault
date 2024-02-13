@@ -1,3 +1,71 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 50px;
+}
+
+.left,
+.right {
+  width: 45%;
+}
+
+h2 {
+  font-size: 18px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+  cursor: pointer;
+}
+
+/* Add this CSS rule to limit the height and enable overflow scrolling for each side */
+.left,
+.right {
+    height: 300px; /* Adjust as needed */
+    overflow-y: auto;
+}
+
+/* Add this CSS rule to limit the height of the file lists */
+#yourFiles,
+#sharedWithYou {
+    max-height: 100%; /* Ensure that the lists don't exceed the height of their containers */
+}
+
+/* Add this CSS rule to make the file lists display as flex containers with vertical flow */
+#yourFiles,
+#sharedWithYou {
+    display: flex;
+    flex-direction: column;
+}
+
 
 
 
@@ -22,61 +90,61 @@
 [ RESTYLE TAG ]*/
 
 * {
-    margin: 0px; 
-    padding: 0px; 
-    box-sizing: border-box;
+	margin: 0px; 
+	padding: 0px; 
+	box-sizing: border-box;
 }
 
 body, html {
-    height: 100%;
-    font-family: Ubuntu-Regular, sans-serif;
+	height: 100%;
+	font-family: Ubuntu-Regular, sans-serif;
 }
 
 /*---------------------------------------------*/
 a {
-    font-family: Ubuntu-Regular;
-    font-size: 14px;
-    line-height: 1.7;
-    color: #ffffff;
-    margin: 0px;
-    transition: all 0.4s;
-    -webkit-transition: all 0.4s;
+	font-family: Ubuntu-Regular;
+	font-size: 14px;
+	line-height: 1.7;
+	color: #ffffff;
+	margin: 0px;
+	transition: all 0.4s;
+	-webkit-transition: all 0.4s;
   -o-transition: all 0.4s;
   -moz-transition: all 0.4s;
 }
 
 a:focus {
-    outline: none !important;
+	outline: none !important;
 }
 
 a:hover {
-    text-decoration: none;
+	text-decoration: none;
   color: #fff;
 }
 
 /*---------------------------------------------*/
 h1,h2,h3,h4,h5,h6 {
-    margin: 0px;
+	margin: 0px;
 }
 
 p {
-    font-family: Ubuntu-Regular;
-    font-size: 14px;
-    line-height: 1.7;
-    color: #ffffff;
-    margin: 0px;
+	font-family: Ubuntu-Regular;
+	font-size: 14px;
+	line-height: 1.7;
+	color: #ffffff;
+	margin: 0px;
 }
 
 ul, li {
-    margin: 0px;
-    list-style-type: none;
+	margin: 0px;
+	list-style-type: none;
 }
 
 
 /*---------------------------------------------*/
 input {
-    outline: none;
-    border: none;
+	outline: none;
+	border: none;
 }
 
 textarea {
@@ -115,17 +183,17 @@ label {
 
 /*---------------------------------------------*/
 button {
-    outline: none !important;
-    border: none;
-    background: transparent;
+	outline: none !important;
+	border: none;
+	background: transparent;
 }
 
 button:hover {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 iframe {
-    border: none !important;
+	border: none !important;
 }
 
 
@@ -179,7 +247,7 @@ iframe {
   background-color: rgba(0,0,0,0.65);
 }
 
-.wrap-upload100 {
+.wrap-login100 {
   width: 390px;
   border-radius: 10px;
   overflow: hidden;
@@ -680,264 +748,7 @@ iframe {
     visibility: visible;
     opacity: 1;
   }
-}/* Add your custom styles for the upload form here */
-.upload-container {
-  width: 100%;
-  margin: 50px auto;
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.608);
-  border-radius: 10px;
-  color: white;
-}
-
-.upload-form .form-group label {
-  font-size: 18px; /* Increase font size */
-}
-
-.upload-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group {
-  margin-bottom: 20px;
-  color: white;
-}
-
-label {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-input[type="text"],
-input[type="file"],
-select {
-  width: 100%;
-  padding: 10px;
-  font-size: 20px;
-
-  box-sizing: border-box;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.upload-btn {
-  width: 100%; /* Set the width to 100% to take up the full width of its container */
-  padding: 10px;
-  font-size: 20px;
-  background: #003366;
-  background: -webkit-linear-gradient(left, #001f3f, #003366, #005b96);
-  background: -o-linear-gradient(left, #001f3f, #003366, #005b96);
-  background: -moz-linear-gradient(left, #001f3f, #003366, #005b96);
-  background: linear-gradient(left, #001f3f, #003366, #005b96);
-
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  transition: all 0.4s;  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.upload-btn:hover {
-  background: #002245;
-  background: -webkit-linear-gradient(left, #001326, #002243, #004777);
-  background: -o-linear-gradient(left, #001326, #002243, #004777);
-  background: -moz-linear-gradient(left, #001326, #002243, #004777);
-  background: linear-gradient(left, #001326, #002243, #004777);}
-
-.file-upload input[type="file"] {
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  position: absolute;
-  z-index: -1;
-}
-
-.file-upload label {
-  display: inline-block;
-  padding: 10px 20px; /* Adjust padding as needed */
-  background: #003366;
-  background: -webkit-linear-gradient(left, #001f3f, #003366, #005b96);
-  background: -o-linear-gradient(left, #001f3f, #003366, #005b96);
-  background: -moz-linear-gradient(left, #001f3f, #003366, #005b96);
-  background: linear-gradient(left, #001f3f, #003366, #005b96);
-
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  transition: all 0.4s;
-
-  color: #fff; /* Match button text color */
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.file-upload label:hover {
-
-  background: #002245;
-  background: -webkit-linear-gradient(left, #001326, #002243, #004777);
-  background: -o-linear-gradient(left, #001326, #002243, #004777);
-  background: -moz-linear-gradient(left, #001326, #002243, #004777);
-  background: linear-gradient(left, #001326, #002243, #004777);
-  
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  transition: all 0.4s;
-}
-
-.upload100-form-title
-{
-  font-family: Ubuntu-Bold;
-  font-size: 28px;
-  color: #fff;
-  line-height: 1.2;
-  text-align: center;
-  text-transform: uppercase;
-  
-  display: block;
-}
-/* Adjust the layout of radio buttons */
-input[type="radio"] {
-  display: inline-block;
-  margin-right: 5px; /* Adjust the margin between radio buttons */
-}
-
-/* Adjust the layout of radio button labels */
-label[for="private"], label[for="public"] {
-  display: inline-block;
-  margin-right: 15px; /* Adjust the margin between radio buttons and labels */
-}
-
-/* Style the uploaded file container */
-#uploadedFile {
-  margin-top: 10px;
-  font-family: Ubuntu-Regular;
-  font-size: 14px;
-  color: #ffffff;
-}
-
-#fileUpload {
-  /* Increase width and height as needed */
-  width: 300px;
-  height: 100px;
-  /* Additional styling */
-  font-size: 18px; /* Increase font size for better visibility */
-  padding: 30px; /* Add padding for better spacing */
-  box-sizing: border-box; /* Ensure padding doesn't affect overall size */
-  margin-bottom: 30px; /* Add margin bottom to move the box up */
-
-}
-
-.search-container {
-  margin-bottom: 20px;
-}
-
-#searchBar {
-  width: 300px;
-  padding: 10px;
-  color: black;
-  font-size: 18px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-right: 10px;
-}
-
-#fileList {
-  margin-bottom: 20px;
-}
-
-#fileList ul {
-  padding: 0;
-}
-
-#fileList li {
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-
-#fileDetails {
-  display: none; /* Initially hide file details */
-  margin-top: 20px;
-}
-
-#fileDetails h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-#fileDetails ul {
-  padding: 0;
-}
-
-#fileDetails li {
-  margin-bottom: 5px;
-}
-
-.download-form {
-  background-color: rgba(255, 255, 255, 0.608);
-  border-radius: 10px; /* Rounded corners */
-  padding: 20px; /* Add padding */
-  color: white;
 }
 
 
-/* Style the text input */
-.download-form input[type="text"] {
-  color: #fff; /* White text color */
-}
 
-/* Style the button */
-.download-form button {
-  color: #fff; /* White text color */
-  background-color: #003366; /* Blue button background */
-}
-
-/* Style the file list */
-.download-form #fileListItems li {
-  color: #fff; /* White text color */
-}
-
-/* Style the file details */
-.download-form #fileDetails {
-  color: #fff; /* White text color */
-}
-
-.download-form #fileList {
-  max-height: 250px; /* Set a maximum height for the file list container */
-  overflow-y: auto; /* Enable vertical scrolling */
-}
-
-/* Style the file list items */
-.download-form #fileListItems {
-  list-style: none; /* Remove default list styles */
-  padding: 0; /* Remove default padding */
-  margin: 0; /* Remove default margin */
-}
-
-/* Adjust the scrollbar styles if needed */
-/* For webkit browsers (Chrome, Safari) */
-.download-form #fileList::-webkit-scrollbar {
-  width: 8px; /* Set the width of the scrollbar */
-}
-
-.download-form #fileList::-webkit-scrollbar-thumb {
-  background-color: #888; /* Set the color of the scrollbar thumb */
-}
-
-/* For Firefox */
-.download-form #fileList {
-  scrollbar-width: thin; /* Set the width of the scrollbar */
-}
-
-.download-form #fileList::-webkit-scrollbar-thumb {
-  background-color: #888; /* Set the color of the scrollbar thumb */
-}
-
-#sharedWithMeDetails {
-  max-height: 250px; /* Set a maximum height for the shared files section */
-  overflow-y: auto; /* Enable vertical scrolling if content overflows */
-}

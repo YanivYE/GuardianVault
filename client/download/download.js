@@ -1,91 +1,74 @@
-const socket = io({
-    query: {
-      newUser: false
-    }
-  });
-
-// Sample file data
-var files = [
-    { name: "File 1", sharedWith: ["User 1", "User 2"] },
-    { name: "File 2", sharedWith: ["User 3", "User 4"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-];
-
-// Mock data for files shared with the user
-const sharedFiles = [
-    { user: 'User 1', files: ['File A', 'File B'] },
-    { user: 'User 2', files: ['File C', 'File D'] },
-    { user: 'User 3', files: ['File E', 'File F', 'File G'] },
-    { user: 'User 3', files: ['File E', 'File F', 'File G'] },
-    { user: 'User 3', files: ['File E', 'File F', 'File G'] },
-    { user: 'User 3', files: ['File E', 'File F', 'File G'] },
-    // Add more mock data as needed
-];
-
-// Function to populate file list
-function populateFileList() {
-    var fileListItems = document.getElementById("fileListItems");
-    fileListItems.innerHTML = ""; // Clear existing list items
-
-    files.forEach(function(file) {
-        var listItem = document.createElement("li");
-        listItem.textContent = file.name;
-        listItem.onclick = function() {
-            showFileDetails(file);
-        };
-        fileListItems.appendChild(listItem);
-    });
+// Function to create a file button element
+function createFileButton(fileName, fileData) {
+    const button = document.createElement('button');
+    button.classList.add('fileButton');
+    button.textContent = fileName;
+    button.dataset.file = fileData;
+    return button;
 }
 
-// Function to display file details
-function showFileDetails(file) {
-    var fileDetailsElement = document.getElementById("fileDetails");
-    fileDetailsElement.innerHTML = "<h2>" + file.name + "</h2>";
-
-    // Display shared with information
-    var sharedWithList = "<p>Shared with:</p><ul>";
-    file.sharedWith.forEach(function(user) {
-        sharedWithList += "<li>" + user + "</li>";
-    });
-    sharedWithList += "</ul>";
-    fileDetailsElement.innerHTML += sharedWithList;
-
-    // Show file details element
-    fileDetailsElement.style.display = "block";
-}
-
-// Function to display shared files
-function displaySharedFiles() {
-    const sharedFilesContainer = document.getElementById('sharedWithMeDetails');
-    sharedFilesContainer.innerHTML = '<h2>Files Shared with You</h2><ul>';
-
-    sharedFiles.forEach(user => {
-        sharedFilesContainer.innerHTML += `<li><strong>${user.user}:</strong><ul>`;
-        user.files.forEach(file => {
-            sharedFilesContainer.innerHTML += `<li>${file}</li>`;
+// Function to add files to a list
+function addFilesToList(files, listId) {
+    const list = document.getElementById(listId);
+    files.forEach(file => {
+        const li = document.createElement('li');
+        const button = createFileButton(file.name, file.data);
+        // Add click event listener to handle single selection
+        button.addEventListener('click', () => {
+            const buttons = document.querySelectorAll('.fileButton');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+            updateSelectedFiles();
         });
-        sharedFilesContainer.innerHTML += `</ul></li>`;
+        li.appendChild(button);
+        list.appendChild(li);
     });
-
-    sharedFilesContainer.innerHTML += '</ul>';
 }
 
-// Populate file list on page load
-window.onload = function() {
-    populateFileList();
-    // Call the function to display shared files
-displaySharedFiles();
-};
+// Function to update the selected files array
+function updateSelectedFiles() {
+    const buttons = document.querySelectorAll('.fileButton');
+    selectedFiles = [];
+    buttons.forEach(button => {
+        if (button.classList.contains('active')) {
+            selectedFiles.push(button.dataset.file);
+        }
+    });
+}
+
+
+// Sample data for demonstration
+const yourFiles = [
+    { name: 'File 1', data: 'file1' },
+    { name: 'File 2', data: 'file2' },
+    { name: 'File 3', data: 'file3' },
+    { name: 'File 3', data: 'file3' },
+    { name: 'File 3', data: 'file3' },
+    { name: 'File 3', data: 'file3' },
+    { name: 'File 3', data: 'file3' }
+];
+
+const sharedWithYou = [
+    { name: 'Shared File 1', data: 'sharedFile1' },
+    { name: 'Shared File 2', data: 'sharedFile2' },
+    { name: 'Shared File 3', data: 'sharedFile3' },
+    { name: 'Shared File 3', data: 'sharedFile3' },
+    { name: 'Shared File 3', data: 'sharedFile3' },
+    { name: 'Shared File 3', data: 'sharedFile3' },
+    { name: 'Shared File 3', data: 'sharedFile3' }
+];
+
+// Variable to store the selected files
+let selectedFiles = [];
+
+// Add files to the respective lists
+addFilesToList(yourFiles, 'yourFiles');
+addFilesToList(sharedWithYou, 'sharedWithYou');
+
+// Function to handle the download button click
+document.getElementById('downloadButton').addEventListener('click', () => {
+    // Perform download logic using the selectedFiles array
+    console.log('Selected files:', selectedFiles);
+});
