@@ -7,7 +7,7 @@ const config = require('./config');
 
 class FileHandler 
 {
-    constructor(userPassword)
+    constructor(username, userPassword)
     {
         this.oauth2Client = new google.auth.OAuth2(
           config.CLIENT_ID,
@@ -24,38 +24,91 @@ class FileHandler
 
         this.atRestCrypto = new EncryptionAtRest.EncryptionAtRest(userPassword);
         this.compressor = new Compressor.Compressor();
+
+        // create folder
+        this.createFolder(username);
     }
 
-    async uploadFile(filePath) {
+    async createFolder(username) {
       try {
-        // Get the file name and extension
-        const fileName = path.basename(filePath);
-        const fileExtension = path.extname(filePath).substr(1); // Remove the dot
-    
-        // Determine the MIME type based on the file extension
-        const mimeType = {
-          jpg: 'image/jpeg',
-          jpeg: 'image/jpeg',
-          png: 'image/png',
-          pdf: 'application/pdf',
-          txt: 'text/plain',
-          // Add more extensions and corresponding MIME types as needed
-        }[fileExtension.toLowerCase()] || 'application/octet-stream'; // Default to binary data if not recognized
-    
-        const response = await this.drive.files.create({
-          requestBody: {
-            name: fileName,
-            mimeType: mimeType,
-          },
-          media: {
-            mimeType: mimeType,
-            body: fs.createReadStream(filePath),
-          },
-        });
-    
-        console.log('File uploaded:', response.data);
+          // Check if folder already exists
+          const existingFolder = await this.findFolderIdByUsername(username);
+          
+          if (existingFolder) {
+              console.log('Folder already exists:', existingFolder);
+              return;
+          }
+  
+          // If folder doesn't exist, create it
+          const response = await this.drive.files.create({
+              requestBody: {
+                  name: username,
+                  mimeType: 'application/vnd.google-apps.folder',
+              },
+          });
+  
+          console.log('Folder created:', response.data);
       } catch (error) {
-        console.error('Error uploading file:', error.message);
+          console.error('Error creating folder:', error.message);
+      }
+  }
+
+  
+    async uploadFile(filePath, username) {
+      try {
+          // Get the file name and extension
+          const fileName = path.basename(filePath);
+          const fileExtension = path.extname(filePath).substr(1); // Remove the dot
+  
+          // Determine the MIME type based on the file extension
+          const mimeType = {
+              jpg: 'image/jpeg',
+              jpeg: 'image/jpeg',
+              png: 'image/png',
+              pdf: 'application/pdf',
+              txt: 'text/plain',
+              // Add more extensions and corresponding MIME types as needed
+          }[fileExtension.toLowerCase()] || 'application/octet-stream'; // Default to binary data if not recognized
+  
+          // Find the folder ID of the specified username
+          const folderId = await this.findFolderIdByUsername(username);
+  
+          if (!folderId) {
+              throw new Error(`Folder not found for username: ${username}`);
+          }
+  
+          const response = await this.drive.files.create({
+              requestBody: {
+                  name: fileName,
+                  mimeType: mimeType,
+                  parents: [folderId], // Set the parent folder ID
+              },
+              media: {
+                  mimeType: mimeType,
+                  body: fs.createReadStream(filePath),
+              },
+          });
+  
+          console.log('File uploaded:', response.data);
+      } catch (error) {
+          console.error('Error uploading file:', error.message);
+      }
+    }
+  
+    async findFolderIdByUsername(username) {
+      try {
+          const response = await this.drive.files.list({
+              q: `name='${username}' and mimeType='application/vnd.google-apps.folder'`,
+          });
+  
+          if (response.data.files.length > 0) {
+              return response.data.files[0].id;
+          } else {
+              return null;
+          }
+      } catch (error) {
+          console.error('Error finding folder ID:', error.message);
+          return null;
       }
     }
       
@@ -71,7 +124,7 @@ class FileHandler
       }
     }
 
-    async saveToDrive(fileName, fileData)
+    async saveToDrive(fileName, fileData, username)
     {
       const encryptedFileData = this.atRestCrypto.encryptFile(fileData);
 
@@ -84,7 +137,7 @@ class FileHandler
 
       // GOOGLE DRIVE 
       
-      await this.uploadFile(comprFilePath);
+      await this.uploadFile(comprFilePath, username);
 
       const fileIds = await this.showFiles();
       console.log('File IDs in Google Drive:', fileIds);
