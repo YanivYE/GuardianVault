@@ -25,33 +25,34 @@ class FileHandler
         this.atRestCrypto = new EncryptionAtRest.EncryptionAtRest(userPassword);
         this.compressor = new Compressor.Compressor();
         this.dirName = username;
-
-        // create folder
-        this.createFolder();
     }
 
     async createFolder() {
-      try {
-          // Check if folder already exists
-          const existingFolder = await this.findFolderIdByUsername();
-          
-          if (existingFolder) {
-              console.log('Folder already exists:', existingFolder);
-              return;
-          }
-  
-          // If folder doesn't exist, create it
-          const response = await this.drive.files.create({
-              requestBody: {
-                  name: this.dirName,
-                  mimeType: 'application/vnd.google-apps.folder',
-              },
-          });
-  
-          console.log('Folder created:', response.data);
-      } catch (error) {
-          console.error('Error creating folder:', error.message);
-      }
+        const {GoogleAuth} = require('google-auth-library');
+        const {google} = require('googleapis');
+
+        const auth = new GoogleAuth({
+            scopes: 'https://www.googleapis.com/auth/drive',
+        });
+        const service = google.drive({version: 'v3', auth});
+        const fileMetadata = {
+            name: this.dirName,
+            mimeType: 'application/vnd.google-apps.folder',
+        };
+        try {
+            const file = await this.drive.files.create({
+            resource: fileMetadata,
+            fields: 'id',
+            });
+            console.log('Folder Id:', file.data.id);
+            return file.data.id;
+        }     
+        catch (err) 
+        {
+            console.log("Error! couldn't create a folder")
+            // TODO(developer) - Handle error
+            throw err;
+        }
   }
 
   
@@ -74,10 +75,6 @@ class FileHandler
         // Find the folder ID of the specified username
         const folderId = await this.findFolderIdByUsername();
 
-        if (!folderId) {
-            throw new Error(`Folder not found for username: ${this.dirName}`);
-        }
-
         // Ensure that the file is uploaded to the directory named after the username
         const response = await this.drive.files.create({
             requestBody: {
@@ -93,7 +90,7 @@ class FileHandler
 
         console.log('File uploaded:', response.data);
     } catch (error) {
-        console.error('Error uploading file:', error.message);
+        console.error('Error uploading file', error.message);
     }
 }
 
@@ -101,13 +98,17 @@ class FileHandler
     async findFolderIdByUsername() {
       try {
           const response = await this.drive.files.list({
-              q: `name='${this.dirName}' and mimeType='application/vnd.google-apps.folder'`,
+              q: `name='${this.dirName}' and mimeType = 'application/vnd.google-apps.folder'`,
           });
+
+          console.log(`name='${this.dirName}' and mimeType = 'application/vnd.google-apps.folder'`);
+          console.log("FOUND:", response);
   
-          if (response.data.files.length > 0) {
+          if (response.data.files.length.valueOf() > 0) {
+              console.log("FOUND FOLDER");
               return response.data.files[0].id;
           } else {
-              return null;
+              return await this.createFolder();
           }
       } catch (error) {
           console.error('Error finding folder ID:', error.message);
