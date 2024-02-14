@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="download.js"></script>
+</head>
+<body>
+    <div class="container-login100" style="background-image: url('images/bg-01.jpg');">
+        <span class="upload100-form-title p-b-41" id="downloadTitle">
+            Download File
+        </span>
+        <div class="wrap-login100 p-t-30 p-b-50 download-form"> <!-- Added 'download-form' class -->
+            <div class="download-container">
+                <h2>Search Files</h2> <!-- Move the title above the container -->
+                <div class="search-container">
+                    <input type="search" id="searchBar" placeholder="Search files...">
+                    <button onclick="searchFiles()">Search</button> <!-- Move the button here -->
+                </div>
+                <h2>Your Files</h2>
+                <div id="fileList">
+                    <ul id="fileListItems">
+                        <!-- Placeholder for files shared with the user -->
+                    </ul>
+                </div>
+            </div>
+            <h2>Files Shared with You</h2>
+            <div id="sharedWithMeDetails">
+                <!-- Use an unordered list to contain user-shared files -->
+                <ul id="sharedFilesList">
+                    <!-- Placeholder for shared files -->
+                </ul>
+            </div>
+            <button id="downloadButton">Download Selected File</button> <!-- Added download button -->
+        </div>
+    </div>
+</body>
+</html>
