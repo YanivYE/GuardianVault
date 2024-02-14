@@ -47,12 +47,6 @@ function populateFileList() {
     });
 }
 
-// Function to toggle the display of individual file details
-function toggleFile(button) {
-    // Toggle the class to change the button style
-    button.classList.toggle('file-selected');
-}
-
 // Function to display shared files
 function displaySharedFiles() {
     const sharedFilesContainer = document.getElementById('sharedFilesList');
@@ -134,7 +128,22 @@ function toggleSharedFiles(element) {
 
 // Function to toggle the display of individual file details
 function toggleFile(button) {
-    button.classList.toggle('file-selected');
+
+    // const allButtons = document.querySelectorAll('.file-button');
+    // allButtons.forEach(btn => {
+    //     if (btn !== button) {
+    //         btn.style.background='#003366';
+    //     }
+    // });
+
+    if(button.style.background=='gray')
+    {
+        button.style.background='#003366';
+    }
+    else
+    {
+        button.style.background='gray';
+    }
 }
 
 // Populate file list on page load
@@ -142,25 +151,19 @@ window.onload = function() {
     populateFileList();
     // Call the function to display shared files
     displaySharedFiles();
-};
-
-
-function toggleFile(button) {
-    // Toggle the class to change the button style
-    button.classList.toggle('file-selected');
-}
-
-// Function to handle the download action
-document.getElementById('downloadButton').addEventListener('click', function() {
-    // Gather selected files
-    const selectedFiles = document.querySelectorAll('.file-selected');
     
-    // Logic to handle download action with selected files
-    // You can implement this according to your requirements
-    // For example, you can create a download link for each selected file.
-    selectedFiles.forEach(file => {
-        // Logic to handle download for each selected file
-        // For demonstration purpose, you can console log the file name
-        console.log(file.textContent);
+    // Add event listener to the download button
+    document.getElementById('downloadButton').addEventListener('click', function() {
+        // Gather selected files
+        const selectedFiles = document.querySelectorAll('.file-selected');
+        
+        // Logic to handle download action with selected files
+        // You can implement this according to your requirements
+        // For example, you can create a download link for each selected file.
+        selectedFiles.forEach(file => {
+            // Logic to handle download for each selected file
+            // For demonstration purpose, you can console log the file name
+            console.log(file.textContent);
+        });
     });
-});
+};

@@ -746,7 +746,8 @@ select {
   background: -webkit-linear-gradient(left, #001326, #002243, #004777);
   background: -o-linear-gradient(left, #001326, #002243, #004777);
   background: -moz-linear-gradient(left, #001326, #002243, #004777);
-  background: linear-gradient(left, #001326, #002243, #004777);}
+  background: linear-gradient(left, #001326, #002243, #004777);
+}
 
 .file-upload input[type="file"] {
   width: 0;
