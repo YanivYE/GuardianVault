@@ -33,7 +33,7 @@ loadScript().then(() => {
 // Function to initialize the shared key
 async function initializeKey() {
     var encryptedSharedKey = sessionStorage.getItem('sharedKey');
-    var decryptedSharedKey = CryptoJS.AES.decrypt(encryptedSharedKey, "GuardianVaultSharedKeyEncryption");
+    var decryptedSharedKey = CryptoJS.AES.decrypt(encryptedSharedKey, "GuardianVault2023SharedKeyEncryption");
     sharedKey = decryptedSharedKey.toString(CryptoJS.enc.Utf8);
     sharedKey = await hexToCryptoKey(sharedKey);
     keyInitialized = true;
