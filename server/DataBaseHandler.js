@@ -152,6 +152,51 @@ class DataBaseHandler{
         }
     }
 
+    async getUserFilesList(username)
+    {
+        try {
+            // Find the user by username
+            const user = await User.findOne({ username });
+            if (!user) {
+                console.error('User not found.');
+                return [];
+            }
+    
+            // Find all files owned by the user
+            const files = await File.find({ owner: user._id }, 'name');
+            // Extract file names from the retrieved files
+            const fileList = files.map(file => file.name);
+            return fileList;
+        } catch (error) {
+            console.error("Error getting user's files list:", error);
+            return [];
+        }
+    }
+
+    async getUserSharedFilesList(username)
+    {
+        try {
+            // Find permissions where the specified username is listed as a shared user
+            const permissions = await Permission.find({ sharedUserNames: username });
+    
+            // Array to store file names
+            const sharedFiles = [];
+    
+            // Iterate through each permission and extract file names
+            for (const permission of permissions) {
+                // Find the file associated with the permission
+                const file = await File.findById(permission.file, 'name');
+                if (file) {
+                    sharedFiles.push(file.name);
+                }
+            }
+    
+            return sharedFiles;
+        } catch (error) {
+            console.error("Error getting user's shared files list:", error);
+            return [];
+        }
+    }
 
     async deleteAllUsers() {
         try {

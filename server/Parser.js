@@ -21,27 +21,31 @@ class Parser{
         switch(operation)
         {
             case "Login":
-                this.parseLoginMessage(additionalData);
+                this.parseLoginRequest(additionalData);
                 break;
             case "SignUp":
-                this.parseSignupMessage(additionalData);
+                this.parseSignupRequest(additionalData);
                 break;
             case "UploadFile":
-                this.parseUploadFileMessage(additionalData);
+                this.parseUploadFileRequest(additionalData);
                 break;
-
-
-
             case "UsersList":
                 this.getUsersList();
                 break;
+            case "ownFileList":
+                this.getOwnFilesList()
+                break;
+            case "sharedFileList":
+                this.getSharedFilesList()
+                break;
+  
         }
     }
 
-    async parseLoginMessage(loginMessage)
+    async parseLoginRequest(loginRequest)
     {
         let operationResult = "Fail";
-        const [username, password] = loginMessage.split('$');
+        const [username, password] = loginRequest.split('$');
 
         console.log(username, password);
 
@@ -53,9 +57,9 @@ class Parser{
         this.socket.emit('loginResult', operationResult);
     }
 
-    async parseSignupMessage(signupMessage)
+    async parseSignupRequest(signupRequest)
     {
-        const [username, email, password] = signupMessage.split('$');
+        const [username, email, password] = signupRequest.split('$');
 
         console.log(username, email, password);
 
@@ -69,8 +73,8 @@ class Parser{
         this.socket.emit('signupResult', operationResult);
     }
 
-    async parseUploadFileMessage(uploadFileMessage) {
-        const [fileName, fileContent, usersString] = uploadFileMessage.split('$');
+    async parseUploadFileRequest(uploadFileRequest) {
+        const [fileName, fileContent, usersString] = uploadFileRequest.split('$');
     
         const { username, password } = this.getConnectedUserDetails();
         const users = usersString.split(',');
@@ -99,6 +103,20 @@ class Parser{
         const {username} = this.getConnectedUserDetails();
         usersList.splice(usersList.indexOf(username), 1);
         this.socket.emit('usersListResult', usersList);
+    }
+
+    async getOwnFilesList()
+    {
+        const {username} = this.getConnectedUserDetails();
+        const filesList = await this.DBHandler.getUserFilesList(username);
+        this.socket.emit('ownFileListResult', filesList);
+    }
+
+    async getSharedFilesList()
+    {
+        const {username} = this.getConnectedUserDetails();
+        const filesList = await this.DBHandler.getUserSharedFilesList(username);
+        this.socket.emit('sharedFileListResult', filesList);
     }
 
     getConnectedUserDetails()

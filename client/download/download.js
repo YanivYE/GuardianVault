@@ -1,33 +1,68 @@
-// Sample file data
-var files = [
-    { name: "File 1", sharedWith: ["User 1", "User 2"] },
-    { name: "File 2", sharedWith: ["User 3", "User 4"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-    { name: "File 3", sharedWith: ["User 2", "User 5"] },
-];
+const socket = io({
+    query: {
+      newUser: false
+    }
+  });
 
-// Mock data for files shared with the user
-const sharedFiles = [
-    { user: 'User 1', files: ['File A', 'File B'] },
-    { user: 'User 2', files: ['File C', 'File D'] },
-    { user: 'User 3', files: ['File E', 'File F', 'File G'] },
-    { user: 'User 3', files: ['File E', 'File F', 'File G'] },
-    { user: 'User 3', files: ['File E', 'File F', 'File G'] },
-    { user: 'User 3', files: ['File E', 'File F', 'File G'] },
-    // Add more mock data as needed
-];
+
+document.addEventListener('DOMContentLoaded', async function () {
+
+    var files = await getUserOwnFilesListFromServer();
+
+    console.log(files);
+
+    // Mock data for files shared with the user
+    const sharedFiles = await getUserSharedFilesListFromServer();
+
+    console.log(sharedFiles);
+
+    async function getUserOwnFilesListFromServer() {
+        try {
+            const ownFileListPayload = await sendToServerPayload('ownFileList$');
+            socket.emit('ClientMessage', ownFileListPayload); // Not sure why you're emitting here, but you can handle it based on your application's logic
+
+            return new Promise((resolve, reject) => {
+                socket.on('ownFileListResult', (filesList) => {
+                    resolve(filesList);
+                });
+
+                // Optionally, handle any errors that might occur while receiving the users list
+                socket.on('error', (error) => {
+                    reject(error);
+                });
+            }).then((filesList) => {
+                return filesList; // Return the usersList after resolving the promise
+            });
+        } catch (error) {
+            console.error("Error getting users list from server:", error);
+            // Handle the error as needed
+        }
+    }
+
+    async function getUserSharedFilesListFromServer() {
+        try {
+            const sharedFileListPayload = await sendToServerPayload('sharedFileList$');
+            socket.emit('ClientMessage', sharedFileListPayload); // Not sure why you're emitting here, but you can handle it based on your application's logic
+
+            return new Promise((resolve, reject) => {
+                socket.on('sharedFileListResult', (filesList) => {
+                    resolve(filesList);
+                });
+
+                // Optionally, handle any errors that might occur while receiving the users list
+                socket.on('error', (error) => {
+                    reject(error);
+                });
+            }).then((filesList) => {
+                return filesList; // Return the usersList after resolving the promise
+            });
+        } catch (error) {
+            console.error("Error getting users list from server:", error);
+            // Handle the error as needed
+        }
+    }
+
+});
 
 // Function to populate file list
 function populateFileList() {

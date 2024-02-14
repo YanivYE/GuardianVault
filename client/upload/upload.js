@@ -92,7 +92,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
     
 
-    // Dummy list of users
     var users = await getUsersListFromServer();
 
     // Dynamically generate checkboxes for each user
@@ -184,7 +183,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 // ALERT SUCCESSFUL UPLOAD
                 message.style.display = "block"; // Show error message
                 message.style.color = "green";
-                message.innerText = "File uploaded successfuly!"; // Set error message text
+                message.innerText = "File uploaded successfully!"; // Set error message text
             }
             if(UploadFileResult === "Fail")
             {
