@@ -29,9 +29,6 @@ class Parser{
             case "UploadFile":
                 this.parseUploadFileMessage(additionalData);
                 break;
-            case "FileName":
-                this.parseFileNameValidationMessage(additionalData);
-                break;
 
 
 
@@ -76,25 +73,24 @@ class Parser{
         const [fileName, fileContent, usersString] = uploadFileMessage.split('$');
     
         const { username, password } = this.getConnectedUserDetails();
-        console.log(fileName, fileContent, usersString);
         const users = usersString.split(',');
-        console.log(users);
-        this.DBHandler.setUsersPermissions(users, fileName, username);
-
-        this.FileHandler = new FileHandler.FileHandler(username, password);
-
-        await this.FileHandler.handleFileUpload(fileName, fileContent); 
-    }
-
-    async parseFileNameValidationMessage(fileNameMessage)
-    {
-        const fileName = fileNameMessage;
-
-        const {username} = this.getConnectedUserDetails();
 
         const operationResult = await this.DBHandler.validateFileName(fileName, username);
 
-        this.socket.emit('FileNameValidationResult', operationResult);
+        if(operationResult === "Fail")
+        {
+            this.socket.emit('UploadFileResult', "Fail");
+        }
+        else
+        {
+            this.DBHandler.setUsersPermissions(users, fileName, username);
+
+            this.FileHandler = new FileHandler.FileHandler(username, password);
+
+            await this.FileHandler.handleFileUpload(fileName, fileContent); 
+
+            this.socket.emit('UploadFileResult', "Success");
+        }
     }
 
     async getUsersList()
@@ -109,6 +105,13 @@ class Parser{
     {
         const [connectedUserName, connectedUserPassword] = sessionStorage.Session.split('#');
         return {username: connectedUserName, password: connectedUserPassword};
+    }
+
+    initializeSystem()
+    {
+        this.DBHandler.initDataBase();
+        this.FileHandler.initDrive();
+        console.log("Initialized system successfully!")
     }
 }
 

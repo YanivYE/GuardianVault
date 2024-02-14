@@ -29,8 +29,8 @@ class SocketHandler {
     }
 
     receivePayloadFromClient() {
-        const parser = new Parser.Parser(this.socket);
         this.socket.on('ClientMessage', async (clientMessagePayload) => {
+            const parser = new Parser.Parser(this.socket);
             const payload = Buffer.from(clientMessagePayload, 'base64').toString('hex');
         
             const iv = payload.substr(0, 32);   

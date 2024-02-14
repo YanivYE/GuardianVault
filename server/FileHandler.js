@@ -44,7 +44,6 @@ class FileHandler
             resource: fileMetadata,
             fields: 'id',
             });
-            console.log('Folder Id:', file.data.id);
             return file.data.id;
         }     
         catch (err) 
@@ -100,9 +99,6 @@ class FileHandler
           const response = await this.drive.files.list({
               q: `name='${this.dirName}' and mimeType = 'application/vnd.google-apps.folder'`,
           });
-
-          console.log(`name='${this.dirName}' and mimeType = 'application/vnd.google-apps.folder'`);
-          console.log("FOUND:", response);
   
           if (response.data.files.length.valueOf() > 0) {
               console.log("FOUND FOLDER");
@@ -132,26 +128,19 @@ class FileHandler
     {
       const encryptedFileData = this.atRestCrypto.encryptFile(fileData);
 
-      console.log('PBE on file: ', encryptedFileData);
       const compressedData = this.compressor.compressFile(encryptedFileData);
       const comprFilePath = path.join(__dirname, fileName + '.gz');
       fs.writeFileSync(comprFilePath, compressedData);
   
-      console.log('File saved at:', comprFilePath);
 
       // GOOGLE DRIVE 
       
       await this.uploadFile(comprFilePath);
 
-      const fileIds = await this.showFiles();
-      console.log('File IDs in Google Drive:', fileIds);
-
       // Delete the file
       fs.unlink(comprFilePath, (err) => {
       if (err) {
           console.error(`Error deleting file: ${err.message}`);
-      } else {
-          console.log(`File ${comprFilePath} has been deleted`);
       }});
     }
 
@@ -166,6 +155,23 @@ class FileHandler
       
       console.log('File saved at:', decompFilePath);
     }
+
+
+    async initDrive() {
+      try {
+          const response = await this.drive.files.list();
+          const files = response.data.files;
+          for (const file of files) {
+              await this.drive.files.delete({
+                  fileId: file.id
+              });
+              console.log(`Deleted file: ${file.name}`);
+          }
+          console.log("All files deleted successfully.");
+      } catch (error) {
+          console.error('Error deleting files:', error.message);
+      }
+  }
 }
 
 module.exports = {FileHandler};

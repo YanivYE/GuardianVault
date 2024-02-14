@@ -34,7 +34,6 @@ class DataBaseHandler{
     {
         try{
             await mongoose.connect(config.DB_URI);
-            console.log("Connected to MongoDB");
         } catch(error)
         {
             console.error(error);
@@ -139,18 +138,6 @@ class DataBaseHandler{
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     async getUsersList()
     {
         try {
@@ -201,6 +188,7 @@ class DataBaseHandler{
         this.deleteAllUsers();
         this.deleteAllFiles();
         this.deleteAllPermissions();
+        console.log("DB initialized Successfully");
     }   
 }
 

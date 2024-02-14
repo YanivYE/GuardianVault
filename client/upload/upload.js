@@ -52,36 +52,43 @@ document.addEventListener('DOMContentLoaded', async function () {
     
         var fileInput = document.getElementById('fileInput');
         var file = fileInput.files[0]; // Get the selected file
-        const fileExtension = file.name.split('.').pop().toLowerCase(); // Extract the file extension and convert it to lowercase
-    
-        // List of PHP file extensions
-        const phpExtensions = ['php', 'php3', 'php4', 'php5', 'phtml'];
-    
-        // Check if the file extension is in the list of PHP extensions
-        if (phpExtensions.includes(fileExtension)) {
-            console.log('The file is a PHP file.');
-            message.style.display = "block"; // Show error message
-            message.innerText = "PHP files are not allowed!!!"; // Set error message text
-        } else {
-            console.log('The file is not a PHP file.');
-            if (file) {
-                const reader = new FileReader();
         
+        // Check if all inputs are valid
+        if (fileName !== '' && fileStatus && (privateUpload || users.length > 0) && file) {
+            const fileExtension = file.name.split('.').pop().toLowerCase(); // Extract the file extension and convert it to lowercase
+
+            // List of PHP file extensions
+            const phpExtensions = ['php', 'php3', 'php4', 'php5', 'phtml'];
+        
+            // Check if the file extension is in the list of PHP extensions
+            if (phpExtensions.includes(fileExtension)) {
+                console.log('The file is a PHP file.');
+                message.style.display = "block"; // Show error message
+                message.style.color = "red";
+                message.innerText = "PHP files are not allowed!!!"; // Set error message text
+            }
+            else
+            {
+                // All inputs are valid, proceed with form submission
+                const reader = new FileReader();
+
                 reader.onload = async (event) => {
                     let fileContent = event.target.result;
-                    // Check if all inputs are valid
-                    if (fileName !== '' && fileStatus && (privateUpload || users.length > 0) && file) {
-                        // All inputs are valid, proceed with form submission
-                        uploadFile(fileName + '.' + fileExtension, users, fileContent);
-                    } else {
-                        // Display error message
-                        message.style.display = "block"; // Show error message
-                        message.innerText = "Please fill out all required fields."; // Set error message text
-                    }
+                    uploadFile(fileName + '.' + fileExtension, users, fileContent);
                 };
                 reader.readAsDataURL(file);
             }
+        } 
+        else 
+        {
+            // Display error message
+            message.style.display = "block"; // Show error message
+            message.style.color = "red";
+            message.innerText = "Please fill out all required fields."; // Set error message text
         }
+            
+        
+        
     });
     
 
@@ -168,27 +175,25 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     async function uploadFile(fileName, shareWithUsers, fileContent)
     {
-        const validateFileNameRequest = 'FileName$' + fileName;
-        const validateFileNamePayload = await sendToServerPayload(validateFileNameRequest);
-        socket.emit('ClientMessage', validateFileNamePayload);
-        socket.on('FileNameValidationResult', async (fileNameResult) => {
-            if(fileNameResult === 'Success')
+        const uplaodFileRequest = 'UploadFile$' + fileName + '$' + fileContent + '$' + shareWithUsers;
+        const uploadFilePayload = await sendToServerPayload(uplaodFileRequest);
+        socket.emit('ClientMessage', uploadFilePayload);
+        socket.on('UploadFileResult', async (UploadFileResult) => {
+            if(UploadFileResult === "Success")
             {
-                console.log('no file with this name was found');
-                const uplaodFileRequest = 'UploadFile$' + fileName + '$' + fileContent + '$' + shareWithUsers;
-                const uploadFilePayload = await sendToServerPayload(uplaodFileRequest);
-                socket.emit('ClientMessage', uploadFilePayload);
                 // ALERT SUCCESSFUL UPLOAD
                 message.style.display = "block"; // Show error message
                 message.style.color = "green";
                 message.innerText = "File uploaded successfuly!"; // Set error message text
             }
-            else{
+            if(UploadFileResult === "Fail")
+            {
                 // Display error message
                 message.style.display = "block"; // Show error message
+                message.style.color = "red";
                 message.innerText = "File name is already taken"; // Set error message text
             }
-        });
+        });   
     }
 
     async function getUsersListFromServer() {
