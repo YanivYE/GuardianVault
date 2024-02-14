@@ -5,6 +5,7 @@ body {
 }
 
 .container {
+  background-color: rgba(255, 255, 255, 0.608);
   display: flex;
   justify-content: space-around;
   margin-top: 50px;
@@ -30,6 +31,18 @@ li {
 
 button {
   display: block;
+  padding: 10px 20px;
+  padding-left: 50px; /* Add left padding to move the buttons to the right */
+  font-size: 16px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.wrap-login100 button {
+  display: block;
   margin: 20px auto;
   padding: 10px 20px;
   font-size: 16px;
@@ -45,6 +58,16 @@ button:hover {
   background-color: #0056b3;
   cursor: pointer;
 }
+
+.fileButton.active {
+  background-color: gray; /* Change background color to indicate the pressed state */
+  color: white; /* Change text color to white */
+}
+
+#fileButton {
+  cursor: pointer;
+}
+
 
 /* Add this CSS rule to limit the height and enable overflow scrolling for each side */
 .left,
@@ -152,9 +175,7 @@ textarea {
   border: none;
 }
 
-textarea:focus, input:focus {
-  border-color: transparent !important;
-}
+
 
 input:focus::-webkit-input-placeholder { color:transparent; }
 input:focus:-moz-placeholder { color:transparent; }
@@ -181,12 +202,6 @@ label {
   display: block;
 }
 
-/*---------------------------------------------*/
-button {
-	outline: none !important;
-	border: none;
-	background: transparent;
-}
 
 button:hover {
 	cursor: pointer;
@@ -211,6 +226,7 @@ iframe {
 [ login ]*/
 
 .limiter {
+  background-color: rgba(255, 255, 255, 0.608);
   width: 100%;
   margin: 0 auto;
 }
@@ -233,6 +249,8 @@ iframe {
   background-size: cover;
   position: relative;
   z-index: 1;  
+  background-color: rgba(255, 255, 255, 0.608);
+
 }
 
 .container-login100::before {
@@ -252,7 +270,6 @@ iframe {
   border-radius: 10px;
   overflow: hidden;
 
-  background: transparent;
 }
 
 
@@ -301,9 +318,11 @@ iframe {
 .wrap-input100 {
   width: 100%;
   position: relative;
-  border-bottom: 1px solid #ffffff;
   padding: 29px 0;
+  height: 500px;
+  overflow-y: auto; /* Add this line to enable vertical scrolling */
 }
+
 
 .input100 {
   font-family: Ubuntu-Regular;
@@ -314,7 +333,6 @@ iframe {
   display: block;
   width: calc(100% - 40px);
   height: 50px;
-  background: transparent;
   padding: 0 10px 0 80px;
   -webkit-transition: all 0.4s;
   -o-transition: all 0.4s;
@@ -474,6 +492,7 @@ iframe {
 
 .login100-container{
   width: 400px;
+
   position: relative;
 }
 .login100-container input[type="password"],
@@ -627,59 +646,6 @@ iframe {
   color: #fff;
 }
 
-/* Add styles for the container of the "Forgot Password" button */
-.container-forgot-password {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end; /* Align to the right */
-  align-items: flex-start; /* Align to the top */
-  padding-top: 10px; /* Add some top padding for spacing */
-}
-
-.show-password-btn {
-  font-family: Ubuntu-Bold;
-  font-size: 14px; /* Reduced font size to 16px */
-  color: #ffffff;
-  line-height: 1.2;
-  text-transform: uppercase;
-  text-decoration: underline; /* Added underline */
-
-  padding: 10px 20px; /* Add padding for spacing */
-  border-radius: 5px;
-  margin-top: 10px;
-
-  position: relative;
-  z-index: 1;
-
-  transition: all 0.4s;
-}
-
-.show-password-btn::before {
-  content: "";
-  display: block;
-  position: absolute;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  border-radius: 21px;
-  background-color: #555555;
-  top: 0;
-  left: 0;
-  color: #fff;
-  opacity: 0;
-
-  transition: all 0.4s;
-}
-
-.show-password-btn:hover {
-  background-color: transparent;
-  color: #fff;
-}
-
-.show-password-btn:hover:before {
-  opacity: 1;
-  color: #fff;
-}
 
 
 /*------------------------------------------------------------------
@@ -752,3 +718,152 @@ iframe {
 
 
 
+.container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 50px;
+  background-color: white; /* Set background color to white */
+}
+
+.left,
+.right {
+  width: 45%;
+}
+
+h2 {
+  font-size: 18px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+button {
+  display: block;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+  cursor: pointer;
+}
+
+.fileButton.active {
+  background-color: gray; /* Change background color to indicate the pressed state */
+  color: white; /* Change text color to white */
+}
+
+/* Add this CSS rule to limit the height and enable overflow scrolling for each side */
+.left,
+.right {
+  height: 300px; /* Adjust as needed */
+  overflow-y: auto;
+}
+
+/* Add this CSS rule to limit the height of the file lists */
+#yourFiles,
+#sharedWithYou {
+  max-height: 100%; /* Ensure that the lists don't exceed the height of their containers */
+}
+
+/* Add this CSS rule to make the file lists display as flex containers with vertical flow */
+#yourFiles,
+#sharedWithYou {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Add this CSS rule to center the buttons relative to the title */
+.wrap-login100 {
+  text-align: center;
+}
+
+/* Center the buttons within the container */
+.login100-form-title {
+  margin-bottom: 20px; /* Add space between the title and buttons */
+}
+
+/* Center the content within the left and right containers */
+.left ul,
+.right ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Add this line to center the items horizontally */
+  justify-content: center; /* Add this line to center the items vertically */
+}
+
+/* Ensure each file item takes full width */
+.left li,
+.right li {
+  width: 100%;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 50px;
+  background-color: #fff; /* Set background color to white */
+}
+
+.left,
+.right {
+  width: 45%;
+  display: flex; /* Add this line to make the containers flex items */
+  flex-direction: column; /* Add this line to stack the children vertically */
+  background-color: #fff; /* Set background color to white */
+}
+
+/* Add this CSS rule to ensure both containers have the same height */
+.container {
+  align-items: stretch; /* Make the containers stretch to match the height of their parent */
+}
+
+/* Add this CSS rule to ensure the containers fill the available space */
+.container {
+  flex-grow: 1; /* Make the containers grow to fill the available space */
+}
+
+.left input,
+.right input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Style for the list container */
+.left ul,
+.right ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  max-height: 300px; /* Set a max height to limit the height of the list */
+}
+
+/* Style for list items */
+.left li,
+.right li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Hide the bottom border for the last item */
+.left li:last-child,
+.right li:last-child {
+  border-bottom: none;
+}

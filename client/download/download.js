@@ -9,6 +9,7 @@ function createFileButton(fileName, fileData) {
 
 // Function to add files to a list
 function addFilesToList(files, listId) {
+    console.log(listId);
     const list = document.getElementById(listId);
     files.forEach(file => {
         const li = document.createElement('li');
@@ -63,9 +64,11 @@ const sharedWithYou = [
 // Variable to store the selected files
 let selectedFiles = [];
 
-// Add files to the respective lists
-addFilesToList(yourFiles, 'yourFiles');
-addFilesToList(sharedWithYou, 'sharedWithYou');
+document.addEventListener('DOMContentLoaded', async function () {
+    // Add files to the respective lists
+    addFilesToList(yourFiles, "yourFilesSide");
+    addFilesToList(sharedWithYou, 'sharedWithYou');
+});
 
 // Function to handle the download button click
 document.getElementById('downloadButton').addEventListener('click', () => {
