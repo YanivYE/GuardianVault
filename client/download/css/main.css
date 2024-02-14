@@ -335,7 +335,6 @@ iframe {
 /*------------------------------------------------------------------
 [ Button ]*/
 .container-login100-form-btn {
-  width: 100%;
   display: -webkit-box;
   display: -webkit-flex;
   display: -moz-box;
@@ -834,6 +833,11 @@ label[for="private"], label[for="public"] {
 
 .search-container {
   margin-bottom: 20px;
+  
+}
+
+.search-container button {
+  margin-left: 10px; /* Add margin to separate the search bar and button */
 }
 
 #searchBar {
@@ -843,6 +847,7 @@ label[for="private"], label[for="public"] {
   font-size: 18px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  flex: 1; /* Allow the search bar to grow and take up remaining space */
   margin-right: 10px;
 }
 
@@ -890,10 +895,23 @@ label[for="private"], label[for="public"] {
   color: #fff; /* White text color */
 }
 
+
 /* Style the button */
 .download-form button {
   color: #fff; /* White text color */
   background-color: #003366; /* Blue button background */
+  border: none; /* Remove default button border */
+  padding: 10px; /* Add padding for better appearance */
+  border-radius: 5px; /* Add rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+  cursor: pointer; /* Add pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth transition for background color change */
+  width: 30%;
+}
+
+/* Hover effect */
+.download-form button:hover {
+  background-color: #005599; /* Darker blue on hover */
 }
 
 /* Style the file list */
@@ -940,4 +958,71 @@ label[for="private"], label[for="public"] {
 #sharedWithMeDetails {
   max-height: 250px; /* Set a maximum height for the shared files section */
   overflow-y: auto; /* Enable vertical scrolling if content overflows */
+}
+
+.download-container {
+  margin-bottom: 20px; /* Add margin to create space between the title and the container */
+}
+
+.download-container h2 {
+  margin-bottom: 10px; /* Add margin below the title */
+}
+
+.search-container {
+  display: flex; /* Change display to flex */
+  align-items: center; /* Align items vertically */
+  margin-bottom: 20px; /* Add margin to create space between the search bar and button */
+}
+
+.search-container button {
+  margin-left: 10px; /* Add margin to separate the search bar and button */
+}
+
+#sharedWithMeDetails {
+  margin-top: 20px; /* Add margin to create space between the search container and shared files section */
+}
+
+#sharedWithMeDetails h2 {
+  margin-bottom: 10px; /* Add margin below the title */
+}
+
+.shared-user-files .file-button {
+  margin-bottom: 10px; /* Adjust the margin value as needed */
+}
+
+.shared-user-header:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+#downloadTitle {
+  position: absolute;
+  top: 110px; /* Adjust this value to position the title as desired */
+  left: 50%; /* Position it horizontally in the middle */
+  transform: translateX(-50%); /* Center it precisely */
+  z-index: 1; /* Ensure it appears above other content */
+}
+
+#sharedWithMeDetails {
+  max-height: 250px;
+  overflow-y: auto;
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #888 transparent; /* For Firefox */
+}
+
+#sharedWithMeDetails::-webkit-scrollbar {
+  width: 8px;
+}
+
+#sharedWithMeDetails::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
+
+#sharedWithMeDetails::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+#downloadButton
+{
+  padding-bottom: 10px;
+  width: 100%;
 }

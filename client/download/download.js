@@ -36,50 +36,131 @@ function populateFileList() {
 
     files.forEach(function(file) {
         var listItem = document.createElement("li");
-        listItem.textContent = file.name;
-        listItem.onclick = function() {
-            showFileDetails(file);
-        };
-        fileListItems.appendChild(listItem);
+        var fileButton = document.createElement("button"); // Create button element
+        fileButton.textContent = file.name; // Set button text
+        fileButton.classList.add('file-button'); // Add a class for styling
+        fileButton.addEventListener('click', function() { // Add click event listener
+            toggleFile(this);
+        });
+        listItem.appendChild(fileButton); // Append button to list item
+        fileListItems.appendChild(listItem); // Append list item to file list
     });
 }
 
-// Function to display file details
-function showFileDetails(file) {
-    var fileDetailsElement = document.getElementById("fileDetails");
-    fileDetailsElement.innerHTML = "<h2>" + file.name + "</h2>";
-
-    // Display shared with information
-    var sharedWithList = "<p>Shared with:</p><ul>";
-    file.sharedWith.forEach(function(user) {
-        sharedWithList += "<li>" + user + "</li>";
-    });
-    sharedWithList += "</ul>";
-    fileDetailsElement.innerHTML += sharedWithList;
-
-    // Show file details element
-    fileDetailsElement.style.display = "block";
+// Function to toggle the display of individual file details
+function toggleFile(button) {
+    // Toggle the class to change the button style
+    button.classList.toggle('file-selected');
 }
 
 // Function to display shared files
 function displaySharedFiles() {
-    const sharedFilesContainer = document.getElementById('sharedWithMeDetails');
-    sharedFilesContainer.innerHTML = '<h2>Files Shared with You</h2><ul>';
+    const sharedFilesContainer = document.getElementById('sharedFilesList');
+    sharedFilesContainer.innerHTML = ''; // Clear existing content
 
     sharedFiles.forEach(user => {
-        sharedFilesContainer.innerHTML += `<li><strong>${user.user}:</strong><ul>`;
-        user.files.forEach(file => {
-            sharedFilesContainer.innerHTML += `<li>${file}</li>`;
+        const userItem = document.createElement('li');
+        const userHeader = document.createElement('span');
+        userHeader.textContent = `${user.user} (${user.files.length} files)`;
+        // Add a click event listener to toggle the display of shared files
+        userHeader.addEventListener('click', function() {
+            toggleSharedFiles(this);
         });
-        sharedFilesContainer.innerHTML += `</ul></li>`;
+        userItem.appendChild(userHeader);
+
+        const userFiles = document.createElement('ul');
+        user.files.forEach(file => {
+            const fileButton = document.createElement('button'); // Create button element
+            fileButton.textContent = file; // Set button text
+            fileButton.classList.add('file-button'); // Add a class for styling
+            fileButton.addEventListener('click', function() { // Add click event listener
+                toggleFile(this);
+            });
+            const fileItem = document.createElement('li');
+            fileItem.appendChild(fileButton); // Append button to list item
+            userFiles.appendChild(fileItem); // Append list item to file list
+        });
+
+        // Initially hide the shared files list
+        userFiles.style.display = 'none';
+        userFiles.classList.add('shared-files');
+        userItem.appendChild(userFiles);
+        sharedFilesContainer.appendChild(userItem);
     });
 
-    sharedFilesContainer.innerHTML += '</ul>';
+    const sharedWithMeDetails = document.getElementById('sharedWithMeDetails');
+    sharedWithMeDetails.innerHTML = ''; // Clear existing content
+
+    sharedFiles.forEach(user => {
+        const userSection = document.createElement('div');
+        userSection.classList.add('shared-user-section');
+
+        const userHeader = document.createElement('h3');
+        userHeader.textContent = `${user.user} (${user.files.length} files)`;
+        userHeader.classList.add('shared-user-header');
+        userHeader.addEventListener('click', function() {
+            toggleSharedFiles(this);
+        });
+
+        const userFilesList = document.createElement('ul');
+        userFilesList.classList.add('shared-user-files');
+        userFilesList.style.display = 'none';
+
+        user.files.forEach(file => {
+            const fileButton = document.createElement('button'); // Create button element
+            fileButton.textContent = file; // Set button text
+            fileButton.classList.add('file-button'); // Add a class for styling
+            fileButton.addEventListener('click', function() { // Add click event listener
+                toggleFile(this);
+            });
+            const fileItem = document.createElement('li');
+            fileItem.appendChild(fileButton); // Append button to list item
+            userFilesList.appendChild(fileItem); // Append list item to file list
+        });
+
+        userSection.appendChild(userHeader);
+        userSection.appendChild(userFilesList);
+        sharedWithMeDetails.appendChild(userSection);
+    });
+}
+
+
+// Function to toggle the display of shared files
+function toggleSharedFiles(element) {
+    // Toggle the display of shared files list
+    const sharedFilesList = element.nextElementSibling;
+    sharedFilesList.style.display = sharedFilesList.style.display === 'none' ? 'block' : 'none';
+}
+
+// Function to toggle the display of individual file details
+function toggleFile(button) {
+    button.classList.toggle('file-selected');
 }
 
 // Populate file list on page load
 window.onload = function() {
     populateFileList();
     // Call the function to display shared files
-displaySharedFiles();
+    displaySharedFiles();
 };
+
+
+function toggleFile(button) {
+    // Toggle the class to change the button style
+    button.classList.toggle('file-selected');
+}
+
+// Function to handle the download action
+document.getElementById('downloadButton').addEventListener('click', function() {
+    // Gather selected files
+    const selectedFiles = document.querySelectorAll('.file-selected');
+    
+    // Logic to handle download action with selected files
+    // You can implement this according to your requirements
+    // For example, you can create a download link for each selected file.
+    selectedFiles.forEach(file => {
+        // Logic to handle download for each selected file
+        // For demonstration purpose, you can console log the file name
+        console.log(file.textContent);
+    });
+});
