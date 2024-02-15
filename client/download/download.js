@@ -165,13 +165,13 @@ document.addEventListener('DOMContentLoaded', async function () {
         socket.on('downloadFilePayload', async (downloadFilePayload) => {
             const fileData = await receivePayloadFromServer(downloadFilePayload);
             console.log(fileData);
-            // if(DownloadFileResult === "Success")
-            // {
-            //     // ALERT SUCCESSFUL UPLOAD
-            //     message.style.display = "block"; // Show error message
-            //     message.style.color = "green";
-            //     message.innerText = "File downloaded successfully!"; // Set error message text
-            // }
+            if(fileData)
+            {
+                // ALERT SUCCESSFUL UPLOAD
+                message.style.display = "block"; // Show error message
+                message.style.color = "green";
+                message.innerText = "File downloaded successfully!"; // Set error message text
+            }
         });
     }
 

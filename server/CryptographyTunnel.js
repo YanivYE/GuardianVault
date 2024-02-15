@@ -14,16 +14,19 @@ class CryptographyTunnel {
         const iv = crypto.randomBytes(16);
         
         // Create a cipher instance
-        const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(this.aesGcmKey, 'hex'), iv, {authTagLength: 16});
+        const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(this.aesGcmKey, 'hex'), iv, { authTagLength: 16 });
         
         // Update the cipher with the data
         const encrypted = cipher.update(data, 'utf-8', 'hex');
-        
+    
         // Finalize the cipher to obtain the authentication tag
-        const authTag = cipher.final('hex');
+        cipher.final();
+    
+        // Get the authentication tag
+        const authTag = cipher.getAuthTag();
     
         // Return the IV, ciphertext, and authentication tag
-        return { iv, ciphertext: encrypted, authTag };
+        return { iv: iv, ciphertext: encrypted, authTag: authTag };
     }
     
     

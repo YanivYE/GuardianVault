@@ -48,7 +48,7 @@ class Parser{
 
     generateServerPayload(data) {
         const { iv, ciphertext, authTag } = sharedCryptography.encryptData(data);
-        const payload = iv.toString('hex') + ciphertext + authTag;
+        const payload = iv.toString('hex') + ciphertext + authTag.toString('hex');
         const payloadBase64 = Buffer.from(payload, 'hex').toString('base64');
 
         return payloadBase64;
