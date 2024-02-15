@@ -6,7 +6,6 @@ const socket = io({
 
 
 document.addEventListener('DOMContentLoaded', async function () {
-
     var files = await getUserOwnFilesListFromServer();
 
     console.log(files);
@@ -19,20 +18,25 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Call the function to display shared files
     displaySharedFiles();
     
-    // Add event listener to the download button
-    document.getElementById('downloadButton').addEventListener('click', function() {
+    document.getElementById("downloadForm").addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent default form submission behavior
+    
         // Gather selected files
-        const selectedFiles = document.querySelectorAll('.file-selected');
+        const selectedFiles = document.querySelectorAll('.file-button[style="background: gray;"]');
         
         // Logic to handle download action with selected files
         // You can implement this according to your requirements
         // For example, you can create a download link for each selected file.
         selectedFiles.forEach(file => {
-            // Logic to handle download for each selected file
-            // For demonstration purpose, you can console log the file name
-            console.log(file.textContent);
+            // Extract owner's name and file name from the button's text content
+            const fileName = file.textContent;
+            const owner = file.getAttribute('owner');
+            
+            // Call the toggleFile function with owner's name and file name
+            toggleFileOwner(owner, fileName);
         });
     });
+
 
     async function getUserOwnFilesListFromServer() {
         try {
@@ -100,42 +104,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Function to display shared files
     function displaySharedFiles() {
-        const sharedFilesContainer = document.getElementById('sharedFilesList');
-        sharedFilesContainer.innerHTML = ''; // Clear existing content
-
-        sharedFiles.forEach(user => {
-            console.log(user);
-            console.log(user.files);
-            const userItem = document.createElement('li');
-            const userHeader = document.createElement('span');
-            userHeader.textContent = `${user.user} (${user.files.length} files)`;
-            // Add a click event listener to toggle the display of shared files
-            userHeader.addEventListener('click', function() {
-                toggleSharedFiles(this);
-            });
-            userItem.appendChild(userHeader);
-
-            const userFiles = document.createElement('ul');
-            user.files.forEach(file => {
-                const fileButton = document.createElement('button'); // Create button element
-                fileButton.textContent = file; // Set button text
-                fileButton.classList.add('file-button'); // Add a class for styling
-                fileButton.addEventListener('click', function() { // Add click event listener
-                    toggleFile(this);
-                });
-                const fileItem = document.createElement('li');
-                fileItem.appendChild(fileButton); // Append button to list item
-                userFiles.appendChild(fileItem); // Append list item to file list
-            });
-
-            // Initially hide the shared files list
-            userFiles.style.display = 'none';
-            userFiles.classList.add('shared-files');
-            userItem.appendChild(userFiles);
-            sharedFilesContainer.appendChild(userItem);
-        });
-
-        const sharedWithMeDetails = document.getElementById('sharedWithMeDetails');
+        const sharedWithMeDetails = document.getElementById('sharedFilesList');
         sharedWithMeDetails.innerHTML = ''; // Clear existing content
 
         sharedFiles.forEach(user => {
@@ -143,7 +112,8 @@ document.addEventListener('DOMContentLoaded', async function () {
             userSection.classList.add('shared-user-section');
 
             const userHeader = document.createElement('h3');
-            userHeader.textContent = `${user.user} (${user.files.length} files)`;
+            const filesAmount = user.files.length;
+            userHeader.textContent = `${user.user} (${filesAmount} ${filesAmount === 1 ? 'file' : 'files'})`;
             userHeader.classList.add('shared-user-header');
             userHeader.addEventListener('click', function() {
                 toggleSharedFiles(this);
@@ -156,6 +126,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             user.files.forEach(file => {
                 const fileButton = document.createElement('button'); // Create button element
                 fileButton.textContent = file; // Set button text
+                fileButton.setAttribute('owner', user.user);
                 fileButton.classList.add('file-button'); // Add a class for styling
                 fileButton.addEventListener('click', function() { // Add click event listener
                     toggleFile(this);
@@ -181,14 +152,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Function to toggle the display of individual file details
     function toggleFile(button) {
-
-        // const allButtons = document.querySelectorAll('.file-button');
-        // allButtons.forEach(btn => {
-        //     if (btn !== button) {
-        //         btn.style.background='#003366';
-        //     }
-        // });
-
         if(button.style.background=='gray')
         {
             button.style.background='#003366';
@@ -199,11 +162,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     }
 
-    function toggleDownloadContainer() {
-        const container = document.querySelector('.shared-files-container');
-        const button = document.getElementById('downloadButton');
-        container.classList.toggle('expand');
-        button.classList.toggle('expand');
+    function toggleFileOwner(owner, fileName) {
+        // Print the owner's name and file name
+        console.log(`Owner: ${owner}, File: ${fileName}`);
+
     }
 
 });
