@@ -146,13 +146,15 @@ class FileHandler
 
     async handleFileDownload(fileName, fileOwner)
     {
-        const compressedData = await this.retrieveFromDrive(fileName, fileOwner).then(fileContent => console.log('File content:', fileContent));
-      const decompressedData = this.compressor.decompressFile(compressedData);
-      const decryptedFileData = this.atRestCrypto.decryptFile(decompressedData);
-      const decompFilePath = path.join(__dirname, fileName);
-      fs.writeFileSync(decompFilePath, Buffer.from(decryptedFileData.split(';base64,').pop(), 'base64'));
-      
-      console.log('File saved at:', decompFilePath);
+        const compressedData = await this.retrieveFromDrive(fileName, fileOwner);
+        console.log(compressedData, typeof(compressedData));
+
+        const decompressedData = this.compressor.decompressFile(compressedData);
+        const decryptedFileData = this.atRestCrypto.decryptFile(decompressedData);
+        const decompFilePath = path.join(__dirname, fileName);
+        fs.writeFileSync(decompFilePath, Buffer.from(decryptedFileData.split(';base64,').pop(), 'base64'));
+        
+        console.log('File saved at:', decompFilePath);
     }
 
     async getFileIdByNameInFolder(fileName, folderName) {
@@ -182,29 +184,25 @@ class FileHandler
         }
     }
       
-    async retrieveFromDrive(fileName, fileOwner)
-    {
+    async retrieveFromDrive(fileName, fileOwner) {
         fileName += ".gz";
- 
+    
         try {
             const result = await this.drive.files.get({
-              fileId: await this.getFileIdByNameInFolder(fileName, fileOwner),
-              alt: 'media'
+                fileId: await this.getFileIdByNameInFolder(fileName, fileOwner),
+                alt: 'media'
             }, { responseType: 'stream' });
-
+    
             // Read the file content as a buffer
             const chunks = [];
             return new Promise((resolve, reject) => {
-                response.data.on('data', chunk => chunks.push(chunk));
-                response.data.on('end', () => resolve(Buffer.concat(chunks)));
-                response.data.on('error', error => reject(error));
-            
+                result.data.on('data', chunk => chunks.push(chunk));
+                result.data.on('end', () => resolve(Buffer.concat(chunks)));
+                result.data.on('error', error => reject(error));
             });
-
-          } catch (err) {
+        } catch (err) {
             throw err;
         }
-
     }
 
     async initDrive() {
