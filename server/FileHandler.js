@@ -146,8 +146,7 @@ class FileHandler
 
     async handleFileDownload(fileName, fileOwner)
     {
-      // TODO: add drive retrieve function
-      const compressedData = retrieveFromDrive(fileName);
+        const compressedData = await this.retrieveFromDrive(fileName, fileOwner).then(fileContent => console.log('File content:', fileContent));
       const decompressedData = this.compressor.decompressFile(compressedData);
       const decryptedFileData = this.atRestCrypto.decryptFile(decompressedData);
       const decompFilePath = path.join(__dirname, fileName);
@@ -156,6 +155,57 @@ class FileHandler
       console.log('File saved at:', decompFilePath);
     }
 
+    async getFileIdByNameInFolder(fileName, folderName) {
+        try {
+          // First, find the folder ID by its name
+          const folderResponse = await this.drive.files.list({
+            q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder'`,
+          });
+          if (folderResponse.data.files.length > 0) {
+            const folderId = folderResponse.data.files[0].id;
+      
+            // Then, search for the file within the specified folder
+            const fileResponse = await this.drive.files.list({
+              q: `'${folderId}' in parents and name='${fileName}'`,
+              fields: 'files(id, name)',
+            });
+            if (fileResponse.data.files.length > 0) {
+              return fileResponse.data.files[0].id;
+            } else {
+              throw new Error('File not found in the specified folder');
+            }
+          } else {
+            throw new Error('Folder not found');
+          }
+        } catch (err) {
+          throw err;
+        }
+    }
+      
+    async retrieveFromDrive(fileName, fileOwner)
+    {
+        fileName += ".gz";
+ 
+        try {
+            const result = await this.drive.files.get({
+              fileId: await this.getFileIdByNameInFolder(fileName, fileOwner),
+              alt: 'media'
+            }, { responseType: 'stream' });
+
+            // Read the file content as a buffer
+            const chunks = [];
+            return new Promise((resolve, reject) => {
+                response.data.on('data', chunk => chunks.push(chunk));
+                response.data.on('end', () => resolve(Buffer.concat(chunks)));
+                response.data.on('error', error => reject(error));
+            
+            });
+
+          } catch (err) {
+            throw err;
+        }
+
+    }
 
     async initDrive() {
       try {

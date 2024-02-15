@@ -113,9 +113,9 @@ class Parser{
 
         console.log(fileName, fileOwner);
 
-        // this.FileHandler = new FileHandler.FileHandler(username, password);
+        this.FileHandler = new FileHandler.FileHandler(username, password);
 
-        // await this.FileHandler.handleFileDownload(fileName, fileOwner);
+        await this.FileHandler.handleFileDownload(fileName, fileOwner);
         
     }
 
