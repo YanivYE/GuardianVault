@@ -67,7 +67,7 @@ async function receivePayloadFromServer(ServerPaylaod) {
 
     const decryptedData = await decryptData(iv, encryptedData, authTag);
 
-    console.log('got file from server: ', decryptedData);
+    return decryptedData;
 }
 
 async function encryptData(data) {    
