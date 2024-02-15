@@ -1,8 +1,6 @@
 const crypto = require('crypto');
 
 class EncryptionAtRest {
-    static iv = crypto.randomBytes(16); // Generate a random iv
-
     constructor(userPassword) {
         this.password = userPassword;
     }
@@ -14,22 +12,25 @@ class EncryptionAtRest {
 
     encryptFile(data) {
         const salt = crypto.randomBytes(16); // Generate a random salt
+        const iv = crypto.randomBytes(16); // Generate a random iv
+
         const key = this.deriveKeyFromPassword(salt);
-        const cipher = crypto.createCipheriv('aes-256-gcm', key, EncryptionAtRest.iv); // Use static iv
+        const cipher = crypto.createCipheriv('aes-256-gcm', key, iv); // Use static iv
 
         const encryptedContent = Buffer.concat([cipher.update(data, 'utf8'), cipher.final()]);
         const tag = cipher.getAuthTag();
 
-        return Buffer.concat([salt, tag, encryptedContent]);
+        return Buffer.concat([salt, iv, tag, encryptedContent]);
     }
 
     decryptFile(encryptedFileData) {
         const salt = encryptedFileData.slice(0, 16);
-        const tag = encryptedFileData.slice(16, 32);
-        const encryptedData = encryptedFileData.slice(32);
+        const iv = encryptedFileData.slice(16, 32);
+        const tag = encryptedFileData.slice(32, 48);
+        const encryptedData = encryptedFileData.slice(48);
 
         const key = this.deriveKeyFromPassword(salt);
-        const decipher = crypto.createDecipheriv('aes-256-gcm', key, EncryptionAtRest.iv); // Use static iv
+        const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv); // Use static iv
         decipher.setAuthTag(tag);
 
         const decryptedContent = Buffer.concat([decipher.update(encryptedData)]);

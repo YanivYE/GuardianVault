@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 socket.on('error', (error) => {
                     reject(error);
                 });
-            }).then((usersList) => {
+            }).then(async (usersList) => {
                 return usersList; // Return the usersList after resolving the promise
             });
         } catch (error) {

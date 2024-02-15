@@ -1,6 +1,7 @@
 const DBHandler = require("./DataBaseHandler");
 const FileHandler = require("./FileHandler");
 const sessionStorage = require('express-session');
+const sharedCryptography = require("./CryptographyTunnel");
 
 class Parser{
     constructor(socket)
@@ -43,6 +44,14 @@ class Parser{
                 break;
   
         }
+    }
+
+    generateServerPayload(data) {
+        const { iv, ciphertext, authTag } = sharedCryptography.encryptData(data);
+        const payload = iv.toString('hex') + ciphertext + authTag;
+        const payloadBase64 = Buffer.from(payload, 'hex').toString('base64');
+
+        return payloadBase64;
     }
 
     async parseLoginRequest(loginRequest)
@@ -115,13 +124,18 @@ class Parser{
 
         this.FileHandler = new FileHandler.FileHandler(username, password);
 
-        await this.FileHandler.handleFileDownload(fileName, fileOwner);
-        
+        const fileData = await this.FileHandler.handleFileDownload(fileName, fileOwner);
+
+        // FIX
+
+        const downloadedFilePayload = this.generateServerPayload(fileData);
+
+        this.socket.emit('downloadFilePayload', downloadedFilePayload);   
     }
 
     async getUsersList()
     {
-        const usersList = await this.DBHandler.getUsersList();
+        let usersList = await this.DBHandler.getUsersList();
         const {username} = this.getConnectedUserDetails();
         usersList.splice(usersList.indexOf(username), 1);
         this.socket.emit('usersListResult', usersList);

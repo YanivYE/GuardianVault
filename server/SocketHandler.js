@@ -19,15 +19,6 @@ class SocketHandler {
         });
     }
 
-    sendPayloadToClient(data) {
-        const { iv, ciphertext, authTag } = sharedCryptography.encryptData(data);
-        const payload = iv.toString('hex') + ciphertext + authTag;
-        const payloadBase64 = Buffer.from(payload, 'hex').toString('base64');
-
-        console.log("sent: ", payloadBase64);
-        this.socket.emit('server-send-file', payloadBase64);
-    }
-
     receivePayloadFromClient() {
         this.socket.on('ClientMessage', async (clientMessagePayload) => {
             const parser = new Parser.Parser(this.socket);

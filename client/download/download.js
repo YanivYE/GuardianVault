@@ -162,14 +162,16 @@ document.addEventListener('DOMContentLoaded', async function () {
         const downloadFileRequest = 'DownloadFile$' + fileName + '$' + fileOwner;
         const downloadFilePayload = await sendToServerPayload(downloadFileRequest);
         socket.emit('ClientMessage', downloadFilePayload);
-        socket.on('DownloadFileResult', async (DownloadFileResult) => {
-            if(DownloadFileResult === "Success")
-            {
-                // ALERT SUCCESSFUL UPLOAD
-                message.style.display = "block"; // Show error message
-                message.style.color = "green";
-                message.innerText = "File downloaded successfully!"; // Set error message text
-            }
+        socket.on('downloadFilePayload', async (downloadFilePayload) => {
+            const fileData = await receivePayloadFromServer(downloadFilePayload);
+            console.log(fileData);
+            // if(DownloadFileResult === "Success")
+            // {
+            //     // ALERT SUCCESSFUL UPLOAD
+            //     message.style.display = "block"; // Show error message
+            //     message.style.color = "green";
+            //     message.innerText = "File downloaded successfully!"; // Set error message text
+            // }
         });
     }
 

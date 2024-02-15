@@ -61,9 +61,8 @@ async function receivePayloadFromServer(ServerPaylaod) {
     const payload = arrayBufferToHexString(base64ToArrayBuffer(ServerPaylaod));
     
     const iv = payload.substr(0, 32); // Assuming IV is 32 characters (16 bytes)
-    const authTag = payload.substr(payload.length - 32); // Assuming tag is 32 characters (16 bytes)
-
     const encryptedData = payload.substring(32, payload.length - 32);
+    const authTag = payload.substr(payload.length - 32); // Assuming tag is 32 characters (16 bytes)
 
     const decryptedData = await decryptData(iv, encryptedData, authTag);
 
@@ -108,7 +107,7 @@ async function decryptData(ivHex, ciphertextHex, tagHex) {
         const concatenatedArray = new Uint8Array(totalLength);
         concatenatedArray.set(ciphertextUint8Array, 0);
         concatenatedArray.set(tagUint8Array, ciphertextUint8Array.length);
-
+        
         // Decrypt the data using AES-GCM
         const decryptedData = await crypto.subtle.decrypt(
             { name: 'AES-GCM', iv: ivArray},

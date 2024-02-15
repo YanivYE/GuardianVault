@@ -147,14 +147,11 @@ class FileHandler
     async handleFileDownload(fileName, fileOwner)
     {
         const compressedData = await this.retrieveFromDrive(fileName, fileOwner);
-        console.log(compressedData, typeof(compressedData));
 
         const decompressedData = this.compressor.decompressFile(compressedData);
         const decryptedFileData = this.atRestCrypto.decryptFile(decompressedData);
-        const decompFilePath = path.join(__dirname, fileName);
-        fs.writeFileSync(decompFilePath, Buffer.from(decryptedFileData.split(';base64,').pop(), 'base64'));
-        
-        console.log('File saved at:', decompFilePath);
+
+        return decryptedFileData;
     }
 
     async getFileIdByNameInFolder(fileName, folderName) {
