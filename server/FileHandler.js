@@ -144,7 +144,7 @@ class FileHandler
       }});
     }
 
-    async getFromDrive(fileName)
+    async handleFileDownload(fileName, fileOwner)
     {
       // TODO: add drive retrieve function
       const compressedData = retrieveFromDrive(fileName);

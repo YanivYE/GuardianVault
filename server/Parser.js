@@ -29,6 +29,9 @@ class Parser{
             case "UploadFile":
                 this.parseUploadFileRequest(additionalData);
                 break;
+            case "DownloadFile":
+                this.parseDownloadFileRequest(additionalData);
+                break;
             case "UsersList":
                 this.getUsersList();
                 break;
@@ -95,6 +98,25 @@ class Parser{
 
             this.socket.emit('UploadFileResult', "Success");
         }
+    }
+
+    async parseDownloadFileRequest(downloadFileRequest)
+    {
+        let [fileName, fileOwner] = downloadFileRequest.split('$');
+
+        const { username, password } = this.getConnectedUserDetails();
+
+        if(fileOwner === 'null')
+        {
+            fileOwner = username;
+        }
+
+        console.log(fileName, fileOwner);
+
+        // this.FileHandler = new FileHandler.FileHandler(username, password);
+
+        // await this.FileHandler.handleFileDownload(fileName, fileOwner);
+        
     }
 
     async getUsersList()

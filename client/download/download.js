@@ -8,11 +8,7 @@ const socket = io({
 document.addEventListener('DOMContentLoaded', async function () {
     var files = await getUserOwnFilesListFromServer();
 
-    console.log(files);
-
     const sharedFiles = await getUserSharedFilesListFromServer();
-
-    console.log(sharedFiles);
 
     populateFileList();
     // Call the function to display shared files
@@ -32,8 +28,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             const fileName = file.textContent;
             const owner = file.getAttribute('owner');
             
-            // Call the toggleFile function with owner's name and file name
-            toggleFileOwner(owner, fileName);
+            downloadFile(fileName, owner);
         });
     });
 
@@ -162,10 +157,20 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     }
 
-    function toggleFileOwner(owner, fileName) {
-        // Print the owner's name and file name
-        console.log(`Owner: ${owner}, File: ${fileName}`);
-
+    async function downloadFile(fileName, fileOwner)
+    {
+        const downloadFileRequest = 'DownloadFile$' + fileName + '$' + fileOwner;
+        const downloadFilePayload = await sendToServerPayload(downloadFileRequest);
+        socket.emit('ClientMessage', downloadFilePayload);
+        socket.on('DownloadFileResult', async (DownloadFileResult) => {
+            if(DownloadFileResult === "Success")
+            {
+                // ALERT SUCCESSFUL UPLOAD
+                message.style.display = "block"; // Show error message
+                message.style.color = "green";
+                message.innerText = "File downloaded successfully!"; // Set error message text
+            }
+        });
     }
 
 });
