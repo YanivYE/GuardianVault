@@ -14,12 +14,12 @@
         <span class="upload100-form-title p-b-41" id="downloadTitle">
             Download File
         </span>
-        <div class="wrap-login100 p-t-30 p-b-50 download-form"> <!-- Added 'download-form' class -->
+        <div class="wrap-login100 p-t-30 p-b-50 download-form">
             <div class="download-container">
-                <h2>Search Files</h2> <!-- Move the title above the container -->
+                <h2>Search Files</h2>
                 <div class="search-container">
                     <input type="search" id="searchBar" placeholder="Search files...">
-                    <button onclick="searchFiles()">Search</button> <!-- Move the button here -->
+                    <button onclick="searchFiles()">Search</button>
                 </div>
                 <h2>Your Files</h2>
                 <div id="fileList">
@@ -28,15 +28,17 @@
                     </ul>
                 </div>
             </div>
-            <h2>Files Shared with You</h2>
-            <div id="sharedWithMeDetails">
-                <!-- Use an unordered list to contain user-shared files -->
-                <ul id="sharedFilesList">
-                    <!-- Placeholder for shared files -->
-                </ul>
+            <div class="shared-files-container"></div>
+                <h2>Files Shared with You</h2>
+                <div id="sharedWithMeDetails">
+                    <!-- Use an unordered list to contain user-shared files -->
+                    <ul id="sharedFilesList">
+                        <!-- Placeholder for shared files -->
+                    </ul>
+                </div>
+                <h2>‎ </h2>
+                <button id="downloadButton">Download</button> <!-- Added download button -->
             </div>
-            <h2>‎ </h2>
-            <button id="downloadButton">Download</button> <!-- Added download button -->
         </div>
     </div>
 </body>

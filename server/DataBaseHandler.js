@@ -177,19 +177,28 @@ class DataBaseHandler{
     {
         try {
             // Find permissions where the specified username is listed as a shared user
-            const permissions = await Permission.find({ sharedUserNames: username });
+            const permissions = await Permission.find({ sharedUserNames: username }).populate('file');
     
-            // Array to store file names
-            const sharedFiles = [];
+            // Map to store shared files organized by owners
+            const sharedFilesMap = new Map();
     
-            // Iterate through each permission and extract file names
+            // Iterate through each permission
             for (const permission of permissions) {
-                // Find the file associated with the permission
-                const file = await File.findById(permission.file, 'name');
-                if (file) {
-                    sharedFiles.push(file.name);
+                // Get the owner's username
+                const owner = await User.findById(permission.file.owner, 'username');
+    
+                // If the owner exists and is not the same as the user requesting the shared files
+                if (owner && owner.username !== username) {
+                    // Add the file to the map under the owner's username
+                    if (!sharedFilesMap.has(owner.username)) {
+                        sharedFilesMap.set(owner.username, []);
+                    }
+                    sharedFilesMap.get(owner.username).push(permission.file.name);
                 }
             }
+    
+            // Convert the map to the desired output format
+            const sharedFiles = Array.from(sharedFilesMap).map(([user, files]) => ({ user, files }));
     
             return sharedFiles;
         } catch (error) {
