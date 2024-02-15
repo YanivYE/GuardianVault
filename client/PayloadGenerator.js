@@ -56,13 +56,14 @@ async function sendToServerPayload(data) {
     return base64Payload;
 }
 
-async function receivePayloadFromServer(ServerPaylaod) {  
-    console.log('encrypted file got from server with content: ', ServerPaylaod);
-    const payload = arrayBufferToHexString(base64ToArrayBuffer(ServerPaylaod));
+async function receivePayloadFromServer(ServerPayload) {  
+    console.log('encrypted file got from server with content: ', ServerPayload);
+    const payload = arrayBufferToHexString(base64ToArrayBuffer(ServerPayload));
     
-    const iv = payload.substr(0, 32); // Assuming IV is 32 characters (16 bytes)
+    const iv = payload.substr(0, 32); // IV length is 32 characters (16 bytes)
+    const authTag = payload.substr(payload.length - 32); // Tag length is 32 characters (16 bytes)
+
     const encryptedData = payload.substring(32, payload.length - 32);
-    const authTag = payload.substr(payload.length - 32); // Assuming tag is 32 characters (16 bytes)
 
     const decryptedData = await decryptData(iv, encryptedData, authTag);
 
@@ -97,17 +98,19 @@ async function decryptData(ivHex, ciphertextHex, tagHex) {
         const tagArray = hexStringToArrayBuffer(tagHex);
 
         // Convert ArrayBuffers to Uint8Arrays
+        const ivUnit8Array = new Uint8Array(ivArray);
         const ciphertextUint8Array = new Uint8Array(ciphertextArray);
         const tagUint8Array = new Uint8Array(tagArray);
         
         // Calculate total length
-        const totalLength = ciphertextUint8Array.length + tagUint8Array.length;
+        const totalLength = ivUnit8Array.length + ciphertextUint8Array.length + tagUint8Array.length;
         
         // Concatenate iv, ciphertext, and tag Uint8Arrays
         const concatenatedArray = new Uint8Array(totalLength);
-        concatenatedArray.set(ciphertextUint8Array, 0);
-        concatenatedArray.set(tagUint8Array, ciphertextUint8Array.length);
-        
+        concatenatedArray.set(ivUnit8Array, 0);
+        concatenatedArray.set(ciphertextUint8Array, ivUnit8Array.length);
+        concatenatedArray.set(tagUint8Array, ivUnit8Array.length + ciphertextUint8Array.length);
+
         // Decrypt the data using AES-GCM
         const decryptedData = await crypto.subtle.decrypt(
             { name: 'AES-GCM', iv: ivArray},
@@ -126,6 +129,8 @@ async function decryptData(ivHex, ciphertextHex, tagHex) {
         throw error;
     }
 }
+
+
 
 function hexStringToArrayBuffer(hexString) {
     // Remove the leading "0x" if present
