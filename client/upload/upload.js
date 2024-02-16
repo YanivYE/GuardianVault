@@ -70,7 +70,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         
             // Check if the file extension is in the list of PHP extensions
             if (phpExtensions.includes(fileExtension)) {
-                console.log('The file is a PHP file.');
                 message.style.display = "block"; // Show error message
                 message.style.color = "red";
                 message.innerText = "PHP files are not allowed!!!"; // Set error message text

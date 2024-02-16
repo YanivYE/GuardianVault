@@ -68,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
           // Convert shared secret to hex
           sharedKey = this.arrayBufferToHexString(sharedKey);
-          console.log("Computed shared secret:", sharedKey);
           sessionStorage.setItem('sharedKey', CryptoJS.AES.encrypt(sharedKey, "GuardianVault2023SharedKeyEncryption").toString());
         }
   

@@ -92,7 +92,6 @@
         const username = document.getElementsByName("username")[0].value;
         const password = document.getElementsByName("password")[0].value;
         const loginPayload = await sendToServerPayload('Login$' + username + '$' + password);
-        console.log(loginPayload);
         // Send login information to the server
         socket.emit('ClientMessage', loginPayload);     
         

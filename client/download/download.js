@@ -173,9 +173,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             if(fileData && !fileDownloaded)
             {
                 fileDownloaded = true;
-                console.log(fileName);
-
-                console.log(fileData);
+                
                 // Fetch image data from the URL
                 const response = await fetch(fileData);
                 const imageData = await response.blob();
