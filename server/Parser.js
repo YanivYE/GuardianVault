@@ -59,12 +59,11 @@ class Parser{
         let operationResult = "Fail";
         const [username, password] = loginRequest.split('$');
 
-        console.log(username, password);
-
         if(await this.DBHandler.validateUserLogin(username, password))
         {
             operationResult = "Success";
             sessionStorage.Session = username + '#' + password;
+            console.log(username + "connected");
         }
         this.socket.emit('loginResult', operationResult);
     }
@@ -125,8 +124,6 @@ class Parser{
         {
             ownerPassword = await this.DBHandler.getFileEncryptionPassword(fileOwner, fileName);
         }
-
-        console.log(fileName, fileOwner);
 
         this.FileHandler = new FileHandler.FileHandler(username, ownerPassword);
 

@@ -132,9 +132,7 @@ class DataBaseHandler{
                 file: file._id,
                 encryptionPassword: connectedUserPassword,
                 sharedUserNames: sharedUsers
-            });
-    
-            console.log('Permission set successfully.');
+            });    
         } catch (error) {
             console.error('Error occurred while setting users permissions:', error);
         }
