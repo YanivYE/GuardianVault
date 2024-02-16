@@ -101,7 +101,6 @@ class FileHandler
           });
   
           if (response.data.files.length.valueOf() > 0) {
-              console.log("FOUND FOLDER");
               return response.data.files[0].id;
           } else {
               return await this.createFolder();

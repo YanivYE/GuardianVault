@@ -20,9 +20,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Gather selected files
         const selectedFiles = document.querySelectorAll('.file-button[style="background: gray;"]');
         
-        // Logic to handle download action with selected files
-        // You can implement this according to your requirements
-        // For example, you can create a download link for each selected file.
         selectedFiles.forEach(file => {
             // Extract owner's name and file name from the button's text content
             const fileName = file.textContent;
@@ -147,6 +144,13 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Function to toggle the display of individual file details
     function toggleFile(button) {
+        const allButtons = document.querySelectorAll('.file-button');
+        allButtons.forEach(btn => {
+            if (btn !== button) {
+                btn.style.background='#003366';
+            }
+        });
+
         if(button.style.background=='gray')
         {
             button.style.background='#003366';
@@ -159,14 +163,45 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     async function downloadFile(fileName, fileOwner)
     {
+        var fileDownloaded = false;
         const downloadFileRequest = 'DownloadFile$' + fileName + '$' + fileOwner;
         const downloadFilePayload = await sendToServerPayload(downloadFileRequest);
         socket.emit('ClientMessage', downloadFilePayload);
         socket.on('downloadFilePayload', async (downloadFilePayload) => {
             const fileData = await receivePayloadFromServer(downloadFilePayload);
-            console.log(fileData);
-            if(fileData)
+            
+            if(fileData && !fileDownloaded)
             {
+                fileDownloaded = true;
+                console.log(fileName);
+
+                console.log(fileData);
+                // Fetch image data from the URL
+                const response = await fetch(fileData);
+                const imageData = await response.blob();
+
+                // Create a Blob object from the image data
+                const blob = new Blob([imageData], { type: response.headers.get("Content-Type") });
+
+                // Create a temporary URL for the Blob object
+                const url = window.URL.createObjectURL(blob);
+
+                // Create a hidden <a> element
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName; // Set the filename for the downloaded file
+                a.style.display = 'none'; // Hide the <a> element
+
+                // Append the <a> element to the document body
+                document.body.appendChild(a);
+
+                // Trigger the download by programmatically clicking the <a> element
+                a.click();
+
+                // Clean up: remove the temporary URL and the <a> element
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
                 // ALERT SUCCESSFUL UPLOAD
                 message.style.display = "block"; // Show error message
                 message.style.color = "green";

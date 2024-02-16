@@ -31,8 +31,6 @@ class SocketHandler {
             const decryptedData = sharedCryptography.decryptData(iv, encryptedData, authTag);
 
             parser.parseClientMessage(decryptedData);
-
-            // get payload from parser and send to client 
         });
     }
 }

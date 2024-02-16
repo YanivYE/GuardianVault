@@ -99,7 +99,7 @@ class Parser{
         }
         else
         {
-            this.DBHandler.setUsersPermissions(users, fileName, username);
+            this.DBHandler.setUsersPermissions(users, fileName, username, password);
 
             this.FileHandler = new FileHandler.FileHandler(username, password);
 
@@ -111,6 +111,7 @@ class Parser{
 
     async parseDownloadFileRequest(downloadFileRequest)
     {
+        let ownerPassword = "";
         let [fileName, fileOwner] = downloadFileRequest.split('$');
 
         const { username, password } = this.getConnectedUserDetails();
@@ -118,19 +119,22 @@ class Parser{
         if(fileOwner === 'null')
         {
             fileOwner = username;
+            ownerPassword = password;
+        }
+        else
+        {
+            ownerPassword = await this.DBHandler.getFileEncryptionPassword(fileOwner, fileName);
         }
 
         console.log(fileName, fileOwner);
 
-        this.FileHandler = new FileHandler.FileHandler(username, password);
+        this.FileHandler = new FileHandler.FileHandler(username, ownerPassword);
 
         const fileData = await this.FileHandler.handleFileDownload(fileName, fileOwner);
 
-        // FIX
-
         const downloadedFilePayload = this.generateServerPayload(fileData);
 
-        this.socket.emit('downloadFilePayload', downloadedFilePayload);   
+        this.socket.emit('downloadFilePayload', downloadedFilePayload); 
     }
 
     async getUsersList()

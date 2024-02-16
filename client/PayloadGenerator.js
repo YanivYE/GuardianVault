@@ -35,7 +35,6 @@ async function initializeKey() {
     var encryptedSharedKey = sessionStorage.getItem('sharedKey');
     var decryptedSharedKey = CryptoJS.AES.decrypt(encryptedSharedKey, "GuardianVault2023SharedKeyEncryption");
     sharedKey = decryptedSharedKey.toString(CryptoJS.enc.Utf8);
-    console.log(sharedKey);
     sharedKey = await hexToCryptoKey(sharedKey);
     keyInitialized = true;
 }
@@ -58,14 +57,11 @@ async function sendToServerPayload(data) {
 }
 
 async function receivePayloadFromServer(ServerPayload) {  
-    console.log('encrypted file got from server with content: ', ServerPayload);
     const payload = arrayBufferToHexString(base64ToArrayBuffer(ServerPayload));
     
     const iv = payload.substr(0, 32); // IV length is 32 characters (16 bytes)
     const encryptedData = payload.substring(32, payload.length - 32);
     const authTag = payload.substr(payload.length - 32); // Tag length is 32 characters (16 bytes)
-
-    
 
     const decryptedData = await decryptData(iv, encryptedData, authTag);
 
@@ -95,7 +91,6 @@ async function encryptData(data) {
 
 async function decryptData(ivHex, ciphertextHex, tagHex) {    
     try {
-        console.log(ivHex, ciphertextHex, tagHex);
         const ivArray = hexStringToArrayBuffer(ivHex);
         const ciphertextArray = hexStringToArrayBuffer(ciphertextHex);
         const tagArray = hexStringToArrayBuffer(tagHex);

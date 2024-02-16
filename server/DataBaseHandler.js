@@ -19,6 +19,7 @@ const File = mongoose.model('Files', fileSchema);
 
 const permissionSchema = mongoose.Schema({
     file: {type: mongoose.Schema.Types.ObjectId, ref: 'Files'},
+    encryptionPassword: String,
     sharedUserNames: Array
 });
 
@@ -110,7 +111,7 @@ class DataBaseHandler{
         }
     }
 
-    async setUsersPermissions(sharedUsers, fileName, connectedUserName) {
+    async setUsersPermissions(sharedUsers, fileName, connectedUserName, connectedUserPassword) {
         try {
             const user = await User.findOne({ username: connectedUserName });
     
@@ -129,6 +130,7 @@ class DataBaseHandler{
             // Create a new permission entry directly using create()
             await Permission.create({
                 file: file._id,
+                encryptionPassword: connectedUserPassword,
                 sharedUserNames: sharedUsers
             });
     
@@ -149,6 +151,38 @@ class DataBaseHandler{
         } catch (error) {
             console.error("Error getting users list:", error);
             return [];
+        }
+    }
+
+    async getFileEncryptionPassword(fileOwner, fileName)
+    {
+        try {
+            // Find the user document corresponding to the specified file owner's name
+            const owner = await User.findOne({ username: fileOwner });
+            if (!owner) {
+                console.error('Owner not found.');
+                return null;
+            }
+    
+            // Find the file document corresponding to the specified file name and owner's ObjectId
+            const file = await File.findOne({ name: fileName, owner: owner._id });
+            if (!file) {
+                console.error('File not found.');
+                return null;
+            }
+    
+            // Find the permission document corresponding to the found file document
+            const permission = await Permission.findOne({ file: file._id });
+            if (!permission) {
+                console.error('Permission not found.');
+                return null;
+            }
+    
+            // Return the encryption password from the permission document
+            return permission.encryptionPassword;
+        } catch (error) {
+            console.error('Error getting file encryption password:', error);
+            return null;
         }
     }
 
