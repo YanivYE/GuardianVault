@@ -63,7 +63,7 @@ class Parser{
         {
             operationResult = "Success";
             sessionStorage.Session = username + '#' + password;
-            console.log(username + "connected");
+            console.log(username + " connected");
         }
         this.socket.emit('loginResult', operationResult);
     }
@@ -71,8 +71,6 @@ class Parser{
     async parseSignupRequest(signupRequest)
     {
         const [username, email, password] = signupRequest.split('$');
-
-        console.log(username, email, password);
 
         const operationResult = await this.DBHandler.validateUserSignup(username, email, password);
 

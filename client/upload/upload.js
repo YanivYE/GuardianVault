@@ -34,6 +34,14 @@ document.addEventListener('DOMContentLoaded', async function () {
         clearUserSelection();
     });
 
+    const selectAllCheckbox = document.getElementById('selectAllUsers');
+    selectAllCheckbox.addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('input[name="users"]');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+    });
+
     // Add event listener for form submission
     uploadForm.addEventListener('submit', async function(event) {
         event.preventDefault(); // Prevent default form submission
@@ -86,9 +94,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             message.style.color = "red";
             message.innerText = "Please fill out all required fields."; // Set error message text
         }
-            
-        
-        
     });
     
 
