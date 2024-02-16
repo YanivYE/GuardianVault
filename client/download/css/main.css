@@ -895,6 +895,8 @@ label[for="private"], label[for="public"] {
   border-radius: 10px; /* Rounded corners */
   padding: 20px; /* Add padding */
   color: white;
+  max-height: calc(100vh - 85px); /* Adjusted height */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 
@@ -964,7 +966,7 @@ label[for="private"], label[for="public"] {
 }
 
 #sharedWithMeDetails {
-  max-height: 250px; /* Set a maximum height for the shared files section */
+  max-height: 10px; /* Set a maximum height for the shared files section */
   overflow-y: auto; /* Enable vertical scrolling if content overflows */
 }
 
@@ -1011,7 +1013,7 @@ label[for="private"], label[for="public"] {
 }
 
 #sharedWithMeDetails {
-  max-height: 250px;
+  max-height: 200px;
   overflow-y: auto;
   scrollbar-width: thin; /* For Firefox */
   scrollbar-color: #888 transparent; /* For Firefox */
@@ -1054,4 +1056,26 @@ label[for="private"], label[for="public"] {
   background: -o-linear-gradient(left, #001326, #002243, #004777);
   background: -moz-linear-gradient(left, #001326, #002243, #004777);
   background: linear-gradient(left, #001326, #002243, #004777);
+}
+
+#sharedFilesList {
+  max-height: 250px; /* Set a maximum height for the shared files section */
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+}
+
+#sharedFilesList::-webkit-scrollbar {
+  width: 8px; /* Set the width of the scrollbar */
+}
+
+#sharedFilesList::-webkit-scrollbar-thumb {
+  background-color: #888; /* Set the color of the scrollbar thumb */
+}
+
+/* For Firefox */
+#sharedFilesList {
+  scrollbar-width: thin; /* Set the width of the scrollbar */
+}
+
+#sharedFilesList::-webkit-scrollbar-thumb {
+  background-color: #888; /* Set the color of the scrollbar thumb */
 }
