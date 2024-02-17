@@ -78,6 +78,7 @@ class Parser{
         if(operationResult === "Success")
         {
             sessionStorage.Session = username + '#' + password;
+            console.log(username + " connected");
         }
 
         this.socket.emit('signupResult', operationResult);
@@ -101,11 +102,9 @@ class Parser{
 
             this.FileHandler = new FileHandler.FileHandler(username, password);
 
-            this.initializeSystem();
+            await this.FileHandler.handleFileUpload(fileName, fileContent); 
 
-            // await this.FileHandler.handleFileUpload(fileName, fileContent); 
-
-            // this.socket.emit('UploadFileResult', "Success");
+            this.socket.emit('UploadFileResult', "Success");
         }
     }
 

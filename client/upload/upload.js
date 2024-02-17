@@ -178,10 +178,16 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     async function uploadFile(fileName, shareWithUsers, fileContent)
     {
+        message.style.display = "none"; 
+        document.getElementById('uploadLoader').style.display = 'block';
+
         const uplaodFileRequest = 'UploadFile$' + fileName + '$' + fileContent + '$' + shareWithUsers;
         const uploadFilePayload = await sendToServerPayload(uplaodFileRequest);
+
         socket.emit('ClientMessage', uploadFilePayload);
         socket.on('UploadFileResult', async (UploadFileResult) => {
+            document.getElementById('uploadLoader').style.display = 'none';
+
             if(UploadFileResult === "Success")
             {
                 // ALERT SUCCESSFUL UPLOAD

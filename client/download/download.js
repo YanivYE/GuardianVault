@@ -179,11 +179,15 @@ document.addEventListener('DOMContentLoaded', async function () {
     async function downloadFile(fileName, fileOwner)
     {
         var fileDownloaded = false;
+        message.style.display = "none"; 
+        document.getElementById('downloadLoader').style.display = 'block';
         const downloadFileRequest = 'DownloadFile$' + fileName + '$' + fileOwner;
         const downloadFilePayload = await sendToServerPayload(downloadFileRequest);
         socket.emit('ClientMessage', downloadFilePayload);
         socket.on('downloadFilePayload', async (downloadFilePayload) => {
             const fileData = await receivePayloadFromServer(downloadFilePayload);
+
+            document.getElementById('downloadLoader').style.display = 'none';
             
             if(fileData && !fileDownloaded)
             {
