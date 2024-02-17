@@ -2,6 +2,7 @@ const DBHandler = require("./DataBaseHandler");
 const FileHandler = require("./FileHandler");
 const sessionStorage = require('express-session');
 const sharedCryptography = require("./CryptographyTunnel");
+const fs = require('fs');
 
 class Parser{
     constructor(socket)
@@ -100,9 +101,11 @@ class Parser{
 
             this.FileHandler = new FileHandler.FileHandler(username, password);
 
-            await this.FileHandler.handleFileUpload(fileName, fileContent); 
+            this.initializeSystem();
 
-            this.socket.emit('UploadFileResult', "Success");
+            // await this.FileHandler.handleFileUpload(fileName, fileContent); 
+
+            // this.socket.emit('UploadFileResult', "Success");
         }
     }
 
@@ -160,11 +163,20 @@ class Parser{
         return {username: connectedUserName, password: connectedUserPassword};
     }
 
-    initializeSystem()
-    {
+    initializeSystem() {
         this.DBHandler.initDataBase();
         this.FileHandler.initDrive();
-        console.log("Initialized system successfully!")
+        
+        // Get current date and time
+        const currentDateTime = new Date().toISOString();
+        
+        // Log message to be written
+        const logMessage = `${currentDateTime}: System Initialized\n`;
+
+        // Append log message to log.txt file
+        fs.appendFileSync('../guardianvault/system_log.txt', logMessage);
+
+        console.log("Initialized system successfully!");
     }
 }
 

@@ -7,9 +7,7 @@ class SocketHandler {
         this.socket = socket;
     }
 
-    async handleSocketConnection() {
-        console.log('A user connected');
-      
+    async handleSocketConnection() {      
         const sharedKey = await keyExchange.performKeyExchange(this.socket);
 
         sharedCryptography.setEncryptionKey(sharedKey);
