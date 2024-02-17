@@ -1,8 +1,9 @@
 const DBHandler = require("./DataBaseHandler");
-const FileHandler = require("./FileHandler");
 const sessionStorage = require('express-session');
+const FileHandler = require("./FileHandler");
 const sharedCryptography = require("./CryptographyTunnel");
 const fs = require('fs');
+const DriveHandler = require("./DriveHandler");
 
 class Parser{
     constructor(socket)
@@ -28,11 +29,14 @@ class Parser{
             case "SignUp":
                 this.parseSignupRequest(additionalData);
                 break;
-            case "UploadFile":
-                this.parseUploadFileRequest(additionalData);
+            case "UploadFileChunk":
+                this.parseUploadFileChunkRequest(additionalData);
                 break;
             case "DownloadFile":
                 this.parseDownloadFileRequest(additionalData);
+                break;
+            case "validateName":
+                this.validateFileName(additionalData);
                 break;
             case "UsersList":
                 this.getUsersList();
@@ -84,27 +88,36 @@ class Parser{
         this.socket.emit('signupResult', operationResult);
     }
 
-    async parseUploadFileRequest(uploadFileRequest) {
-        const [fileName, fileContent, usersString] = uploadFileRequest.split('$');
+    async parseUploadFileChunkRequest(uploadFileChunkRequest) {
+        var isLastChunk = false;
+        const [chunkIndex, chunkContent, totalChunks] = uploadFileChunkRequest.split('$');
     
+        if(parseInt(chunkIndex) === parseInt(totalChunks) - 1)  // the last chunk
+        {
+            isLastChunk = true;
+        }
+
+        this.FileHandler.assembleFileContent(chunkContent, isLastChunk);
+    }
+
+    async validateFileName(validationData)
+    {
+        this.fileContent = "";
+        this.uploadFinished = false;
+        const [fileName, usersString] = validationData.split('$');
+
         const { username, password } = this.getConnectedUserDetails();
         const users = usersString.split(',');
 
         const operationResult = await this.DBHandler.validateFileName(fileName, username);
 
-        if(operationResult === "Fail")
-        {
-            this.socket.emit('UploadFileResult', "Fail");
-        }
-        else
-        {
+        this.socket.emit('validateNameResult', operationResult);
+
+        if(operationResult === "Success")
+        {            
+            this.FileHandler = new FileHandler.FileHandler(this.socket, fileName, username, password);
+
             this.DBHandler.setUsersPermissions(users, fileName, username, password);
-
-            this.FileHandler = new FileHandler.FileHandler(username, password);
-
-            await this.FileHandler.handleFileUpload(fileName, fileContent); 
-
-            this.socket.emit('UploadFileResult', "Success");
         }
     }
 
@@ -125,9 +138,9 @@ class Parser{
             ownerPassword = await this.DBHandler.getFileEncryptionPassword(fileOwner, fileName);
         }
 
-        this.FileHandler = new FileHandler.FileHandler(username, ownerPassword);
+        const driveHandler = new DriveHandler.DriveHandler(username, ownerPassword);
 
-        const fileData = await this.FileHandler.handleFileDownload(fileName, fileOwner);
+        const fileData = await driveHandler.handleFileDownload(fileName, fileOwner);
 
         const downloadedFilePayload = this.generateServerPayload(fileData);
 

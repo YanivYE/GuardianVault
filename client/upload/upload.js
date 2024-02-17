@@ -76,14 +76,26 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
             else
             {
-                // All inputs are valid, proceed with form submission
-                const reader = new FileReader();
+                const fileNameAndExtention = fileName + '.' + fileExtension;
+                const validationResult = await validateFileName(fileNameAndExtention, users);
+                if(validationResult === "Success")
+                {
+                    // All inputs are valid, proceed with form submission
+                    const reader = new FileReader();
 
-                reader.onload = async (event) => {
-                    let fileContent = event.target.result;
-                    uploadFile(fileName + '.' + fileExtension, users, fileContent);
-                };
-                reader.readAsDataURL(file);
+                    reader.onload = async (event) => {
+                        let fileContent = event.target.result;
+                        await uploadFile(fileContent);
+                    };
+                    reader.readAsDataURL(file);
+                }
+                else
+                {
+                    // Display error message
+                    message.style.display = "block"; // Show error message
+                    message.style.color = "red";
+                    message.innerText = "File name is already taken"; // Set error message text
+                }
             }
         } 
         else 
@@ -94,6 +106,59 @@ document.addEventListener('DOMContentLoaded', async function () {
             message.innerText = "Please fill out all required fields."; // Set error message text
         }
     });
+
+    async function uploadFile(fileContent) {
+        const chunkSize = 1024 * 600; // 1 MB chunk size
+        const fileSize = fileContent.length;
+        const totalChunks = Math.ceil(fileSize / chunkSize);
+        let offset = 0;
+
+        console.log(totalChunks);
+    
+        message.style.display = "none";
+        document.getElementById('uploadLoader').style.display = 'block';
+    
+        function uploadNextChunk() {
+            if (offset < fileSize) {
+                const chunk = fileContent.slice(offset, offset + chunkSize);
+                console.log(chunk.length);
+                const chunkIndex = Math.ceil(offset / chunkSize);
+                uploadFileChunk(chunk, chunkIndex, totalChunks)
+                    .then(uploadChunkResult => {
+                        if (uploadChunkResult === "Success") {
+                            offset += chunkSize;
+                            uploadNextChunk(); // Upload the next chunk recursively
+                        } else {
+                            // Handle the case where chunk upload failed
+                            console.error('Failed to upload chunk ' + chunkIndex);
+                            document.getElementById('uploadLoader').style.display = 'none';
+                            message.style.display = "block";
+                            message.style.color = "red";
+                            message.innerText = "Error occurred while uploading the file.";
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error uploading chunk: ', error);
+                        // Handle the error
+                        document.getElementById('uploadLoader').style.display = 'none';
+                        message.style.display = "block";
+                        message.style.color = "red";
+                        message.innerText = "Error occurred while uploading the file.";
+                    });
+            } else {
+                // All chunks have been uploaded successfully
+                console.log("All chunks uploaded successfully");
+                document.getElementById('uploadLoader').style.display = 'none';
+                message.style.display = "block";
+                message.style.color = "green";
+                message.innerText = "File uploaded successfully!";
+            }
+        }
+    
+        // Start uploading the first chunk
+        uploadNextChunk();
+    }
+
     
 
     var users = await getUsersListFromServer();
@@ -176,39 +241,51 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
     }
 
-    async function uploadFile(fileName, shareWithUsers, fileContent)
-    {
-        message.style.display = "none"; 
-        document.getElementById('uploadLoader').style.display = 'block';
-
-        const uplaodFileRequest = 'UploadFile$' + fileName + '$' + fileContent + '$' + shareWithUsers;
-        const uploadFilePayload = await sendToServerPayload(uplaodFileRequest);
-
-        socket.emit('ClientMessage', uploadFilePayload);
-        socket.on('UploadFileResult', async (UploadFileResult) => {
-            document.getElementById('uploadLoader').style.display = 'none';
-
-            if(UploadFileResult === "Success")
-            {
-                // ALERT SUCCESSFUL UPLOAD
-                message.style.display = "block"; // Show error message
-                message.style.color = "green";
-                message.innerText = "File uploaded successfully!"; // Set error message text
-            }
-            if(UploadFileResult === "Fail")
-            {
-                // Display error message
-                message.style.display = "block"; // Show error message
-                message.style.color = "red";
-                message.innerText = "File name is already taken"; // Set error message text
-            }
-        });   
+    async function validateFileName(fileName, shareWithUsers) {
+        return new Promise(async (resolve, reject) => {
+            const validateFileNameRequest = 'validateName$' + fileName + '$' + shareWithUsers;
+            const validateFileNamePayload = await sendToServerPayload(validateFileNameRequest);
+    
+            socket.emit('ClientMessage', validateFileNamePayload);
+            
+            socket.on('validateNameResult', (validateNameResult) => {
+                resolve(validateNameResult); // Resolve the promise with the result
+            });
+    
+            // Handle errors if any
+            socket.on('error', (error) => {
+                reject(error); // Reject the promise with the error
+            });
+        });
     }
+
+    async function uploadFileChunk(chunk, chunkIndex, totalChunks) {
+        try {
+            console.log(chunk);
+            const uploadFileChunkRequest = 'UploadFileChunk$' + chunkIndex + '$' + chunk + '$' + totalChunks;
+            const uploadFileChunkPayload = await sendToServerPayload(uploadFileChunkRequest);
+            
+            socket.emit('ClientMessage', uploadFileChunkPayload);
+    
+            return new Promise((resolve, reject) => {
+                socket.once('uploadChunkResult', uploadChunkResult => {
+                    resolve(uploadChunkResult);
+                });
+    
+                socket.once('error', error => {
+                    reject(error);
+                });
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+    
 
     async function getUsersListFromServer() {
         try {
             const userListPayload = await sendToServerPayload('UsersList$');
-            socket.emit('ClientMessage', userListPayload); // Not sure why you're emitting here, but you can handle it based on your application's logic
+            socket.emit('ClientMessage', userListPayload); 
     
             return new Promise((resolve, reject) => {
                 socket.on('usersListResult', (usersList) => {
