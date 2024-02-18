@@ -193,36 +193,45 @@ document.addEventListener('DOMContentLoaded', async function () {
         {
             fileDownloaded = true;
             
-            // Fetch image data from the URL
-            const response = await fetch(fileData);
-            const imageData = await response.blob();
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', fileData, true);
+                xhr.responseType = 'blob';
+        
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        const blob = xhr.response;
+                        const url = window.URL.createObjectURL(blob);
+        
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = fileName;
+                        a.style.display = 'none';
+                        document.body.appendChild(a);
+        
+                        a.click();
+        
+                        // Clean up
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
 
-            // Create a Blob object from the image data
-            const blob = new Blob([imageData], { type: response.headers.get("Content-Type") });
-
-            // Create a temporary URL for the Blob object
-            const url = window.URL.createObjectURL(blob);
-
-            // Create a hidden <a> element
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = fileName; // Set the filename for the downloaded file
-            a.style.display = 'none'; // Hide the <a> element
-
-            // Append the <a> element to the document body
-            document.body.appendChild(a);
-
-            // Trigger the download by programmatically clicking the <a> element
-            a.click();
-
-            // Clean up: remove the temporary URL and the <a> element
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-
-            // ALERT SUCCESSFUL UPLOAD
-            message.style.display = "block"; // Show error message
-            message.style.color = "green";
-            message.innerText = "File downloaded successfully!"; // Set error message text
+                        // Display success message
+                        message.style.display = "block";
+                        message.style.color = "green";
+                        message.innerText = "File downloaded successfully!";
+                    } else {
+                        console.error('Failed to download file:', xhr.statusText);
+                    }
+                };
+        
+                xhr.onerror = function () {
+                    console.error('Failed to download file:', xhr.statusText);
+                };
+        
+                xhr.send();
+            } catch (error) {
+                console.error('Error downloading file:', error);
+            }
         }
     }
 
@@ -235,6 +244,9 @@ document.addEventListener('DOMContentLoaded', async function () {
             socket.on('fileBlock', async (fileBlockPayload) => {
                 const serverPayload = await receivePayloadFromServer(fileBlockPayload);
                 const [blockIndex, block, totalBlocksStr] = serverPayload.split('$');
+
+                console.log(blockIndex);
+
                 const currentBlockIndex = parseInt(blockIndex);
                 const currentTotalBlocks = parseInt(totalBlocksStr);
     

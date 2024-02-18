@@ -120,6 +120,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             if (offset < fileSize) {
                 const block = fileContent.slice(offset, offset + blockSize);
                 const blockIndex = Math.ceil(offset / blockSize);
+                
                 sendFileBlock(block, blockIndex, totalBlocks)
                     .then(uploadBlockResult => {
                         if (uploadBlockResult === "Success") {
