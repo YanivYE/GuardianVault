@@ -6,7 +6,7 @@ const socket = io({
 
 
 document.addEventListener('DOMContentLoaded', async function () {
-    var files = await getUserOwnFilesListFromServer();
+    const files = await getUserOwnFilesListFromServer();
 
     const sharedFiles = await getUserSharedFilesListFromServer();
 
@@ -15,8 +15,27 @@ document.addEventListener('DOMContentLoaded', async function () {
     displaySharedFiles();
 
     // Get the elements
+    const searchButton = document.getElementById('searchButton');
     const downloadTitle = document.getElementById('downloadTitle');
     const downloadContainer = document.getElementById('downloadContainer');
+
+    // Add event listener for input event on search bar
+    searchButton.addEventListener('click', function() {
+        // Get the current value of the search bar
+        const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+
+        const filteredOwnFiles = files.filter(file => file.toLowerCase().includes(searchTerm));
+
+        // Filter the list of shared files based on the search term
+        const filteredSharedFiles = sharedFiles.filter(user => {
+            const filteredUserFiles = user.files.filter(file => file.toLowerCase().includes(searchTerm));
+            return filteredUserFiles.length > 0;
+        });
+
+        // Update the display to show only the filtered file names
+        populateFileList(filteredOwnFiles);
+        displaySharedFiles(filteredSharedFiles);
+    });
     
     // Function to adjust the position of the title based on the container's size
     function adjustTitlePosition() {
@@ -92,11 +111,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     // Function to populate file list
-    function populateFileList() {
+    function populateFileList(filteredFiles = []) {
         var fileListItems = document.getElementById("fileListItems");
         fileListItems.innerHTML = ""; // Clear existing list items
 
-        files.forEach(function(file) {
+        // Use the filtered files if provided, otherwise use the original files array
+        const filesToDisplay = filteredFiles.length > 0 ? filteredFiles : files;
+
+        filesToDisplay.forEach(function(file) {
             var listItem = document.createElement("li");
             var fileButton = document.createElement("button"); // Create button element
             fileButton.textContent = file; // Set button text
@@ -110,14 +132,16 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     // Function to display shared files
-    function displaySharedFiles() {
+    function displaySharedFiles(filteredFiles = []) {
         const sharedWithMeDetails = document.getElementById('sharedFilesList');
         sharedWithMeDetails.innerHTML = ''; // Clear existing content
 
-        sharedFiles.forEach(user => {
+        const usersToDisplay  = filteredFiles.length > 0 ? filteredFiles : sharedFiles;
+
+        usersToDisplay.forEach(user => {
             const userSection = document.createElement('div');
             userSection.classList.add('shared-user-section');
-
+    
             const userHeader = document.createElement('h3');
             const filesAmount = user.files.length;
             userHeader.textContent = `${user.user} (${filesAmount} ${filesAmount === 1 ? 'file' : 'files'})`;
@@ -125,24 +149,28 @@ document.addEventListener('DOMContentLoaded', async function () {
             userHeader.addEventListener('click', function() {
                 toggleSharedFiles(this);
             });
-
+    
             const userFilesList = document.createElement('ul');
             userFilesList.classList.add('shared-user-files');
             userFilesList.style.display = 'none';
-
+    
+            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+            
             user.files.forEach(file => {
-                const fileButton = document.createElement('button'); // Create button element
-                fileButton.textContent = file; // Set button text
-                fileButton.setAttribute('owner', user.user);
-                fileButton.classList.add('file-button'); // Add a class for styling
-                fileButton.addEventListener('click', function() { // Add click event listener
-                    toggleFile(this);
-                });
-                const fileItem = document.createElement('li');
-                fileItem.appendChild(fileButton); // Append button to list item
-                userFilesList.appendChild(fileItem); // Append list item to file list
+                if (file.toLowerCase().includes(searchTerm)) { // Check if the file matches the search term
+                    const fileButton = document.createElement('button'); // Create button element
+                    fileButton.textContent = file; // Set button text
+                    fileButton.setAttribute('owner', user.user);
+                    fileButton.classList.add('file-button'); // Add a class for styling
+                    fileButton.addEventListener('click', function() { // Add click event listener
+                        toggleFile(this);
+                    });
+                    const fileItem = document.createElement('li');
+                    fileItem.appendChild(fileButton); // Append button to list item
+                    userFilesList.appendChild(fileItem); // Append list item to file list
+                }
             });
-
+    
             userSection.appendChild(userHeader);
             userSection.appendChild(userFilesList);
             sharedWithMeDetails.appendChild(userSection);

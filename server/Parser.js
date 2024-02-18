@@ -128,9 +128,9 @@ class Parser{
             ownerPassword = await this.DBHandler.getFileEncryptionPassword(fileOwner, fileName);
         }
 
-        this.FileHandler = new FileHandler.FileHandler(this.socket, fileName, username, ownerPassword);
+        this.FileHandler = new FileHandler.FileHandler(this.socket, fileName, fileOwner, ownerPassword);
 
-        this.FileHandler.downloadFile(username);
+        this.FileHandler.downloadFile(fileOwner);
     }
 
     async getUsersList()
