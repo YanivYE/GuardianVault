@@ -1,9 +1,7 @@
 const DBHandler = require("./DataBaseHandler");
 const sessionStorage = require('express-session');
 const FileHandler = require("./FileHandler");
-const sharedCryptography = require("./CryptographyTunnel");
 const fs = require('fs');
-const DriveHandler = require("./DriveHandler");
 
 class Parser{
     constructor(socket)
@@ -29,8 +27,8 @@ class Parser{
             case "SignUp":
                 this.parseSignupRequest(additionalData);
                 break;
-            case "UploadFileChunk":
-                this.parseUploadFileChunkRequest(additionalData);
+            case "UploadFileBlock":
+                this.parseUploadFileBlockRequest(additionalData);
                 break;
             case "DownloadFile":
                 this.parseDownloadFileRequest(additionalData);
@@ -49,14 +47,6 @@ class Parser{
                 break;
   
         }
-    }
-
-    generateServerPayload(data) {
-        const { iv, ciphertext, authTag } = sharedCryptography.encryptData(data);
-        const payload = iv.toString('hex') + ciphertext + authTag.toString('hex');
-        const payloadBase64 = Buffer.from(payload, 'hex').toString('base64');
-
-        return payloadBase64;
     }
 
     async parseLoginRequest(loginRequest)
@@ -88,16 +78,16 @@ class Parser{
         this.socket.emit('signupResult', operationResult);
     }
 
-    async parseUploadFileChunkRequest(uploadFileChunkRequest) {
-        var isLastChunk = false;
-        const [chunkIndex, chunkContent, totalChunks] = uploadFileChunkRequest.split('$');
-    
-        if(parseInt(chunkIndex) === parseInt(totalChunks) - 1)  // the last chunk
+    async parseUploadFileBlockRequest(uploadFileBlockRequest) {
+        var isLastBlock = false;
+        const [blockIndex, blockContent, totalBlocks] = uploadFileBlockRequest.split('$');
+
+        if(parseInt(blockIndex) === parseInt(totalBlocks) - 1)  // the last block
         {
-            isLastChunk = true;
+            isLastBlock = true;
         }
 
-        this.FileHandler.assembleFileContent(chunkContent, isLastChunk);
+        this.FileHandler.assembleFileContent(blockContent, isLastBlock);
     }
 
     async validateFileName(validationData)
@@ -138,13 +128,9 @@ class Parser{
             ownerPassword = await this.DBHandler.getFileEncryptionPassword(fileOwner, fileName);
         }
 
-        const driveHandler = new DriveHandler.DriveHandler(username, ownerPassword);
+        this.FileHandler = new FileHandler.FileHandler(this.socket, fileName, username, ownerPassword);
 
-        const fileData = await driveHandler.handleFileDownload(fileName, fileOwner);
-
-        const downloadedFilePayload = this.generateServerPayload(fileData);
-
-        this.socket.emit('downloadFilePayload', downloadedFilePayload); 
+        this.FileHandler.downloadFile(username);
     }
 
     async getUsersList()
@@ -177,7 +163,7 @@ class Parser{
 
     initializeSystem() {
         this.DBHandler.initDataBase();
-        this.FileHandler.initDrive();
+        this.FileHandler.initFileHandler();
         
         // Get current date and time
         const currentDateTime = new Date().toISOString();

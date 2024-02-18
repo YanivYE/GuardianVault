@@ -184,46 +184,77 @@ document.addEventListener('DOMContentLoaded', async function () {
         const downloadFileRequest = 'DownloadFile$' + fileName + '$' + fileOwner;
         const downloadFilePayload = await sendToServerPayload(downloadFileRequest);
         socket.emit('ClientMessage', downloadFilePayload);
-        socket.on('downloadFilePayload', async (downloadFilePayload) => {
-            const fileData = await receivePayloadFromServer(downloadFilePayload);
 
-            document.getElementById('downloadLoader').style.display = 'none';
+        const fileData = await assembleFileContent();
+        
+        document.getElementById('downloadLoader').style.display = 'none';
+        
+        if(fileData && !fileDownloaded)
+        {
+            fileDownloaded = true;
             
-            if(fileData && !fileDownloaded)
-            {
-                fileDownloaded = true;
-                
-                // Fetch image data from the URL
-                const response = await fetch(fileData);
-                const imageData = await response.blob();
+            // Fetch image data from the URL
+            const response = await fetch(fileData);
+            const imageData = await response.blob();
 
-                // Create a Blob object from the image data
-                const blob = new Blob([imageData], { type: response.headers.get("Content-Type") });
+            // Create a Blob object from the image data
+            const blob = new Blob([imageData], { type: response.headers.get("Content-Type") });
 
-                // Create a temporary URL for the Blob object
-                const url = window.URL.createObjectURL(blob);
+            // Create a temporary URL for the Blob object
+            const url = window.URL.createObjectURL(blob);
 
-                // Create a hidden <a> element
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = fileName; // Set the filename for the downloaded file
-                a.style.display = 'none'; // Hide the <a> element
+            // Create a hidden <a> element
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName; // Set the filename for the downloaded file
+            a.style.display = 'none'; // Hide the <a> element
 
-                // Append the <a> element to the document body
-                document.body.appendChild(a);
+            // Append the <a> element to the document body
+            document.body.appendChild(a);
 
-                // Trigger the download by programmatically clicking the <a> element
-                a.click();
+            // Trigger the download by programmatically clicking the <a> element
+            a.click();
 
-                // Clean up: remove the temporary URL and the <a> element
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
+            // Clean up: remove the temporary URL and the <a> element
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
 
-                // ALERT SUCCESSFUL UPLOAD
-                message.style.display = "block"; // Show error message
-                message.style.color = "green";
-                message.innerText = "File downloaded successfully!"; // Set error message text
-            }
+            // ALERT SUCCESSFUL UPLOAD
+            message.style.display = "block"; // Show error message
+            message.style.color = "green";
+            message.innerText = "File downloaded successfully!"; // Set error message text
+        }
+    }
+
+    function assembleFileContent() {
+        return new Promise((resolve, reject) => {
+            let fileData = "";
+            let totalBlocks = -1;
+            let receivedBlocks = 0;
+    
+            socket.on('fileBlock', async (fileBlockPayload) => {
+                const serverPayload = await receivePayloadFromServer(fileBlockPayload);
+                const [blockIndex, block, totalBlocksStr] = serverPayload.split('$');
+                const currentBlockIndex = parseInt(blockIndex);
+                const currentTotalBlocks = parseInt(totalBlocksStr);
+    
+                if (totalBlocks === -1) {
+                    totalBlocks = currentTotalBlocks;
+                }
+    
+                if (currentBlockIndex === receivedBlocks) {
+                    fileData += block;
+                    receivedBlocks++;
+    
+                    // Emit upload result for each block
+                    socket.emit('uploadBlockResult', 'Success');
+    
+                    // If this is the last block, resolve with the full file data
+                    if (receivedBlocks === totalBlocks) {
+                        resolve(fileData);
+                    }
+                } 
+            });
         });
     }
 

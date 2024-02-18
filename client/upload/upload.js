@@ -108,29 +108,26 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 
     async function uploadFile(fileContent) {
-        const chunkSize = 1024 * 600; // 1 MB chunk size
+        const blockSize = 1024 * 500; // 500KB chunk size
         const fileSize = fileContent.length;
-        const totalChunks = Math.ceil(fileSize / chunkSize);
+        const totalBlocks = Math.ceil(fileSize / blockSize);
         let offset = 0;
-
-        console.log(totalChunks);
     
         message.style.display = "none";
         document.getElementById('uploadLoader').style.display = 'block';
     
-        function uploadNextChunk() {
+        function sendNextBlock() {
             if (offset < fileSize) {
-                const chunk = fileContent.slice(offset, offset + chunkSize);
-                console.log(chunk.length);
-                const chunkIndex = Math.ceil(offset / chunkSize);
-                uploadFileChunk(chunk, chunkIndex, totalChunks)
-                    .then(uploadChunkResult => {
-                        if (uploadChunkResult === "Success") {
-                            offset += chunkSize;
-                            uploadNextChunk(); // Upload the next chunk recursively
+                const block = fileContent.slice(offset, offset + blockSize);
+                const blockIndex = Math.ceil(offset / blockSize);
+                sendFileBlock(block, blockIndex, totalBlocks)
+                    .then(uploadBlockResult => {
+                        if (uploadBlockResult === "Success") {
+                            offset += blockSize;
+                            sendNextBlock(); // Upload the next chunk recursively
                         } else {
                             // Handle the case where chunk upload failed
-                            console.error('Failed to upload chunk ' + chunkIndex);
+                            console.error('Failed to upload block ' + blockIndex);
                             document.getElementById('uploadLoader').style.display = 'none';
                             message.style.display = "block";
                             message.style.color = "red";
@@ -138,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                         }
                     })
                     .catch(error => {
-                        console.error('Error uploading chunk: ', error);
+                        console.error('Error uploading block: ', error);
                         // Handle the error
                         document.getElementById('uploadLoader').style.display = 'none';
                         message.style.display = "block";
@@ -147,7 +144,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     });
             } else {
                 // All chunks have been uploaded successfully
-                console.log("All chunks uploaded successfully");
+                console.log("All blocks uploaded successfully");
                 document.getElementById('uploadLoader').style.display = 'none';
                 message.style.display = "block";
                 message.style.color = "green";
@@ -156,7 +153,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     
         // Start uploading the first chunk
-        uploadNextChunk();
+        sendNextBlock();
     }
 
     
@@ -259,17 +256,16 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
     }
 
-    async function uploadFileChunk(chunk, chunkIndex, totalChunks) {
+    async function sendFileBlock(block, blockIndex, totalBlocks) {
         try {
-            console.log(chunk);
-            const uploadFileChunkRequest = 'UploadFileChunk$' + chunkIndex + '$' + chunk + '$' + totalChunks;
-            const uploadFileChunkPayload = await sendToServerPayload(uploadFileChunkRequest);
+            const uploadFileBlockRequest = 'UploadFileBlock$' + blockIndex + '$' + block + '$' + totalBlocks;
+            const uploadFileBlockPayload = await sendToServerPayload(uploadFileBlockRequest);
             
-            socket.emit('ClientMessage', uploadFileChunkPayload);
+            socket.emit('ClientMessage', uploadFileBlockPayload);
     
             return new Promise((resolve, reject) => {
-                socket.once('uploadChunkResult', uploadChunkResult => {
-                    resolve(uploadChunkResult);
+                socket.once('uploadBlockResult', uploadBlockResult => {
+                    resolve(uploadBlockResult);
                 });
     
                 socket.once('error', error => {
