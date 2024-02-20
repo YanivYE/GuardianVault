@@ -16,8 +16,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Get the elements
     const searchButton = document.getElementById('searchButton');
-    const downloadTitle = document.getElementById('downloadTitle');
-    const downloadContainer = document.getElementById('downloadContainer');
 
     // Add event listener for input event on search bar
     searchButton.addEventListener('click', function() {
