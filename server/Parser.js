@@ -122,7 +122,7 @@ class Parser{
 
         const { username, password } = this.getConnectedUserDetails();
 
-        if(fileOwner === 'null')
+        if(fileOwner === 'null')    // connected user
         {
             fileOwner = username;
             ownerPassword = password;
@@ -144,14 +144,21 @@ class Parser{
 
         const { username, password } = this.getConnectedUserDetails();
 
-        fileOwner = username;
-        ownerPassword = password;
-        
-        this.DriveHandler = new DriveHandler.DriveHandler(fileOwner, ownerPassword);
+        if(fileOwner === 'null')    // connected user
+        {
+            fileOwner = username;
+            ownerPassword = password;
 
-        await this.DriveHandler.deleteFile(fileName);
+            this.DriveHandler = new DriveHandler.DriveHandler(fileOwner, ownerPassword);
 
-        await this.DBHandler.deleteFile(fileName, fileOwner);
+            await this.DriveHandler.deleteFile(fileName);
+
+            await this.DBHandler.deleteOwnFile(fileName, fileOwner);
+        }
+        else
+        {
+            await this.DBHandler.deleteSharedFile(fileName, fileOwner);
+        }
 
         this.socket.emit('deleteFileResult', 'Success');
     }
