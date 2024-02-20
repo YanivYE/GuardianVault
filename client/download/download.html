@@ -11,31 +11,33 @@
 </head>
 <body>
     <div class="container-login100" style="background-image: url('images/bg-01.jpg');">
-        <span class="upload100-form-title p-b-41" id="downloadTitle">
-            Download File
-        </span>
-        <div class="wrap-login100 p-t-30 p-b-50 download-form" id="downloadContainer">
-            <div class="download-container">
-                <h2>Search Files</h2>
-                <div class="search-container">
-                    <input type="search" id="searchBar" placeholder="Search files...">
-                    <button onclick="searchFiles()">Search</button>
+        <div class="wrap-login100 p-t-30 p-b-50 download-form">
+            <span class="upload100-form-title p-b-41"> <!-- New div wrapper -->
+                Download File
+            </span>
+            <div  id="downloadContainer">
+                <div class="download-container">
+                    <h2>Search Files</h2>
+                    <div class="search-container">
+                        <input type="search" id="searchBar" placeholder="Search files...">
+                        <button onclick="searchFiles()">Search</button>
+                    </div>
+                    <h2>Your Files</h2>
+                    <div id="fileList">
+                        <ul id="fileListItems">
+                            <!-- Placeholder for files shared with the user -->
+                        </ul>
+                    </div>
+                    <h2>Files Shared with You</h2>
+                <div id="sharedFilesList"></div>
+                <h2>‎ </h2>
+                <form id="downloadForm">
+                    <button type="submit" id="downloadButton">Download</button>
+                </form>
+                <div id="message" style="color: red; display: none;"></div>
                 </div>
-                <h2>Your Files</h2>
-                <div id="fileList">
-                    <ul id="fileListItems">
-                        <!-- Placeholder for files shared with the user -->
-                    </ul>
-                </div>
-            </div>
-            <h2>Files Shared with You</h2>
-            <div id="sharedFilesList"></div>
-            <h2>‎ </h2>
-            <form id="downloadForm">
-                <button type="submit" id="downloadButton">Download</button>
-            </form>
-            <h2>‎ </h2>
-            <div id="message" style="color: red; display: none;"></div> 
+                
+            </div> 
         </div>
     </div>
 </body>

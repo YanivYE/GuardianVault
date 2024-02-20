@@ -13,20 +13,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     populateFileList();
     // Call the function to display shared files
     displaySharedFiles();
-
-    // Get the elements
-    const downloadTitle = document.getElementById('downloadTitle');
-    const downloadContainer = document.getElementById('downloadContainer');
-    
-    // Function to adjust the position of the title based on the container's size
-    function adjustTitlePosition() {
-        const containerHeight = downloadContainer.clientHeight - 580;
-        downloadTitle.style.top = `${containerHeight}px`;
-    }
-    
-    // Call the function initially and on window resize
-    adjustTitlePosition();
-    window.addEventListener('resize', adjustTitlePosition);
     
     document.getElementById("downloadForm").addEventListener('submit', async function(event) {
         event.preventDefault(); // Prevent default form submission behavior

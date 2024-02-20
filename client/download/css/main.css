@@ -199,10 +199,11 @@ iframe {
 /*------------------------------------------------------------------
 [ Form ]*/
 
-.login100-form {
+#downloadContainer
+{
+  background-color: rgba(255, 255, 255, 0.608);
   width: 100%;
   border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.608);
 }
 
 .login100-form-logo {
@@ -798,6 +799,7 @@ select {
 
 .upload100-form-title
 {
+  padding-bottom: 40px;
   font-family: Ubuntu-Bold;
   font-size: 28px;
   color: #fff;
@@ -891,11 +893,9 @@ label[for="private"], label[for="public"] {
 }
 
 .download-form {
-  background-color: rgba(255, 255, 255, 0.608);
   border-radius: 10px; /* Rounded corners */
   padding: 20px; /* Add padding */
   color: white;
-  max-height: calc(100vh - 85px); /* Adjusted height */
   overflow-y: auto; /* Enable vertical scrolling */
 }
 
@@ -971,9 +971,11 @@ label[for="private"], label[for="public"] {
 }
 
 .download-container {
-  margin-bottom: 20px; /* Add margin to create space between the title and the container */
+  margin-bottom: 20px; /* Add margin to create space between the container and the next element */
+  padding: 20px; /* Add padding inside the container */
 }
 
+/* Add margin to the elements inside the container */
 .download-container h2 {
   margin-bottom: 10px; /* Add margin below the title */
 }
@@ -1079,3 +1081,12 @@ label[for="private"], label[for="public"] {
 #sharedFilesList::-webkit-scrollbar-thumb {
   background-color: #888; /* Set the color of the scrollbar thumb */
 }
+
+#downloadTitle {
+  position: absolute;
+  top: 85px; /* Adjust this value to position the title as desired */
+  left: 50%; /* Position it horizontally in the middle */
+  transform: translateX(-50%); /* Center it precisely */
+  z-index: 1; /* Ensure it appears above other content */
+}
+
