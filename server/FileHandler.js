@@ -43,12 +43,12 @@ class FileHandler
         }
     }
 
-    async downloadFile(fileOwner) {
+    async downloadFile() {
         try {
             let offset = 0;
             const blockSize = 1024 * 500; // 500KB 
     
-            this.fileContent = await this.DriveHandler.handleFileDownload(this.fileName, fileOwner);
+            this.fileContent = await this.DriveHandler.handleFileDownload(this.fileName);
     
             const fileSize = this.fileContent.length;
             const totalBlocks = Math.ceil(fileSize / blockSize);

@@ -1075,6 +1075,17 @@ label[for="private"], label[for="public"] {
   background: linear-gradient(left, #001326, #002243, #004777);
 }
 
+#deleteFileButton {
+  width: 100%; /* Set the width to 100% to take up the full width of its container */
+  padding: 10px;
+  font-size: 20px;
+  background: #dc2020;
+}
+
+#deleteFileButton:hover {
+  background: #aa2a2a;
+}
+
 #sharedFilesList {
   max-height: 250px; /* Set a maximum height for the shared files section */
   overflow-y: auto; /* Enable vertical scrolling if content overflows */

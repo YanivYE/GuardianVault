@@ -5,17 +5,18 @@ const socket = io({
   });
 
 
-document.addEventListener('DOMContentLoaded', async function () {
-    const files = await getUserOwnFilesListFromServer();
+document.addEventListener('DOMContentLoaded', async function () 
+{
+    let files = await getUserOwnFilesListFromServer();
 
-    const sharedFiles = await getUserSharedFilesListFromServer();
+    let sharedFiles = await getUserSharedFilesListFromServer();
 
-    populateFileList();
-    // Call the function to display shared files
-    displaySharedFiles();
+    displayUserFiles();
 
     // Get the elements
     const searchButton = document.getElementById('searchButton');
+    const downloadForm = document.getElementById('downloadForm');
+    const deleteButton = document.getElementById('deleteFileButton');
 
     // Add event listener for input event on search bar
     searchButton.addEventListener('click', function() {
@@ -34,9 +35,33 @@ document.addEventListener('DOMContentLoaded', async function () {
         populateFileList(filteredOwnFiles);
         displaySharedFiles(filteredSharedFiles);
     });
+
+    deleteButton.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default form submission behavior
+    
+        // Gather selected files
+        const selectedFiles = document.querySelectorAll('.file-button[style="background: gray;"]');
+        
+        selectedFiles.forEach(file => {
+            // Extract owner's name and file name from the button's text content
+            const fileName = file.textContent;
+            const owner = file.getAttribute('owner');
+
+            if(owner != null)
+            {
+                message.style.display = "block";
+                message.style.color = "red";
+                message.innerText = "Deletion of other user's files are not allowed!";
+            }
+            else
+            {
+                deleteFile(fileName, owner);
+            }
+        });
+    });
     
     
-    document.getElementById("downloadForm").addEventListener('submit', async function(event) {
+    downloadForm.addEventListener('submit', async function(event) {
         event.preventDefault(); // Prevent default form submission behavior
     
         // Gather selected files
@@ -51,7 +76,11 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
     });
 
-
+    async function displayUserFiles()
+    {
+        populateFileList();
+        displaySharedFiles();
+    }
 
     async function getUserOwnFilesListFromServer() {
         try {
@@ -297,8 +326,6 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const serverPayload = await receivePayloadFromServer(fileBlockPayload);
                 const [blockIndex, block, totalBlocksStr] = serverPayload.split('$');
 
-                console.log(blockIndex);
-
                 const currentBlockIndex = parseInt(blockIndex);
                 const currentTotalBlocks = parseInt(totalBlocksStr);
     
@@ -319,6 +346,26 @@ document.addEventListener('DOMContentLoaded', async function () {
                     }
                 } 
             });
+        });
+    }
+
+    async function deleteFile(fileName, fileOwner)
+    {
+        const deleteFileRequest = 'DeleteFile$' + fileName + '$' + fileOwner;
+        const deleteFilePayload = await sendToServerPayload(deleteFileRequest);
+        socket.emit('ClientMessage', deleteFilePayload);
+        socket.on('deleteFileResult', async (deleteFileResult) => {
+            if(deleteFileResult === 'Success')
+            {
+                files = await getUserOwnFilesListFromServer();
+
+                sharedFiles = await getUserSharedFilesListFromServer();
+
+                displayUserFiles();
+                message.style.display = "block";
+                message.style.color = "green";
+                message.innerText = "File deleted successfully!";
+            }
         });
     }
 

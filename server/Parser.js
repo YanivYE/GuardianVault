@@ -1,6 +1,7 @@
 const DBHandler = require("./DataBaseHandler");
 const sessionStorage = require('express-session');
 const FileHandler = require("./FileHandler");
+const DriveHandler = require("./DriveHandler");
 const fs = require('fs');
 
 class Parser{
@@ -9,6 +10,7 @@ class Parser{
         this.socket = socket;
         this.DBHandler = new DBHandler.DataBaseHandler();
         this.FileHandler = null;
+        this.DriveHandler = null;
     }
 
     parseClientMessage(message)
@@ -36,6 +38,9 @@ class Parser{
             case "validateName":
                 this.validateFileName(additionalData);
                 break;
+            case "DeleteFile":
+                this.deleteFile(additionalData);
+                break;
             case "UsersList":
                 this.getUsersList();
                 break;
@@ -45,7 +50,6 @@ class Parser{
             case "sharedFileList":
                 this.getSharedFilesList()
                 break;
-  
         }
     }
 
@@ -130,7 +134,26 @@ class Parser{
 
         this.FileHandler = new FileHandler.FileHandler(this.socket, fileName, fileOwner, ownerPassword);
 
-        this.FileHandler.downloadFile(fileOwner);
+        this.FileHandler.downloadFile();
+    }
+
+    async deleteFile(fileData)
+    {
+        let ownerPassword = "";
+        let [fileName, fileOwner] = fileData.split('$');
+
+        const { username, password } = this.getConnectedUserDetails();
+
+        fileOwner = username;
+        ownerPassword = password;
+        
+        this.DriveHandler = new DriveHandler.DriveHandler(fileOwner, ownerPassword);
+
+        await this.DriveHandler.deleteFile(fileName);
+
+        await this.DBHandler.deleteFile(fileName, fileOwner);
+
+        this.socket.emit('deleteFileResult', 'Success');
     }
 
     async getUsersList()

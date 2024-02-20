@@ -52,46 +52,67 @@ class DriveHandler
             // TODO(developer) - Handle error
             throw err;
         }
-  }
+    }
 
   
-  async uploadFile(filePath) {
-    try {
-        // Get the file name and extension
-        const fileName = path.basename(filePath);
-        const fileExtension = path.extname(filePath).substr(1); // Remove the dot
+    async uploadFile(filePath) {
+      try {
+          // Get the file name and extension
+          const fileName = path.basename(filePath);
+          const fileExtension = path.extname(filePath).substr(1); // Remove the dot
 
-        // Determine the MIME type based on the file extension
-        const mimeType = {
-            jpg: 'image/jpeg',
-            jpeg: 'image/jpeg',
-            png: 'image/png',
-            pdf: 'application/pdf',
-            txt: 'text/plain',
-            // Add more extensions and corresponding MIME types as needed
-        }[fileExtension.toLowerCase()] || 'application/octet-stream'; // Default to binary data if not recognized
+          // Determine the MIME type based on the file extension
+          const mimeType = {
+              jpg: 'image/jpeg',
+              jpeg: 'image/jpeg',
+              png: 'image/png',
+              pdf: 'application/pdf',
+              txt: 'text/plain',
+              // Add more extensions and corresponding MIME types as needed
+          }[fileExtension.toLowerCase()] || 'application/octet-stream'; // Default to binary data if not recognized
 
-        // Find the folder ID of the specified username
-        const folderId = await this.findFolderIdByUsername();
+          // Find the folder ID of the specified username
+          const folderId = await this.findFolderIdByUsername();
 
-        // Ensure that the file is uploaded to the directory named after the username
-        const response = await this.drive.files.create({
-            requestBody: {
-                name: fileName,
-                mimeType: mimeType,
-                parents: [folderId], // Set the parent folder ID
-            },
-            media: {
-                mimeType: mimeType,
-                body: fs.createReadStream(filePath),
-            },
-        });
+          // Ensure that the file is uploaded to the directory named after the username
+          const response = await this.drive.files.create({
+              requestBody: {
+                  name: fileName,
+                  mimeType: mimeType,
+                  parents: [folderId], // Set the parent folder ID
+              },
+              media: {
+                  mimeType: mimeType,
+                  body: fs.createReadStream(filePath),
+              },
+          });
 
-        console.log('File uploaded:', response.data);
-    } catch (error) {
-        console.error('Error uploading file', error.message);
+          console.log('File uploaded:', response.data);
+      } catch (error) {
+          console.error('Error uploading file', error.message);
+      }
     }
-}
+
+    async deleteFile(fileName)
+    {
+      try {
+          // Get the file ID by name in the folder
+          const fileId = await this.getFileIdByNameInFolder(fileName);
+
+          if (fileId) {
+              // Delete the file
+              await this.drive.files.delete({
+                  fileId: fileId
+              });
+              
+              console.log(`File '${fileName}' deleted successfully.`);
+          } else {
+              console.log(`File '${fileName}' not found.`);
+          }
+      } catch (error) {
+          console.error('Error deleting file:', error.message);
+      }
+    }
 
   
     async findFolderIdByUsername() {
@@ -143,9 +164,9 @@ class DriveHandler
       }});
     }
 
-    async handleFileDownload(fileName, fileOwner)
+    async handleFileDownload(fileName)
     {
-        const compressedData = await this.retrieveFromDrive(fileName, fileOwner);
+        const compressedData = await this.retrieveFromDrive(fileName);
 
         const decompressedData = this.compressor.decompressFile(compressedData);
         const decryptedFileData = this.atRestCrypto.decryptFile(decompressedData);
@@ -153,11 +174,11 @@ class DriveHandler
         return decryptedFileData;
     }
 
-    async getFileIdByNameInFolder(fileName, folderName) {
+    async getFileIdByNameInFolder(fileName) {
         try {
           // First, find the folder ID by its name
           const folderResponse = await this.drive.files.list({
-            q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder'`,
+            q: `name='${this.dirName}' and mimeType='application/vnd.google-apps.folder'`,
           });
           if (folderResponse.data.files.length > 0) {
             const folderId = folderResponse.data.files[0].id;
@@ -180,12 +201,12 @@ class DriveHandler
         }
     }
       
-    async retrieveFromDrive(fileName, fileOwner) {
+    async retrieveFromDrive(fileName) {
         fileName += ".gz";
     
         try {
             const result = await this.drive.files.get({
-                fileId: await this.getFileIdByNameInFolder(fileName, fileOwner),
+                fileId: await this.getFileIdByNameInFolder(fileName),
                 alt: 'media'
             }, { responseType: 'stream' });
     
@@ -215,7 +236,7 @@ class DriveHandler
       } catch (error) {
           console.error('Error deleting files:', error.message);
       }
-  }
+    }
 }
 
 module.exports = {DriveHandler};
