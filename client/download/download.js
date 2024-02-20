@@ -351,6 +351,8 @@ document.addEventListener('DOMContentLoaded', async function ()
 
     async function deleteFile(fileName, fileOwner)
     {
+        message.style.display = "none"; 
+        document.getElementById('downloadLoader').style.display = 'block';
         const deleteFileRequest = 'DeleteFile$' + fileName + '$' + fileOwner;
         const deleteFilePayload = await sendToServerPayload(deleteFileRequest);
         socket.emit('ClientMessage', deleteFilePayload);
@@ -361,6 +363,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 
                 sharedFiles = await getUserSharedFilesListFromServer();
 
+                document.getElementById('downloadLoader').style.display = 'none';
                 displayUserFiles();
                 message.style.display = "block";
                 message.style.color = "green";

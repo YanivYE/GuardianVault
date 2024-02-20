@@ -85,11 +85,6 @@ class FileHandler
             // Handle the error as needed
         }
     }
-
-    initFileHandler()
-    {
-        this.DriveHandler.initDrive();
-    }
 }
 
 module.exports = {FileHandler};

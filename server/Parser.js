@@ -186,7 +186,7 @@ class Parser{
 
     initializeSystem() {
         this.DBHandler.initDataBase();
-        this.FileHandler.initFileHandler();
+        this.DriveHandler.initDrive();
         
         // Get current date and time
         const currentDateTime = new Date().toISOString();

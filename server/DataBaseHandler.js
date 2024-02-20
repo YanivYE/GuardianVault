@@ -49,14 +49,11 @@ class DataBaseHandler{
             // Compare the hashed password from the database with the hashed version of the input password
             const passwordMatch = await bcrypt.compare(password, user.password);
             if (passwordMatch) {
-                console.log("User found and password is correct");
                 return true;
             } else {
-                console.log("Password incorrect");
                 return false;
             }
         } else {
-            console.log("User not found");
             return false;
         }
     }

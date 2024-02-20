@@ -104,11 +104,7 @@ class DriveHandler
               await this.drive.files.delete({
                   fileId: fileId
               });
-              
-              console.log(`File '${fileName}' deleted successfully.`);
-          } else {
-              console.log(`File '${fileName}' not found.`);
-          }
+          } 
       } catch (error) {
           console.error('Error deleting file:', error.message);
       }
@@ -182,10 +178,10 @@ class DriveHandler
           });
           if (folderResponse.data.files.length > 0) {
             const folderId = folderResponse.data.files[0].id;
-      
+
             // Then, search for the file within the specified folder
             const fileResponse = await this.drive.files.list({
-              q: `'${folderId}' in parents and name='${fileName}'`,
+              q: `'${folderId}' in parents and name='${fileName + ".gz"}'`,
               fields: 'files(id, name)',
             });
             if (fileResponse.data.files.length > 0) {
@@ -202,8 +198,6 @@ class DriveHandler
     }
       
     async retrieveFromDrive(fileName) {
-        fileName += ".gz";
-    
         try {
             const result = await this.drive.files.get({
                 fileId: await this.getFileIdByNameInFolder(fileName),
