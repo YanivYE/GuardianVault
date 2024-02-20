@@ -920,6 +920,9 @@ label[for="private"], label[for="public"] {
   color: #fff; /* White text color */
 }
 
+.spacer {
+  margin-bottom: 20px; /* Adjust this value as needed */
+}
 
 /* Style the button */
 .download-form button {
