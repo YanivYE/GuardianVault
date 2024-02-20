@@ -37,15 +37,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         displaySharedFiles(filteredSharedFiles);
     });
     
-    // Function to adjust the position of the title based on the container's size
-    function adjustTitlePosition() {
-        const containerHeight = downloadContainer.clientHeight - 580;
-        downloadTitle.style.top = `${containerHeight}px`;
-    }
-    
-    // Call the function initially and on window resize
-    adjustTitlePosition();
-    window.addEventListener('resize', adjustTitlePosition);
     
     document.getElementById("downloadForm").addEventListener('submit', async function(event) {
         event.preventDefault(); // Prevent default form submission behavior
@@ -142,18 +133,34 @@ document.addEventListener('DOMContentLoaded', async function () {
             const userSection = document.createElement('div');
             userSection.classList.add('shared-user-section');
     
+    
             const userHeader = document.createElement('h3');
             const filesAmount = user.files.length;
-            userHeader.textContent = `${user.user} (${filesAmount} ${filesAmount === 1 ? 'file' : 'files'})`;
-            userHeader.classList.add('shared-user-header');
-            userHeader.addEventListener('click', function() {
-                toggleSharedFiles(this);
+    
+            const sharedUserName = `${user.user} (${filesAmount} ${filesAmount === 1 ? 'file' : 'files'})`;
+
+            // Create arrow icon
+            const arrowIcon = document.createElement('span');
+            arrowIcon.textContent = '\u25B6 '; // Unicode for right-pointing triangle
+            arrowIcon.classList.add('arrow-icon');
+            arrowIcon.style.cursor = 'pointer';
+            arrowIcon.addEventListener('click', function() {
+                toggleSharedFiles(userFilesList, arrowIcon, userHeader, sharedUserName);
             });
+            userHeader.appendChild(arrowIcon);
+     
+            userHeader.textContent += sharedUserName;
+            userHeader.classList.add('shared-user-header');
+
     
             const userFilesList = document.createElement('ul');
             userFilesList.classList.add('shared-user-files');
             userFilesList.style.display = 'none';
     
+            userHeader.addEventListener('click', function() {
+                toggleSharedFiles(userFilesList, arrowIcon, userHeader, sharedUserName);
+            });
+
             const searchTerm = document.getElementById('searchBar').value.toLowerCase();
             
             user.files.forEach(file => {
@@ -171,22 +178,39 @@ document.addEventListener('DOMContentLoaded', async function () {
                 }
             });
     
+    
             userSection.appendChild(userHeader);
             userSection.appendChild(userFilesList);
             sharedWithMeDetails.appendChild(userSection);
         });
     }
 
-
     // Function to toggle the display of shared files
-    function toggleSharedFiles(element) {
+    function toggleSharedFiles(element, arrowIcon, userHeader, sharedUserName) {
         // Toggle the display of shared files list
-        const sharedFilesList = element.nextElementSibling;
-        sharedFilesList.style.display = sharedFilesList.style.display === 'none' ? 'block' : 'none';
+        element.style.display = element.style.display === 'none' ? 'block' : 'none';
+    
+        // Toggle arrow icon
+        if (arrowIcon.textContent == '\u25B6 '){
+            userHeader.textContent = "";
+            arrowIcon.textContent = '\u25BC '; // Unicode for down-pointing triangle
+            userHeader.appendChild(arrowIcon);
+
+            userHeader.textContent += sharedUserName;
+        } else {
+            userHeader.textContent = "";
+            arrowIcon.textContent = '\u25B6 '; // Unicode for right-pointing triangle
+            userHeader.appendChild(arrowIcon);
+
+            userHeader.textContent += sharedUserName;
+        
+        }
     }
+
 
     // Function to toggle the display of individual file details
     function toggleFile(button) {
+
         const allButtons = document.querySelectorAll('.file-button');
         allButtons.forEach(btn => {
             if (btn !== button) {
@@ -203,6 +227,8 @@ document.addEventListener('DOMContentLoaded', async function () {
             button.style.background='gray';
         }
     }
+
+    
 
     async function downloadFile(fileName, fileOwner)
     {
