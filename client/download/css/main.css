@@ -1089,4 +1089,3 @@ label[for="private"], label[for="public"] {
   transform: translateX(-50%); /* Center it precisely */
   z-index: 1; /* Ensure it appears above other content */
 }
-
