@@ -135,7 +135,7 @@ class DataBaseHandler{
         }
     }
 
-    async deleteFile(fileName, fileOwner)
+    async deleteOwnFile(fileName, fileOwner)
     {
         try {
             // Find the user document corresponding to the specified file owner's name
@@ -171,6 +171,66 @@ class DataBaseHandler{
         }
     }
 
+    async deleteSharedFile(fileName, fileOwner)
+    {
+        try {
+            // Find the user document corresponding to the specified file owner's name
+            const owner = await User.findOne({ username: fileOwner });
+            if (!owner) {
+                console.error('Owner not found.');
+                return;
+            }
+    
+            // Find the file document corresponding to the specified file name and owner's ObjectId
+            const file = await File.findOne({ name: fileName, owner: owner._id });
+            if (!file) {
+                console.error('File not found.');
+                return;
+            }
+    
+            // Find the permission document corresponding to the found file document
+            const permission = await Permission.findOne({ file: file._id });
+            if (!permission) {
+                console.error('Permission not found.');
+                return;
+            }
+    
+            // Delete the associated permission from the Permissions collection
+            await Permission.deleteOne({ _id: permission._id });
+    
+            console.log(`File '${fileName}' owned by '${fileOwner}' deleted successfully.`);
+        } catch (error) {
+            console.error('Error deleting file:', error);
+        }
+    }
+    
+    async deleteUser(username) {
+        try {
+            // Find the user document corresponding to the specified username
+            const user = await User.findOne({ username });
+            if (!user) {
+                console.error('User not found.');
+                return;
+            }
+    
+            // Find all files owned by the user
+            const userFiles = await File.find({ owner: user._id });
+    
+            // Delete permissions associated with each file
+            for (const file of userFiles) {
+                await Permission.deleteOne({ file: file._id });
+            }
+    
+            // Delete all files owned by the user
+            await File.deleteMany({ owner: user._id });
+    
+            // Delete the user document
+            await User.deleteOne({ _id: user._id });    
+        } catch (error) {
+            console.error('Error deleting user:', error);
+        }
+    }
+     
     async getUsersList()
     {
         try {
@@ -247,25 +307,28 @@ class DataBaseHandler{
             // Map to store shared files organized by owners
             const sharedFilesMap = new Map();
     
-            // Iterate through each permission
-            for (const permission of permissions) {
-                // Get the owner's username
-                const owner = await User.findById(permission.file.owner, 'username');
-    
-                // If the owner exists and is not the same as the user requesting the shared files
-                if (owner && owner.username !== username) {
-                    // Add the file to the map under the owner's username
-                    if (!sharedFilesMap.has(owner.username)) {
-                        sharedFilesMap.set(owner.username, []);
+            if(permissions)
+            {
+                // Iterate through each permission
+                for (const permission of permissions) {
+                    // Get the owner's username
+                    const owner = await User.findById(permission.file.owner, 'username');
+        
+                    // If the owner exists and is not the same as the user requesting the shared files
+                    if (owner && owner.username !== username) {
+                        // Add the file to the map under the owner's username
+                        if (!sharedFilesMap.has(owner.username)) {
+                            sharedFilesMap.set(owner.username, []);
+                        }
+                        sharedFilesMap.get(owner.username).push(permission.file.name);
                     }
-                    sharedFilesMap.get(owner.username).push(permission.file.name);
                 }
+            
+                // Convert the map to the desired output format
+                const sharedFiles = Array.from(sharedFilesMap).map(([user, files]) => ({ user, files }));
+        
+                return sharedFiles;
             }
-    
-            // Convert the map to the desired output format
-            const sharedFiles = Array.from(sharedFilesMap).map(([user, files]) => ({ user, files }));
-    
-            return sharedFiles;
         } catch (error) {
             console.error("Error getting user's shared files list:", error);
             return [];
@@ -300,7 +363,7 @@ class DataBaseHandler{
         } catch (error) {
             console.error("Error deleting permissions:", error);
         }
-    }
+    }   
 
     async initDataBase()
     {

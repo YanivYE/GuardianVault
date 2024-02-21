@@ -47,16 +47,8 @@ document.addEventListener('DOMContentLoaded', async function ()
             const fileName = file.textContent;
             const owner = file.getAttribute('owner');
 
-            if(owner != null)
-            {
-                message.style.display = "block";
-                message.style.color = "red";
-                message.innerText = "Deletion of other user's files are not allowed!";
-            }
-            else
-            {
-                deleteFile(fileName, owner);
-            }
+            deleteFile(fileName, owner);
+            
         });
     });
     

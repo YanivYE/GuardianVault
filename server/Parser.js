@@ -50,6 +50,9 @@ class Parser{
             case "sharedFileList":
                 this.getSharedFilesList()
                 break;
+            case "Logout":
+                this.userLogout();
+                break;
         }
     }
 
@@ -122,7 +125,7 @@ class Parser{
 
         const { username, password } = this.getConnectedUserDetails();
 
-        if(fileOwner === 'null')
+        if(fileOwner === 'null')    // connected user
         {
             fileOwner = username;
             ownerPassword = password;
@@ -144,14 +147,21 @@ class Parser{
 
         const { username, password } = this.getConnectedUserDetails();
 
-        fileOwner = username;
-        ownerPassword = password;
-        
-        this.DriveHandler = new DriveHandler.DriveHandler(fileOwner, ownerPassword);
+        if(fileOwner === 'null')    // connected user
+        {
+            fileOwner = username;
+            ownerPassword = password;
 
-        await this.DriveHandler.deleteFile(fileName);
+            this.DriveHandler = new DriveHandler.DriveHandler(fileOwner, ownerPassword);
 
-        await this.DBHandler.deleteFile(fileName, fileOwner);
+            await this.DriveHandler.deleteFile(fileName);
+
+            await this.DBHandler.deleteOwnFile(fileName, fileOwner);
+        }
+        else
+        {
+            await this.DBHandler.deleteSharedFile(fileName, fileOwner);
+        }
 
         this.socket.emit('deleteFileResult', 'Success');
     }
@@ -176,6 +186,21 @@ class Parser{
         const {username} = this.getConnectedUserDetails();
         const filesList = await this.DBHandler.getUserSharedFilesList(username);
         this.socket.emit('sharedFileListResult', filesList);
+    }
+
+    async userLogout()
+    {
+        const {username, password} = this.getConnectedUserDetails();
+
+        this.DriveHandler = new DriveHandler.DriveHandler(username, password);
+
+        await this.DriveHandler.deleteUser();
+   
+        await this.DBHandler.deleteUser(username);
+
+        this.socket.emit('logoutResult', 'Success');
+
+        console.log('user ' + username + ' loged out');
     }
 
     getConnectedUserDetails()
