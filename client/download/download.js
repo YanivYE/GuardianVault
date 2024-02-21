@@ -337,9 +337,6 @@ document.addEventListener('DOMContentLoaded', async function ()
                     fileData += block;
                     receivedBlocks++;
     
-                    // Emit upload result for each block
-                    socket.emit('uploadBlockResult', 'Success');
-    
                     // If this is the last block, resolve with the full file data
                     if (receivedBlocks === totalBlocks) {
                         resolve(fileData);

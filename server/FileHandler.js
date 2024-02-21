@@ -53,38 +53,32 @@ class FileHandler
             const fileSize = this.fileContent.length;
             const totalBlocks = Math.ceil(fileSize / blockSize);
     
-            while (offset < fileSize) {
-                const block = this.fileContent.slice(offset, offset + blockSize);
-                const blockIndex = Math.ceil(offset / blockSize);
+            const sendNextBlock = () => {
+                if (offset < fileSize) {
+                    const block = this.fileContent.slice(offset, offset + blockSize);
+                    const blockIndex = Math.ceil(offset / blockSize);
     
-                const sendFileBlockRequest = blockIndex + '$' + block + '$' + totalBlocks;
-                const fileBlockPayload = this.generateServerPayload(sendFileBlockRequest);
+                    const sendFileBlockRequest = blockIndex + '$' + block + '$' + totalBlocks;
+                    const fileBlockPayload = this.generateServerPayload(sendFileBlockRequest);
     
-                // Wait for the upload result before sending the next block
-                const uploadResult = await new Promise((resolve, reject) => {
-                    this.socket.emit('fileBlock', fileBlockPayload); 
-                    this.socket.once('uploadBlockResult', result => {
-                        resolve(result);
-                    });
-                });
+                    this.socket.emit('fileBlock', fileBlockPayload);
     
-                // Check if the upload was successful
-                if (uploadResult !== 'Success') {
-                    console.error('Error uploading block:', uploadResult);
-                    // Handle the error as needed
-                    return;
+                    offset += blockSize;
+    
+                    sendNextBlock(); // Call recursively
+                } else {
+                    console.log('File downloaded successfully!');
                 }
+            };
     
-                // Move to the next block
-                offset += blockSize;
-            }
+            sendNextBlock(); // Start the recursive download
     
-            console.log('File downloaded successfully!');
         } catch (error) {
             console.error('Error downloading file:', error);
             // Handle the error as needed
         }
     }
+    
 }
 
 module.exports = {FileHandler};
