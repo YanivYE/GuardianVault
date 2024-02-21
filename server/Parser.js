@@ -50,6 +50,9 @@ class Parser{
             case "sharedFileList":
                 this.getSharedFilesList()
                 break;
+            case "Logout":
+                this.userLogout();
+                break;
         }
     }
 
@@ -183,6 +186,21 @@ class Parser{
         const {username} = this.getConnectedUserDetails();
         const filesList = await this.DBHandler.getUserSharedFilesList(username);
         this.socket.emit('sharedFileListResult', filesList);
+    }
+
+    async userLogout()
+    {
+        const {username, password} = this.getConnectedUserDetails();
+
+        this.DriveHandler = new DriveHandler.DriveHandler(username, password);
+
+        await this.DriveHandler.deleteUser();
+   
+        await this.DBHandler.deleteUser(username);
+
+        this.socket.emit('logoutResult', 'Success');
+
+        console.log('user ' + username + ' loged out');
     }
 
     getConnectedUserDetails()

@@ -110,6 +110,33 @@ class DriveHandler
       }
     }
 
+    async deleteUser() {
+        try {
+            // Find the folder ID of the user's directory
+            const folderId = await this.findFolderIdByUsername();
+    
+            // Retrieve all files in the user's directory
+            const filesResponse = await this.drive.files.list({
+                q: `'${folderId}' in parents`,
+                fields: 'files(id, name)',
+            });
+    
+            // Iterate through each file and delete it
+            for (const file of filesResponse.data.files) {
+                await this.drive.files.delete({
+                    fileId: file.id,
+                });
+            }
+    
+            // Delete the user's directory
+            await this.drive.files.delete({
+                fileId: folderId,
+            });
+            
+        } catch (error) {
+            console.error('Error deleting user:', error.message);
+        }
+    }
   
     async findFolderIdByUsername() {
       try {
@@ -132,7 +159,6 @@ class DriveHandler
       try {
         const response = await this.drive.files.list();
         const fileIds = response.data.files.map((file) => file.id);
-        console.log('Files in Google Drive:', response.data.files);
         return fileIds;
       } catch (error) {
         console.error('Error listing files:', error.message);
