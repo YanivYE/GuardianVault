@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 this.performKeyExchange(serverPublicKeyBase64);
             });
 
-            document.getElementById('Continue').addEventListener('click', () => {
+            document.getElementById('loginButton').addEventListener('click', () => {
               window.location.href = '/login';
             });
 
