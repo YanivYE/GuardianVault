@@ -82,6 +82,7 @@
     /*==================================================================
     [ Show pass ]*/
     document.addEventListener('DOMContentLoaded', function () {
+
         function togglePassword() {
             const eye = document.querySelector("#eye");
             const passwordInput = document.querySelector("#password");

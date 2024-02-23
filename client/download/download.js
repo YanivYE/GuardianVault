@@ -7,6 +7,10 @@ const socket = io({
 
 document.addEventListener('DOMContentLoaded', async function () 
 {
+    if (window.sessionStorage.getItem('Username') == null) {
+        window.location.href = '/Download'; // Redirect to login page if not logged in
+    }
+
     let files = await getUserOwnFilesListFromServer();
 
     let sharedFiles = await getUserSharedFilesListFromServer();

@@ -5,6 +5,10 @@ const socket = io({
   });
 
 document.addEventListener('DOMContentLoaded', async function () {
+    if (window.sessionStorage.getItem('Username') == null) {
+      window.location.href = '/UploadFile'; // Redirect to login page if not logged in
+    }
+
     var publicButton = document.getElementById("publicButton");
     var privateButton = document.getElementById("privateButton");
     var userSelectGroup = document.getElementById("userSelectGroup");
