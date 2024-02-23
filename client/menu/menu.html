@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
@@ -13,6 +14,19 @@
       align-items: center;
       height: 100vh;
       margin: 0;
+      color: white; /* Change text color to white */
+      font-family: Arial, sans-serif; /* Change font family */
+    }
+
+    h1 {
+      font-size: 36px; /* Adjust font size as needed */
+      margin-bottom: 30px; /* Add space below the title */
+      text-align: center; /* Center align the title */
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center; /* Center align the buttons horizontally */
     }
 
     .button {
@@ -40,12 +54,8 @@
     .container-login100 {
       width: 100%;  
       min-height: 100vh;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: -moz-box;
-      display: -ms-flexbox;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column; /* Change to column layout */
       justify-content: center;
       align-items: center;
       padding: 15px;
@@ -69,17 +79,6 @@
       background-color: rgba(0,0,0,0.65);
     }
 
-    .container-login100-form-btn {
-      width: 100%;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: -moz-box;
-      display: -ms-flexbox;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
     .logout-button {
       background-color: #FF5252; /* Red Color */
       color: #fff; /* White Text Color */
@@ -88,25 +87,28 @@
       padding: 10px 20px;
       font-size: 20px;
       cursor: pointer;
-      margin-top: auto; /* Pushes the button to the bottom */
+      margin-top: 20px; /* Adjust the top margin */
       margin-bottom: 20px; /* Adds some space between the button and the bottom */
     }
   </style>
 </head>
 <body>
   <div class="container-login100" style="background-image: url('images/bg-01.jpg');">
-    <button class="button" onclick="window.location.href='../download/download.html'">
-      <img src="images/download.png" alt="Download Icon">
-      Download
-    </button>
-
-    <button class="button" onclick="window.location.href='../upload/upload.html'">
-      <img src="images/upload.png" alt="Upload Icon">
-      Upload
-  </button>
-
-  <button class="logout-button" id="logoutButton">Logout</button>
+    <h1 id="title">Welcome!</h1>
+    <div class="button-container">
+      <button class="button" onclick="window.location.href='../download/download.html'">
+        <img src="images/download.png" alt="Download Icon">
+        Download
+      </button>
   
+      <button class="button" onclick="window.location.href='../upload/upload.html'">
+        <img src="images/upload.png" alt="Upload Icon">
+        Upload
+      </button>
+    </div>
+    <button class="logout-button" id="logoutButton">Logout</button>
+
   </div>
+
 </body>
 </html>

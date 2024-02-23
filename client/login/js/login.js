@@ -101,6 +101,7 @@
             {
                 // Redirect user to the menu page after successful login
                 window.location.href = '/menu';
+                window.sessionStorage.setItem("Username", username); 
             }
             else{
                 const errorMessage = document.getElementById('errorMessage');

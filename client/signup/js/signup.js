@@ -191,7 +191,8 @@
             }
             else
             {
-                window.location.href = '/menu';   
+                window.location.href = '/menu'; 
+                window.sessionStorage.setItem("Username", username); 
             }
         });
     }

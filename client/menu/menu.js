@@ -6,6 +6,9 @@ const socket = io({
 
 document.addEventListener('DOMContentLoaded', async function () 
 {
+    const username = window.sessionStorage.getItem("Username");
+    document.getElementById("title").textContent=`Welcome ${username}!`;
+
     const logoutButton = document.getElementById('logoutButton');
 
     logoutButton.addEventListener('click', function() {
