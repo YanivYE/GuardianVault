@@ -8,6 +8,33 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script type="module" src="index.js"></script>
   <style>
+      /* Add the font-face rules for Ubuntu-Regular and Ubuntu-Bold */
+  @font-face {
+    font-family: 'Ubuntu-Regular';
+    src: url('../fonts/ubuntu/Ubuntu-Regular.ttf'); 
+  }
+
+  @font-face {
+    font-family: 'Ubuntu-Bold';
+    src: url('../fonts/ubuntu/Ubuntu-Bold.ttf'); 
+  }
+
+  /* Apply the fonts to the body and specific elements */
+  body {
+    font-family: 'Ubuntu-Regular', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6,
+  .login100-form-title,
+  p,
+  a {
+    font-family: 'Ubuntu-Regular', sans-serif;
+  }
+
+  .container-login100 {
+    font-family: 'Ubuntu-Regular', sans-serif;
+  }
+
     body {
       background-size: cover;
       background-position: center;
@@ -15,6 +42,7 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+    
       margin: 0;
     }
 
@@ -69,7 +97,7 @@
 
     .container-login100-form-btn {
       position: absolute;
-      bottom: 50px; /* Adjusted position */
+      bottom: 300px; /* Adjusted position */
       text-align: center;
       width: 100%;
     }
@@ -90,8 +118,22 @@
     }
 
     /* Style for the text color */
-    h1, p, #connectionStatus {
+    h1 {
       color: white;
+      font-size: 40px;
+      text-align: center; /* Center aligning */
+    }
+
+    p
+    {
+      color: white;
+      font-size: 40px;
+      text-align: center; /* Center aligning */
+    }
+    #connectionStatus
+    {
+      color: white;
+      font-size: 30px;
       text-align: center; /* Center aligning */
     }
 
@@ -110,7 +152,7 @@
     <div class="container-login100-form-btn">
       <p id="connectionStatus">Establishing a secure connection</p>
       <button id="loginButton" class="login100-form-btn" disabled>
-        LOGIN
+        CONTINUE
       </button>
     </div>
   </div>
