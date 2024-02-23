@@ -31,6 +31,12 @@
     font-family: 'Ubuntu-Regular', sans-serif;
   }
 
+  p
+  {
+    position: relative;
+    top: 130px;
+  }
+
   .container-login100 {
     font-family: 'Ubuntu-Regular', sans-serif;
   }
@@ -111,6 +117,8 @@
       cursor: pointer;
       font-size: 18px; /* Adjusted font size */
       transition: background-color 0.3s;
+      position: relative;
+      top: 130px;
     }
 
     .login100-form-btn:hover {
@@ -134,11 +142,31 @@
     {
       color: white;
       font-size: 30px;
+      padding-top: 130px;
       text-align: center; /* Center aligning */
+      position: relative;
+    }
+
+
+    .login100-form-btn[disabled] {
+      background-color: #ccc; /* Change background color to gray when disabled */
+      cursor: not-allowed; /* Change cursor to not-allowed when disabled */
+      pointer-events: none; /* Disable pointer events when disabled */
     }
 
     #topContent {
-      margin-bottom: 100px; /* Added margin bottom for spacing */
+      margin-bottom: 130px; /* Added margin bottom for spacing */
+    }
+
+    /* Animation */
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    #connectionStatus.animating {
+      animation: pulse 1s infinite; /* Apply the pulse animation */
     }
   </style>
 </head>
@@ -146,23 +174,37 @@
   <div class="container-login100" style="background-image: url('images/bg-01.jpg');">
     <div id="topContent">
       <h1>Welcome to GuardianVault</h1>
-      <p>Made by Yaniv Yehezkel and Elior Yousefi.</p>
+      <h1>Made by Yaniv Yehezkel and Elior Yousefi.</h1> <!-- Added spaces -->
     </div>
     <div id="contentContainer"></div>
     <div class="container-login100-form-btn">
       <p id="connectionStatus">Establishing a secure connection</p>
       <button id="loginButton" class="login100-form-btn" disabled>
-        CONTINUE
+        Continue
       </button>
     </div>
   </div>
 
   <script>
-    // Wait for 3 seconds before enabling the login button and updating the text
-    setTimeout(function() {
-      document.getElementById('loginButton').removeAttribute('disabled');
-      document.getElementById('connectionStatus').textContent = 'Established';
-    }, 3000);
+    // Add click event listener to the button
+    document.getElementById('loginButton').addEventListener('click', function(event) {
+        if (this.hasAttribute('disabled')) {
+          event.preventDefault(); // Prevent default action (click) during the first 3 seconds
+        }
+      });
+
+      // Set timeout to enable the button after 3 seconds
+      setTimeout(function() {
+        var loginButton = document.getElementById('loginButton');
+        loginButton.removeAttribute('disabled');
+        document.getElementById('connectionStatus').textContent = 'Established';
+        document.getElementById('connectionStatus').classList.remove('animating'); // Remove animation class
+      }, 3000);
+
+      // Add animation class while establishing connection
+      setTimeout(function() {
+        document.getElementById('connectionStatus').classList.add('animating');
+      }, 300);
   </script>
 </body>
 </html>
