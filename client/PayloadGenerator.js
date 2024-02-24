@@ -1,52 +1,102 @@
-var sharedKey = null;
-var scriptLoaded = false;
-var keyInitialized = false;
+let socket = null;
+let sharedKey = null;
 
-// Function to load the CryptoJS library asynchronously
+
+async function handleNewClientConnection() {
+    if (!sharedKey) {
+        try {
+            await loadScript();
+            setupEventListeners();
+            // Now the shared key is initialized, proceed with other operations
+        } catch (error) {
+            console.error(error);
+        }
+    }
+}
+
+// Function to load the socket.io library asynchronously
 function loadScript() {
     return new Promise((resolve, reject) => {
-        var script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js';
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js';
         script.onload = () => {
-            scriptLoaded = true;
+            socket = io({
+                query: {
+                    newUser: true
+                }
+            });
             resolve();
         };
         script.onerror = () => {
-            reject(new Error('Failed to load CryptoJS library'));
+            reject(new Error('Failed to load socket.io library'));
         };
         document.head.appendChild(script);
     });
 }
 
-// Call loadScript to start loading the library
-loadScript().then(() => {
-    // Now the CryptoJS library is loaded, initialize the key
-    initializeKey().then(() => {
-        // Now the shared key is initialized, proceed with other operations
-    }).catch(error => {
-        console.error(error);
+function setupEventListeners() {            
+    socket.on('connect', () =>{
+        console.log('Connected to server');
     });
-}).catch(error => {
-    console.error(error);
-});
 
-// Function to initialize the shared key
-async function initializeKey() {
-    var encryptedSharedKey = sessionStorage.getItem('sharedKey');
-    var decryptedSharedKey = CryptoJS.AES.decrypt(encryptedSharedKey, "GuardianVault2023SharedKeyEncryption");
-    sharedKey = decryptedSharedKey.toString(CryptoJS.enc.Utf8);
-    sharedKey = await hexToCryptoKey(sharedKey);
-    keyInitialized = true;
+    socket.on('server-public-key', async (serverPublicKeyBase64) => {
+        await performKeyExchange(serverPublicKeyBase64);
+    });
+}
+
+async function performKeyExchange(serverPublicKeyBase64) {     
+    // Generate client key pair
+    const keyPair = await window.crypto.subtle.generateKey(
+        {
+        name: "ECDH",
+        namedCurve: "P-256"
+        },
+        true,
+        ["deriveKey", "deriveBits"]
+    );
+
+    // Export client public key
+    const clientPublicKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
+    const clientPublicKeyBase64 = arrayBufferToBase64(clientPublicKey);
+
+    socket.emit('client-public-key', clientPublicKeyBase64);
+
+    // Import server public key
+    const importedServerPublicKey = await window.crypto.subtle.importKey(
+        "raw",
+        base64ToArrayBuffer(serverPublicKeyBase64),
+        {
+        name: "ECDH",
+        namedCurve: "P-256"
+        },
+        true,
+        []
+    );
+
+    // Derive shared secret
+    const sharedSecretAlgorithm = {
+        name: 'ECDH',
+        namedCurve: 'P-256',
+        public: importedServerPublicKey
+    };
+
+    sharedKey = await window.crypto.subtle.deriveBits(
+        sharedSecretAlgorithm,
+        keyPair.privateKey,
+        256
+    );
+
+    sharedKey = await hexToCryptoKey(arrayBufferToHexString(sharedKey));
+
+    console.log(sharedKey);
 }
 
 // Function to send payload to the server
 async function sendToServerPayload(data) {
-    // Wait for the CryptoJS library and the shared key to be initialized
-    while (!scriptLoaded || !keyInitialized) {
-        await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 100ms before checking again
-    }
-
     // Once loaded and key initialized, continue with encryption
+    if (!sharedKey) {
+        throw new Error('Shared key is not initialized');
+    }
     const { iv, ciphertext, tag } = await encryptData(data);
     const payload = new Uint8Array(iv.length + ciphertext.length + tag.length);
     payload.set(iv, 0);
@@ -57,15 +107,12 @@ async function sendToServerPayload(data) {
 }
 
 async function receivePayloadFromServer(ServerPayload) {  
-    const payload = arrayBufferToHexString(base64ToArrayBuffer(ServerPayload));
-    
-    const iv = payload.substr(0, 32); // IV length is 32 characters (16 bytes)
-    const encryptedData = payload.substring(32, payload.length - 32);
-    const authTag = payload.substr(payload.length - 32); // Tag length is 32 characters (16 bytes)
-
-    const decryptedData = await decryptData(iv, encryptedData, authTag);
-
-    return decryptedData;
+    // Once loaded and key initialized, continue with encryption
+    if (!sharedKey) {
+        throw new Error('Shared key is not initialized');
+    }
+    const payload = base64ToArrayBuffer(serverPayload);
+    return await decryptData(payload);
 }
 
 async function encryptData(data) {    
@@ -89,29 +136,13 @@ async function encryptData(data) {
     return { iv, ciphertext, tag };
 }
 
-async function decryptData(ivHex, ciphertextHex, tagHex) {    
+async function decryptData(payload) {    
     try {
-        const ivArray = hexStringToArrayBuffer(ivHex);
-        const ciphertextArray = hexStringToArrayBuffer(ciphertextHex);
-        const tagArray = hexStringToArrayBuffer(tagHex);
-
-        // Convert ArrayBuffers to Uint8Arrays
-        const ciphertextUint8Array = new Uint8Array(ciphertextArray);
-        const tagUint8Array = new Uint8Array(tagArray);
-        
-        // Calculate total length
-        const totalLength = ciphertextUint8Array.length + tagUint8Array.length;
-        
-        // Concatenate iv, ciphertext, and tag Uint8Arrays
-        const concatenatedArray = new Uint8Array(totalLength);
-        concatenatedArray.set(ciphertextUint8Array, 0);
-        concatenatedArray.set(tagUint8Array, ciphertextUint8Array.length);
-
         // Decrypt the data using AES-GCM
         const decryptedData = await crypto.subtle.decrypt(
-            { name: 'AES-GCM', iv: ivArray},
+            { name: 'AES-GCM', iv: payload.slice(0, 16)},
             sharedKey,
-            concatenatedArray
+            payload.slice(16)
         );
 
         // Convert the decrypted ArrayBuffer to a string
@@ -127,33 +158,18 @@ async function decryptData(ivHex, ciphertextHex, tagHex) {
 }
 
 
-function hexStringToUint8Array(hexString) {
-    return new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-}
 
-function hexStringToArrayBuffer(hexString) {
-    // Remove the leading "0x" if present
-    hexString = hexString.startsWith("0x") ? hexString.slice(2) : hexString;
-
-    // Convert the hexadecimal string to an ArrayBuffer
-    const buffer = new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16))).buffer;
-
-    return buffer;
-}
+// Utility functions
 
 async function hexToCryptoKey(hexString) {
-    // Convert the hexadecimal string to an ArrayBuffer
-    const buffer = hexStringToArrayBuffer(hexString);
-
-    // Import the key from the ArrayBuffer
+    const keyData = hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
     const cryptoKey = await crypto.subtle.importKey(
         "raw",
-        buffer,
+        new Uint8Array(keyData),
         { name: "AES-GCM" },
         false,
         ["encrypt", "decrypt"]
     );
-
     return cryptoKey;
 }
 
