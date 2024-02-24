@@ -1,17 +1,42 @@
 let socket = null;
 let sharedKey = null;
+const expirationTime = new Date();
+expirationTime.setTime(expirationTime.getTime() + (30 * 60 * 1000));
 
+function retrieveSocketConnection()
+{
+    const socketInfo = localStorage.getItem('socketInfo');
+    if (socketInfo) {
+        const {url, id} = JSON.parse(socketInfo);
+        socket = io(url, { query: { id } });
+    }
+}
+
+async function retrieveClientSharedKey()
+{
+    const sharedKeyBase64 = localStorage.getItem('sharedKey');
+    if (sharedKeyBase64) {
+        const sharedKeyHex = base64ToHex(sharedKeyBase64);
+        sharedKey = await hexToCryptoKey(sharedKeyHex);
+    }
+}
 
 async function handleNewClientConnection() {
-    if (!sharedKey) {
-        try {
-            await loadScript();
-            setupEventListeners();
-            // Now the shared key is initialized, proceed with other operations
-        } catch (error) {
-            console.error(error);
+    await loadScript();
+    socket = io();
+    socket.on('connect', () => {
+        const socketInfo = { url: socket.io.uri, id: socket.id }; // Include socket ID in socketInfo
+        localStorage.setItem('socketInfo', JSON.stringify(socketInfo)); // Save socket info
+        
+        if (!sharedKey) {
+            try {
+                setupEventListeners();
+                // Now the shared key is initialized, proceed with other operations
+            } catch (error) {
+                console.error(error);
+            }
         }
-    }
+    });
 }
 
 // Function to load the socket.io library asynchronously
@@ -20,11 +45,6 @@ function loadScript() {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js';
         script.onload = () => {
-            socket = io({
-                query: {
-                    newUser: true
-                }
-            });
             resolve();
         };
         script.onerror = () => {
@@ -41,6 +61,7 @@ function setupEventListeners() {
 
     socket.on('server-public-key', async (serverPublicKeyBase64) => {
         await performKeyExchange(serverPublicKeyBase64);
+        localStorage.setItem('sharedKey', (sharedKey));
     });
 }
 
@@ -86,13 +107,13 @@ async function performKeyExchange(serverPublicKeyBase64) {
         256
     );
 
-    sharedKey = await hexToCryptoKey(arrayBufferToHexString(sharedKey));
-
-    console.log(sharedKey);
+    sharedKey = hexToBase64(arrayBufferToHexString(sharedKey));
 }
 
 // Function to send payload to the server
 async function sendToServerPayload(data) {
+    retrieveClientSharedKey();
+
     // Once loaded and key initialized, continue with encryption
     if (!sharedKey) {
         throw new Error('Shared key is not initialized');
@@ -106,12 +127,13 @@ async function sendToServerPayload(data) {
     return base64Payload;
 }
 
-async function receivePayloadFromServer(ServerPayload) {  
+async function receivePayloadFromServer(ServerPayload) { 
+    retrieveClientSharedKey();
     // Once loaded and key initialized, continue with encryption
     if (!sharedKey) {
         throw new Error('Shared key is not initialized');
     }
-    const payload = base64ToArrayBuffer(serverPayload);
+    const payload = base64ToArrayBuffer(ServerPayload);
     return await decryptData(payload);
 }
 
@@ -197,3 +219,49 @@ function arrayBufferToHexString(arrayBuffer) {
     return Array.from(byteArray, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
+function hexToBase64(hexString) {
+    // Convert the hexadecimal string to an ArrayBuffer
+    const buffer = hexStringToArrayBuffer(hexString);
+
+    // Convert the ArrayBuffer to a Uint8Array
+    const uint8Array = new Uint8Array(buffer);
+
+    // Convert the Uint8Array to a binary string
+    let binaryString = '';
+    for (let i = 0; i < uint8Array.length; i++) {
+        binaryString += String.fromCharCode(uint8Array[i]);
+    }
+
+    // Encode the binary string as base64
+    return btoa(binaryString);
+}
+
+// Function to convert a hexadecimal string to an ArrayBuffer
+function hexStringToArrayBuffer(hexString) {
+    // Remove the leading "0x" if present
+    hexString = hexString.startsWith("0x") ? hexString.slice(2) : hexString;
+
+    // Convert the hexadecimal string to an ArrayBuffer
+    const buffer = new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16))).buffer;
+
+    return buffer;
+}
+
+function base64ToHex(base64String) {
+    // Decode the base64 string
+    const binaryString = atob(base64String);
+
+    // Convert the binary string to a Uint8Array
+    const uint8Array = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        uint8Array[i] = binaryString.charCodeAt(i);
+    }
+
+    // Convert the Uint8Array to a hexadecimal string
+    let hexString = '';
+    for (let i = 0; i < uint8Array.length; i++) {
+        hexString += uint8Array[i].toString(16).padStart(2, '0');
+    }
+
+    return hexString;
+}

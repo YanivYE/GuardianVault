@@ -74,17 +74,13 @@ function startServer() {
   });
 
   socket.on('connection', (socket) => {
+    console.log("User connected");
     const socketHandler = new Handler.SocketHandler(socket);
-    const isNewUser = socket.handshake.query.newUser === 'true'; 
-    if(isNewUser)
-    {
-      socketHandler.handleSocketConnection();
-    }
-    else
-    {
-      socketHandler.receivePayloadFromClient();
-    }
-    
+    socketHandler.handleClientConnection();
+  });
+
+  socket.on('disconnect', async () => {
+      console.log('user disconnected');
   });
 }
 

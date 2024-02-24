@@ -1,11 +1,29 @@
-(function ($) {
+(async function ($) {
     "use strict";
 
-    const socket = io({
-        query: {
-          newUser: false
-        }
-      });
+    const storedClientData = sessionStorage.getItem('clientData');
+
+    if (storedClientData) {
+        // Parse client data
+        const parsedClientData = JSON.parse(storedClientData);
+
+        // Reconstruct the client object with the existing socket ID
+        window.client = new Client();
+        window.client.setSharedKey(parsedClientData.sharedKey);
+
+        // Connect to the socket using the stored ID
+        const socket = io({ query: { id: parsedClientData.socketId } });
+        window.client.setSocket(socket);
+
+        // Access the client variable from the global scope
+        console.log(window.client);
+    } else {
+        console.error("Client data not found.");
+        return;
+    }
+
+    // Access the client variable from the global scope
+    window.client.printDetails();
 
     /*==================================================================
     [ Focus input ]*/
