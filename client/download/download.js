@@ -8,7 +8,7 @@ const socket = io({
 document.addEventListener('DOMContentLoaded', async function () 
 {
     if (window.sessionStorage.getItem('Username') == null) {
-        window.location.href = '/Download'; // Redirect to login page if not logged in
+        window.location.href = '/login'; // Redirect to login page if not logged in
     }
 
     let files = await getUserOwnFilesListFromServer();

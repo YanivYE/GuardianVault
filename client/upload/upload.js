@@ -6,7 +6,7 @@ const socket = io({
 
 document.addEventListener('DOMContentLoaded', async function () {
     if (window.sessionStorage.getItem('Username') == null) {
-      window.location.href = '/UploadFile'; // Redirect to login page if not logged in
+      window.location.href = '/login'; 
     }
 
     var publicButton = document.getElementById("publicButton");

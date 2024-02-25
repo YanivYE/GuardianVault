@@ -7,8 +7,8 @@ const socket = io({
 document.addEventListener('DOMContentLoaded', async function () 
 {
     if (window.sessionStorage.getItem('Username') == null) {
-        window.location.href = '/MainMenu'; // Redirect to login page if not logged in
-      }
+      window.location.href = '/login'; // Redirect to login page if not logged in
+    }
     const username = window.sessionStorage.getItem("Username");
     document.getElementById("title").textContent=`Welcome ${username}!`;
 
@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 
     async function userLogout()
     {
+        document.getElementById('logoutLoader').style.display = 'block';
         const logoutRequest = 'Logout$';
         const logoutPayload = await sendToServerPayload(logoutRequest);
 
@@ -28,7 +29,8 @@ document.addEventListener('DOMContentLoaded', async function ()
         socket.on('logoutResult', async (logoutResult) => {
             if(logoutResult === 'Success')
             {
-                window.location.href = '/login';
+              document.getElementById('logoutLoader').style.display = 'none';
+              window.location.href = '/login';
             }
         });
     }
