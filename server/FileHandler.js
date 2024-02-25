@@ -1,5 +1,5 @@
 const DriveHandler = require("./DriveHandler");
-const sharedCryptography = require("./CryptographyTunnel");
+const sharedCryptography = require("./Crypto");
 
 class FileHandler
 {

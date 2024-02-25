@@ -1,5 +1,5 @@
 const keyExchange = require("./ServerKeyExchange");
-const sharedCryptography = require("./CryptographyTunnel");
+const sharedCryptography = require("./Crypto");
 const Parser = require("./Parser");
 
 class SocketHandler {
