@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-02-25T17:37:41.780Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" etag="9ZED1T9NYUpkAnW4tF7P" version="23.1.6" type="device">
+<mxfile host="app.diagrams.net" modified="2024-02-25T17:59:47.282Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" etag="X5ktg5hXm0THs981VEJ7" version="23.1.6" type="device" pages="2">
   <diagram name="‫עמוד-1‬" id="lGBujKC89MsANumak7Qr">
     <mxGraphModel dx="2144" dy="1324" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -101,6 +101,14 @@
         <mxCell id="ljZV5Z6OGfyYymSWNuCb-147" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="GXFKzJdZuxaNmONE48NH-49" target="ljZV5Z6OGfyYymSWNuCb-140">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="-qEwZZTARCnbmSD4B9YT" name="‫עמוד-2‬">
+    <mxGraphModel dx="1221" dy="647" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
       </root>
     </mxGraphModel>
   </diagram>
