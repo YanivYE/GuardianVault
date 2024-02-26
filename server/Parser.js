@@ -41,6 +41,9 @@ class Parser{
             case "DeleteFile":
                 this.deleteFile(additionalData);
                 break;
+            case "ForgotPassword":
+                this.forgotPassword(additionalData);
+                break;
             case "UsersList":
                 this.getUsersList();
                 break;
@@ -164,6 +167,21 @@ class Parser{
         }
 
         this.socket.emit('deleteFileResult', 'Success');
+    }
+
+    async forgotPassword(forgotPasswordRequest)
+    {
+        const username = forgotPasswordRequest.split('$');
+
+        let userEmailResult = await this.DBHandler.getUserEmail(username);
+
+        if(userEmailResult != "Fail")
+        {
+            // send email
+            userEmailResult = "Success";
+        } 
+
+        this.socket.emit('forgotPasswordResult', userEmailResult);
     }
 
     async getUsersList()
