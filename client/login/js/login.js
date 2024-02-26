@@ -24,6 +24,10 @@
     [ Validate ]*/
     var input = $('.validate-input .input100');
 
+    $('.validate-form').on('forgot', function(event){
+        window.location.href = '/forgot-password';
+    });
+
     $('.validate-form').on('submit', function(event){
         event.preventDefault(); // Prevent default form submission
 
@@ -113,6 +117,10 @@
 
     document.getElementById('signupButton').addEventListener('click', () => {
         window.location.href = '/signup';
+    });
+
+    document.getElementById('forgotPass').addEventListener('click', () => {
+        window.location.href = '/forgot';
     });
 
 })(jQuery);
