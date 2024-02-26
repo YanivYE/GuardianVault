@@ -2,6 +2,7 @@ const DBHandler = require("./DataBaseHandler");
 const sessionStorage = require('express-session');
 const FileHandler = require("./FileHandler");
 const DriveHandler = require("./DriveHandler");
+const EmailSender = require("./EmailSender");
 const fs = require('fs');
 
 class Parser{
@@ -9,6 +10,7 @@ class Parser{
     {
         this.socket = socket;
         this.DBHandler = new DBHandler.DataBaseHandler();
+        this.EmailSender = new EmailSender.EmailSender();
         this.FileHandler = null;
         this.DriveHandler = null;
     }
@@ -177,7 +179,7 @@ class Parser{
 
         if(userEmailResult != "Fail")
         {
-            // send email
+            this.EmailSender.sendEmailVerificationCode(userEmailResult);
             userEmailResult = "Success";
         } 
 
