@@ -120,7 +120,7 @@
     });
 
     document.getElementById('forgotPass').addEventListener('click', () => {
-        window.location.href = '/forgot';
+        window.location.href = '/forgot-password';
     });
 
 })(jQuery);

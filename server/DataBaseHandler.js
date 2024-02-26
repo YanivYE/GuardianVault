@@ -245,6 +245,24 @@ class DataBaseHandler{
         }
     }
 
+    async getUserEmail(username)
+    {
+        try {
+            // Find the user document corresponding to the specified username
+            const user = await User.findOne({ username: username });
+            if (!user) {
+                console.error('User not found.');
+                return "Fail"; // Return "Fail" if the user doesn't exist
+            }
+    
+            // Return the user's email
+            return user.email;
+        } catch (error) {
+            console.error('Error getting user email:', error);
+            return "Fail"; // Return "Fail" if an error occurs
+        }
+    }
+
     async getFileEncryptionPassword(fileOwner, fileName)
     {
         try {

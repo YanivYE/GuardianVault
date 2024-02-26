@@ -15,11 +15,11 @@ function serveStaticFiles() {
   const staticPaths = [
     '../client/signup',
     '../client/login',
-    '../client/forgot',
+    '../client/forgot-password',
     '../client/upload',
+    '../client/download',
     '../client/menu',
     '../client/index',
-    '../client/socket.io-client',
     '../client'
   ];
 
@@ -42,12 +42,6 @@ function serveClientPage() {
     res.sendFile(filePath);
   });
 
-  app.get('/forgot', (req, res) => {
-    const filePath = path.join(__dirname, '../client/forgot-password/forgot-pass.html');
-    res.setHeader('Content-Type', 'text/html');
-    res.sendFile(filePath);
-  });
-
   app.get('/signup', (req, res) => {
     const filePath = path.join(__dirname, '../client/signup/signup.html');
     res.setHeader('Content-Type', 'text/html');
@@ -60,8 +54,20 @@ function serveClientPage() {
     res.sendFile(filePath);
   });
 
+  app.get('/download', (req, res) => {
+    const filePath = path.join(__dirname, '../client/download/download.html');
+    res.setHeader('Content-Type', 'text/html');
+    res.sendFile(filePath);
+  });
+
   app.get('/menu', (req, res) => {
     const filePath = path.join(__dirname, '../client/menu/menu.html');
+    res.setHeader('Content-Type', 'text/html');
+    res.sendFile(filePath);
+  });
+
+  app.get('/forgot-password', (req, res) => {
+    const filePath = path.join(__dirname, '../client/forgot-password/forgot-password.html');
     res.setHeader('Content-Type', 'text/html');
     res.sendFile(filePath);
   });
