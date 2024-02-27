@@ -16,6 +16,7 @@ function serveStaticFiles() {
     '../client/signup',
     '../client/login',
     '../client/forgot-password',
+    '../client/code-verification',
     '../client/upload',
     '../client/download',
     '../client/menu',
@@ -68,6 +69,12 @@ function serveClientPage() {
 
   app.get('/forgot-password', (req, res) => {
     const filePath = path.join(__dirname, '../client/forgot-password/forgot-password.html');
+    res.setHeader('Content-Type', 'text/html');
+    res.sendFile(filePath);
+  });
+
+  app.get('/code-verification', (req, res) => {
+    const filePath = path.join(__dirname, '../client/code-verification/code-verification.html');
     res.setHeader('Content-Type', 'text/html');
     res.sendFile(filePath);
   });

@@ -26,7 +26,7 @@ const socket = io({
             }
             else
             {
-                // window.location.href = '/verificationEmailCode';
+                window.location.href = '/code-verification';
             }
         });
     });
