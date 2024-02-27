@@ -7,5 +7,5 @@ module.exports = {
   REFRESH_TOKEN: '1//0482zJi2qJq4KCgYIARAAGAQSNwF-L9Irfij_xtILWYix04rSY_gkaD7SHlKpY0dUN-2OAr-4kPoUOgVqeY_xeHokHG2sjnI7U1c',
   DB_URI: 'mongodb+srv://guardianvault:GuardianVault2023@guardianvault.nhlmhfk.mongodb.net/',
   EMAIL: 'gurdianvault@gmail.com', 
-  PASSWORD: 'GuardianVault2023'
+  PASSWORD: 'culu ykql ojng svzm'
 };

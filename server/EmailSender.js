@@ -7,10 +7,13 @@ class EmailSender
     {
         this.transporter = nodemailer.createTransport({
             service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: {
-                user: config.EMAIL, // Your email address
-                pass: config.PASSWORD // Your password
-            }
+                user: config.EMAIL,
+                pass: config.PASSWORD,
+            },
         });
     }
 
