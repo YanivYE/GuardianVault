@@ -24,9 +24,12 @@ const socket = io({
                 message.style.display = "block";
                 message.innerText = "Wrong Verification Code!";
             }
-            else
+            else if(codeVerificationResult === "passwordReset")
             {
                 window.location.href = '/reset-password';
+            }
+            else{
+                window.location.href = '/menu';
             }
         });
     });

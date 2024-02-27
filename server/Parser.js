@@ -4,6 +4,7 @@ const FileHandler = require("./FileHandler");
 const DriveHandler = require("./DriveHandler");
 const EmailSender = require("./EmailSender");
 const fs = require('fs');
+const { Session } = require("inspector");
 
 class Parser{
     constructor(socket)
@@ -75,8 +76,13 @@ class Parser{
         if(await this.DBHandler.validateUserLogin(username, password))
         {
             operationResult = "Success";
-            sessionStorage.Session += '#Username:' + username + '#Password:' + password;
             console.log(username + " connected");
+
+            let userEmailResult = await this.DBHandler.getUserEmail(username);
+
+            const code = this.EmailSender.sendEmailVerificationCode(userEmailResult);
+
+            sessionStorage.Session += '#Username:' + username + '#Password:' + password + '#Code:' + code;
         }
         this.socket.emit('loginResult', operationResult);
     }
@@ -196,13 +202,21 @@ class Parser{
     verifyEmailCode(verifyCodeRequest)
     {
         let result = "Fail";
+        const {username, password} = this.getConnectedUserDetails();
+
         const enteredCode = verifyCodeRequest.split('$')[0];
 
         const verificationCode = this.getCurrentCode();
 
         if(enteredCode === verificationCode)
         {
-            result = "Success";
+            if(password !== '')
+            {
+                result = "2fa";
+            }
+            else{
+                result = "passwordReset";
+            }
         }
         
         this.socket.emit('codeVerificationResult', result);

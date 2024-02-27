@@ -103,9 +103,8 @@
         socket.on('loginResult', async (operationResult) => {
             if(operationResult === "Success")
             {
-                // Redirect user to the menu page after successful login
-                window.location.href = '/menu';
                 window.sessionStorage.setItem("Username", username); 
+                window.location.href = '/code-verification';
             }
             else{
                 const errorMessage = document.getElementById('errorMessage');
