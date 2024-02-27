@@ -30,14 +30,23 @@ class EmailSender
 
     sendEmailVerificationCode(userEmail)
     {        
-        // const verificationCode = getVerificationCode();
+        const verificationCode = this.generateVerificationCode();
         const mailDetails = {
             from: config.EMAIL,
             to: userEmail, // recipient email address
             subject: 'Verification Code',
-            text: 'Your verification code is: ' + 3123214
+            text: 'Your verification code is: ' + verificationCode
         };
         this.sendEmail(mailDetails);
+    }
+
+    generateVerificationCode()
+    {
+        let code = '';
+        for (let i = 0; i < 6; i++) {
+            code += Math.floor(Math.random() * 10); // Generate a random digit (0-9)
+        }
+        return code;
     }
 }
 
