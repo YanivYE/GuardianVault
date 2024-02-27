@@ -1,35 +1,152 @@
-const socket = io({
-    query: {
-      newUser: false
-    }
-  });
+(function ($) {
+    "use strict";
 
-  document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById("verifyCodeForm").addEventListener('submit', async function (event) {
-        event.preventDefault();
-        
-        const message = document.getElementById("message");
-        const verificationCode = document.getElementsByName("code")[0].value;
+    const socket = io({
+        query: {
+          newUser: false
+        }
+      });
 
-        message.style.display = "none"; 
-    
-        const verifyCodeRequest = 'VerifyEmailCode$' + verificationCode;
-        const verifyCodePayload = await sendToServerPayload(verifyCodeRequest);
-
-        socket.emit('ClientMessage', verifyCodePayload);
-
-        socket.on('codeVerificationResult', async (codeVerificationResult) => {
-            if(codeVerificationResult === "Fail")
-            {
-                message.style.display = "block";
-                message.innerText = "Wrong Verification Code!";
+    /*==================================================================
+    [ Focus input ]*/
+    $('.input100').each(function(){
+        $(this).on('blur', function(){
+            if($(this).val().trim() != "") {
+                $(this).addClass('has-val');
             }
-            else
-            {
-                console.log("good");
-                window.location.href = '/reset-password';
+            else {
+                $(this).removeClass('has-val');
+            }
+        })    
+    })
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        function togglePassword() {
+            const eye = document.querySelector("#eye");
+            const passwordInput = document.querySelector("#password");
+
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+
+            // Corrected the class name for the eye icon
+            eye.classList.toggle("fa-eye-slash", type === "password");
+        }
+
+        // Call the togglePassword function on document load
+        togglePassword();
+        togglePassword();
+
+        // Add an event listener for the Show Password button
+        document.querySelector('.btn-show-pass').addEventListener('click', function () {
+            togglePassword();
+        });
+
+        document.getElementById("resetPasswordForm").addEventListener('submit', async function (event) {
+            event.preventDefault();
+            
+            const message = document.getElementById("message");
+            const password = document.getElementsByName("password")[0].value;
+        
+            message.style.display = "none"; 
+        
+            const strength = getPasswordStrength(password);
+
+            if (strength > 0.6) { 
+                message.style.display = "block";
+                message.style.color = "green"
+                message.innerText = "Password reset successfully!";
+                const resetPasswordRequest = 'ResetPassword$' + password;
+                const resetPasswordPayload = await sendToServerPayload(resetPasswordRequest);
+
+                socket.emit('ClientMessage', resetPasswordPayload);
+
+                socket.on('resetPasswordResult', async (resetPasswordResult) => {
+                    window.location.href = '/menu';
+                });
+            } else {
+                message.style.display = "block";
+                message.style.color = "red"
+                message.innerText = "Password strength must be at least strong!";
             }
         });
     });
-});
 
+    function getPasswordStrength(password) {
+        const regexLength = /(?=.{8,})/;
+        const regexLower = /(?=.*[a-z])/;
+        const regexUpper = /(?=.*[A-Z])/;
+        const regexSpecial = /(?=.*[!@#$%^&*-])/;
+    
+        const strength = (regexLength.test(password) + regexLower.test(password) +
+                          regexUpper.test(password) + regexSpecial.test(password)) / 4;
+    
+        return strength;
+    }
+
+    document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        checkPasswordStrength(password);
+    });
+
+    // Update the checkPasswordStrength function
+    function checkPasswordStrength(password) {
+        const regexLength = /(?=.{8,})/;
+        const regexLower = /(?=.*[a-z])/;
+        const regexUpper = /(?=.*[A-Z])/;
+        const regexSpecial = /(?=.*[!@#$%^&*-])/;
+
+        const lengthCheck = document.getElementById('length-check');
+        const lowerCheck = document.getElementById('lower-check');
+        const upperCheck = document.getElementById('upper-check');
+        const specialCheck = document.getElementById('special-check');
+
+        lengthCheck.checked = regexLength.test(password);
+        lowerCheck.checked = regexLower.test(password);
+        upperCheck.checked = regexUpper.test(password);
+        specialCheck.checked = regexSpecial.test(password);
+
+        const strength = (regexLength.test(password) + regexLower.test(password) +
+                          regexUpper.test(password) + regexSpecial.test(password)) / 4;
+
+        const strengthBar = document.getElementById('strength-bar');
+        strengthBar.style.width = (strength * 100) + '%';
+        strengthBar.style.backgroundColor = getStrengthColor(strength);
+
+        updatePasswordStrengthText(strength);
+    }
+
+    // Add a function to update the password strength text
+    function updatePasswordStrengthText(strength) {
+        const passwordStrengthText = document.getElementById('password-strength-text');
+        passwordStrengthText.textContent = getStrengthText(strength);
+    }
+
+    // Function to get the color based on the strength
+    function getStrengthColor(strength) {
+        if (strength < 0.3) {
+            return "#FF0000"; // Red for weak
+        } else if (strength < 0.6) {
+            return "#FFD700"; // Yellow for medium
+        } else if(strength < 0.9)
+        {
+            return "#00FF00"; // Green for strong
+        } else {
+            return "#006400"; // darker green
+        }
+    }
+
+    // Function to get the text based on the strength
+    function getStrengthText(strength) {
+        if (strength < 0.3) {
+            return "Weak";
+        } else if (strength < 0.6) {
+            return "Medium";
+        }  else if (strength < 0.9) {
+            return "Strong";
+        } else {
+            return "Excellent!";
+        }
+    }
+
+})(jQuery);

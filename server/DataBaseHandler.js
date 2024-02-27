@@ -353,6 +353,32 @@ class DataBaseHandler{
         }
     }
 
+    async updateUserPassword(username, password)
+    {
+        try {
+            // Hash the new password
+            const hashedPassword = await bcrypt.hash(password, 10);
+    
+            // Update the user's password
+            const updatedUser = await User.findOneAndUpdate(
+                { username: username }, // Find user by username
+                { password: hashedPassword }, // Update password field
+                { new: true } // Return updated document
+            );
+    
+            if (!updatedUser) {
+                console.error('User not found.');
+                return false; // Return false if user is not found
+            }
+    
+            console.log(`Password updated for user '${username}'`);
+            return true; // Return true if password is updated successfully
+        } catch (error) {
+            console.error('Error updating user password:', error);
+            return false; // Return false if an error occurs
+        }
+    }
+
     async deleteAllUsers() {
         try {
             // Delete all user documents from the Users collection

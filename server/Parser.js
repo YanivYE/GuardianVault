@@ -49,6 +49,9 @@ class Parser{
             case "VerifyEmailCode":
                 this.verifyEmailCode(additionalData);
                 break;
+            case "ResetPassword":
+                this.resetPassword(additionalData);
+                break;
             case "UsersList":
                 this.getUsersList();
                 break;
@@ -183,14 +186,14 @@ class Parser{
         if(userEmailResult != "Fail")
         {
             const code = this.EmailSender.sendEmailVerificationCode(userEmailResult);
-            sessionStorage.Session += '#Code:' + code;
+            sessionStorage.Session += '#Username:' + username + '#Code:' + code;
             userEmailResult = "Success";
         } 
 
         this.socket.emit('forgotPasswordResult', userEmailResult);
     }
 
-    async verifyEmailCode(verifyCodeRequest)
+    verifyEmailCode(verifyCodeRequest)
     {
         let result = "Fail";
         const enteredCode = verifyCodeRequest.split('$')[0];
@@ -203,6 +206,19 @@ class Parser{
         }
         
         this.socket.emit('codeVerificationResult', result);
+    }
+
+    async resetPassword(resetPasswordRequest)
+    {
+        const newPassword = resetPasswordRequest.split('$')[0];
+
+        const {username} = this.getConnectedUserDetails();
+
+        sessionStorage.Session += '#Password:' + newPassword;
+
+        await this.DBHandler.updateUserPassword(username, newPassword);
+
+        this.socket.emit('resetPasswordResult', 'Success');
     }
 
     async getUsersList()

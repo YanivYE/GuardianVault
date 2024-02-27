@@ -26,7 +26,6 @@ const socket = io({
             }
             else
             {
-                console.log("good");
                 window.location.href = '/reset-password';
             }
         });
