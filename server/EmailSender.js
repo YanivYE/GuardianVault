@@ -38,6 +38,8 @@ class EmailSender
             text: 'Your verification code is: ' + verificationCode
         };
         this.sendEmail(mailDetails);
+
+        return verificationCode;
     }
 
     generateVerificationCode()

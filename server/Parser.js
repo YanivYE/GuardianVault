@@ -46,6 +46,9 @@ class Parser{
             case "ForgotPassword":
                 this.forgotPassword(additionalData);
                 break;
+            case "VerifyEmailCode":
+                this.verifyEmailCode(additionalData);
+                break;
             case "UsersList":
                 this.getUsersList();
                 break;
@@ -69,7 +72,7 @@ class Parser{
         if(await this.DBHandler.validateUserLogin(username, password))
         {
             operationResult = "Success";
-            sessionStorage.Session = username + '#' + password;
+            sessionStorage.Session += '#Username:' + username + '#Password:' + password;
             console.log(username + " connected");
         }
         this.socket.emit('loginResult', operationResult);
@@ -83,7 +86,7 @@ class Parser{
 
         if(operationResult === "Success")
         {
-            sessionStorage.Session = username + '#' + password;
+            sessionStorage.Session += '#Username:' + username + '#Password:' + password;
             console.log(username + " connected");
         }
 
@@ -179,11 +182,27 @@ class Parser{
 
         if(userEmailResult != "Fail")
         {
-            this.EmailSender.sendEmailVerificationCode(userEmailResult);
+            const code = this.EmailSender.sendEmailVerificationCode(userEmailResult);
+            sessionStorage.Session += '#Code:' + code;
             userEmailResult = "Success";
         } 
 
         this.socket.emit('forgotPasswordResult', userEmailResult);
+    }
+
+    async verifyEmailCode(verifyCodeRequest)
+    {
+        let result = "Fail";
+        const enteredCode = verifyCodeRequest.split('$')[0];
+
+        const verificationCode = this.getCurrentCode();
+
+        if(enteredCode === verificationCode)
+        {
+            result = "Success";
+        }
+        
+        this.socket.emit('codeVerificationResult', result);
     }
 
     async getUsersList()
@@ -223,10 +242,36 @@ class Parser{
         console.log('user ' + username + ' loged out');
     }
 
-    getConnectedUserDetails()
+    getConnectedUserDetails() 
     {
-        const [connectedUserName, connectedUserPassword] = sessionStorage.Session.split('#');
-        return {username: connectedUserName, password: connectedUserPassword};
+        let username = "";
+        let password = "";
+        const parts = sessionStorage.Session.split('#');
+    
+        for (const part of parts) {
+            if (part.includes('Username:')) {
+                username = part.split('Username:')[1]; // Extract username
+            }
+            if (part.includes('Password:')) {
+                password = part.split('Password:')[1]; // Extract password
+            }
+        }
+    
+        return { username: username, password: password };
+    }
+
+    getCurrentCode() 
+    {
+        let code = "";
+        const parts = sessionStorage.Session.split('#');
+    
+        for (const part of parts) {
+            if (part.includes('Code:')) {
+                code = part.split('Code:')[1]; // Extract username
+            }
+        }
+    
+        return code;
     }
 
     initializeSystem() {
