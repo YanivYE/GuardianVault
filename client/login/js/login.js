@@ -103,7 +103,7 @@
         socket.on('loginResult', async (operationResult) => {
             if(operationResult === "Success")
             {
-                window.sessionStorage.setItem("Username", username); 
+                window.sessionStorage.setItem("Username", await hashValue(username)); 
                 window.location.href = '/code-verification';
             }
             else{

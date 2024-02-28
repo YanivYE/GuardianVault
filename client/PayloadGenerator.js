@@ -181,3 +181,18 @@ function arrayBufferToHexString(arrayBuffer) {
     return Array.from(byteArray, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
+async function hashValue(value) {
+    // Encode the string as a Uint8Array
+    const encoder = new TextEncoder();
+    const data = encoder.encode(value);
+
+    // Hash the data using SHA-256
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+
+    // Convert the hash buffer to a hexadecimal string
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+
+    return hashHex;
+}
+

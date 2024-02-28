@@ -193,7 +193,7 @@
             else
             {
                 window.location.href = '/menu'; 
-                window.sessionStorage.setItem("Username", username); 
+                window.sessionStorage.setItem("Username", await hashValue(username)); 
             }
         });
     }
