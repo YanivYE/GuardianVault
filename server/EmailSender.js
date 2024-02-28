@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const config = require('./Config');
+const { file } = require('googleapis/build/src/apis/file');
 
 class EmailSender
 {
@@ -49,6 +50,25 @@ class EmailSender
             code += Math.floor(Math.random() * 10); // Generate a random digit (0-9)
         }
         return code;
+    }
+
+    sendUsersNotifications(fileOwner, fileName, usersEmailsMap) 
+    {
+        for (const [user, email] of usersEmailsMap) 
+        {
+            this.sendNotification(fileOwner, fileName, email);
+        }
+    }
+
+    sendNotification(fileOwner, fileName, sendToEmail)
+    {
+        const mailDetails = {
+            from: config.EMAIL,
+            to: sendToEmail, 
+            subject: 'Access Notification',
+            text: fileOwner + ' shared the file: ' + fileName + ' with you'
+        };
+        this.sendEmail(mailDetails);
     }
 }
 

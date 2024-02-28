@@ -132,8 +132,26 @@ class Parser{
             this.FileHandler = new FileHandler.FileHandler(this.socket, fileName, username, password);
 
             this.DBHandler.setUsersPermissions(users, fileName, username, password);
+
+            const usersEmailMap = await this.initializeUsersEmailsMap(users);
+
+            this.EmailSender.sendUsersNotifications(username, fileName, usersEmailMap);
         }
     }
+
+    async initializeUsersEmailsMap(usersArray)
+    {
+        let map = new Map();
+        for(const user of usersArray)
+        {
+            const userEmail = await this.DBHandler.getUserEmail(user);
+
+            map.set(user, userEmail);
+        }
+
+        return map;
+    }   
+
 
     async parseDownloadFileRequest(downloadFileRequest)
     {
