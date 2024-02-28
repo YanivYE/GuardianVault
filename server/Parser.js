@@ -53,6 +53,9 @@ class Parser{
             case "ResetPassword":
                 this.resetPassword(additionalData);
                 break;
+            case "getUserName":
+                this.getUsername();
+                break;
             case "UsersList":
                 this.getUsersList();
                 break;
@@ -251,6 +254,13 @@ class Parser{
         await this.DBHandler.updateUserPassword(username, newPassword);
 
         this.socket.emit('resetPasswordResult', 'Success');
+    }
+
+    getUsername()
+    {
+        const {username} = this.getConnectedUserDetails();
+
+        this.socket.emit('usernameResult', username);
     }
 
     async getUsersList()

@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', async function ()
     if (window.sessionStorage.getItem('LogedUserIdentify') == null) {
       window.location.href = '/login'; // Redirect to login page if not logged in
     }
-    const username = window.sessionStorage.getItem("Username");
+
+    const username = await getUserName();
     document.getElementById("title").textContent=`Welcome ${username}!`;
 
     const logoutButton = document.getElementById('logoutButton');
@@ -33,5 +34,19 @@ document.addEventListener('DOMContentLoaded', async function ()
               window.location.href = '/login';
             }
         });
+    }
+
+    async function getUserName()
+    {
+      const getUserNameRequest = 'getUserName$';
+      const getUserNamePayload = await sendToServerPayload(getUserNameRequest);
+
+      return new Promise((resolve, reject) => {
+        socket.emit('ClientMessage', getUserNamePayload);
+
+        socket.once('usernameResult', (username) => {
+            resolve(username);
+        });
+      });
     }
 });
