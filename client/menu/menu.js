@@ -6,7 +6,7 @@ const socket = io({
 
 document.addEventListener('DOMContentLoaded', async function () 
 {
-    if (window.sessionStorage.getItem('Username') == null) {
+    if (window.sessionStorage.getItem('LogedUserIdentify') == null) {
       window.location.href = '/login'; // Redirect to login page if not logged in
     }
     const username = window.sessionStorage.getItem("Username");

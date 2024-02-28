@@ -62,6 +62,8 @@
                 socket.emit('ClientMessage', resetPasswordPayload);
 
                 socket.on('resetPasswordResult', async (resetPasswordResult) => {
+                    window.sessionStorage.setItem("LogedUserIdentify", await hashValue(password)); 
+
                     window.location.href = '/menu';
                 });
             } else {

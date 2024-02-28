@@ -11,8 +11,6 @@ const socket = io({
         const message = document.getElementById("message");
         const username = document.getElementsByName("username")[0].value;
 
-        window.sessionStorage.setItem("Username", await hashValue(username)); 
-
         message.style.display = "none"; 
     
         const forgotPasswordRequest = 'ForgotPassword$' + username;

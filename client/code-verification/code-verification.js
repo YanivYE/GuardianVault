@@ -4,7 +4,7 @@ const socket = io({
     }
   });
 
-  document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     document.getElementById("verifyCodeForm").addEventListener('submit', async function (event) {
         event.preventDefault();
         
@@ -12,7 +12,7 @@ const socket = io({
         const verificationCode = document.getElementsByName("code")[0].value;
 
         message.style.display = "none"; 
-    
+
         const verifyCodeRequest = 'VerifyEmailCode$' + verificationCode;
         const verifyCodePayload = await sendToServerPayload(verifyCodeRequest);
 
@@ -28,7 +28,9 @@ const socket = io({
             {
                 window.location.href = '/reset-password';
             }
-            else{
+            else
+            {
+                window.sessionStorage.setItem("LogedUserIdentify", await hashValue(verificationCode)); 
                 window.location.href = '/menu';
             }
         });

@@ -1,6 +1,5 @@
 const nodemailer = require('nodemailer');
 const config = require('./Config');
-const { file } = require('googleapis/build/src/apis/file');
 
 class EmailSender
 {
@@ -42,7 +41,7 @@ class EmailSender
 
         return verificationCode;
     }
-
+ 
     generateVerificationCode()
     {
         let code = '';
