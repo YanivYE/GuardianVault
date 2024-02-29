@@ -54,7 +54,10 @@ class EmailSender
     {
         for (const [user, email] of usersEmailsMap) 
         {
-            this.sendNotification(fileOwner, fileName, email);
+            if(user !== '')
+            {
+                this.sendNotification(fileOwner, fileName, email);
+            }
         }
     }
 

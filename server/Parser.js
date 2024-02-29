@@ -149,9 +149,13 @@ class Parser{
         let map = new Map();
         for(const user of usersArray)
         {
-            const userEmail = await this.DBHandler.getUserEmail(user);
+            if(user !== '')
+            {
+                const userEmail = await this.DBHandler.getUserEmail(user);
 
-            map.set(user, userEmail);
+                map.set(user, userEmail);
+            }
+            
         }
 
         return map;
