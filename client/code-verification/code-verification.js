@@ -1,6 +1,8 @@
-const socket = window.client.socket;
-
 document.addEventListener('DOMContentLoaded', function () {
+
+    const socket = window.client.socket;
+
+
     document.getElementById("verifyCodeForm").addEventListener('submit', async function (event) {
         event.preventDefault();
         

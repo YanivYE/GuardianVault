@@ -1,7 +1,8 @@
-// const socket = window.client.socket;
 
 document.addEventListener('DOMContentLoaded', async function () 
 {
+    const socket = window.client.socket;
+
     if (!window.client.logedIn) {
       window.client.loadNextPage('/login'); // Redirect to login page if not logged in
     }
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', async function ()
         socket.on('logoutResult', async (logoutResult) => {
             if(logoutResult === 'Success')
             {
+              window.client.logedIn = false;
               document.getElementById('logoutLoader').style.display = 'none';
               window.client.loadNextPage('/login');
             }

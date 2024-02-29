@@ -1,6 +1,6 @@
-const socket = window.client.socket;
+document.addEventListener('DOMContentLoaded', function () {
+    const socket = window.client.socket;
 
-  document.addEventListener('DOMContentLoaded', function () {
     document.getElementById("forgotPasswordForm").addEventListener('submit', async function (event) {
         event.preventDefault();
         

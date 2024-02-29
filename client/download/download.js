@@ -1,7 +1,7 @@
-const socket = window.client.socket;
-
 document.addEventListener('DOMContentLoaded', async function () 
 {
+    const socket = window.client.socket;
+
     if (!window.client.logedIn) {
         window.client.loadNextPage('/login'); // Redirect to login page if not logged in
       }

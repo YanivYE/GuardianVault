@@ -20,10 +20,6 @@
     [ Validate ]*/
     var input = $('.validate-input .input100');
 
-    $('.validate-form').on('forgot', function(event){
-        window.location.href = '/forgot-password';
-    });
-
     $('.validate-form').on('submit', function(event){
         event.preventDefault(); // Prevent default form submission
 
