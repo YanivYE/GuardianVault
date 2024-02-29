@@ -93,7 +93,10 @@ class Parser{
 
     async parseSignupRequest(signupRequest)
     {
-        [this.username, email, this.password] = signupRequest.split('$');
+        const [username, email, password] = signupRequest.split('$');
+
+        this.username = username;
+        this.password = password;
 
         const operationResult = await this.DBHandler.validateUserSignup(this.username, email, this.password);
 

@@ -35,7 +35,10 @@ document.addEventListener('DOMContentLoaded', async function ()
             {
               window.client.logedIn = false;
               document.getElementById('logoutLoader').style.display = 'none';
-              window.client.loadNextPage('/login');
+              window.client.loadNextPage('/index');
+
+              window.client = null; // or window.client = undefined;
+              window.location.reload(); 
             }
         });
     }

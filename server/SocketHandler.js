@@ -13,10 +13,10 @@ class SocketHandler {
 
         sharedCryptography.setEncryptionKey(sharedKey);
 
-        this.receivePayloadFromClient();
+        this.listenForClientMessage();
     }
 
-    receivePayloadFromClient() {
+    listenForClientMessage() {
         this.socket.on('ClientMessage', async (clientMessagePayload) => {
             const payload = Buffer.from(clientMessagePayload, 'base64').toString('hex');
         
