@@ -34,10 +34,10 @@ class FileHandler
         this.fileName = fileName;
     }
 
-    async uploadFile(fileName) {
+    async uploadFile() {
         try {
             // Assuming this.fileName and this.fileContent are available
-            await this.DriveHandler.handleFileUpload(fileName, this.fileContent);
+            await this.DriveHandler.handleFileUpload(this.fileName, this.fileContent);
         
             // Emit the success result
             this.socket.emit('UploadFileResult', "Success");
