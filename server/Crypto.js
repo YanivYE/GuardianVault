@@ -9,6 +9,14 @@ class CryptographyTunnel {
         this.aesGcmKey = encryptionKey;
     }
 
+    generateServerPayload(data) {
+        const { iv, ciphertext, authTag } = this.encryptData(data);
+        const payload = iv.toString('hex') + ciphertext + authTag.toString('hex');
+        const payloadBase64 = Buffer.from(payload, 'hex').toString('base64');
+
+        return payloadBase64;
+    }
+
     encryptData(data) {
         // Generate a random IV (Initialization Vector)
         const iv = crypto.randomBytes(16);

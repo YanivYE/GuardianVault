@@ -2,6 +2,7 @@ const DBHandler = require("./DataBaseHandler");
 const FileHandler = require("./FileHandler");
 const DriveHandler = require("./DriveHandler");
 const EmailSender = require("./EmailSender");
+const sharedCryptography = require("./Crypto");
 const fs = require('fs');
 
 class Parser{

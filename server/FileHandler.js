@@ -11,14 +11,6 @@ class FileHandler
         this.fileName = "";
     }
 
-    generateServerPayload(data) {
-        const { iv, ciphertext, authTag } = sharedCryptography.encryptData(data);
-        const payload = iv.toString('hex') + ciphertext + authTag.toString('hex');
-        const payloadBase64 = Buffer.from(payload, 'hex').toString('base64');
-
-        return payloadBase64;
-    }
-
     assembleFileContent(fileChunk, isLastChunk)
     {
         this.fileContent += fileChunk;
@@ -64,7 +56,7 @@ class FileHandler
                     const blockIndex = Math.ceil(offset / blockSize);
     
                     const sendFileBlockRequest = blockIndex + '$' + block + '$' + totalBlocks;
-                    const fileBlockPayload = this.generateServerPayload(sendFileBlockRequest);
+                    const fileBlockPayload = sharedCryptography.generateServerPayload(sendFileBlockRequest);
     
                     this.socket.emit('fileBlock', fileBlockPayload);
     
