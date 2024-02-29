@@ -1,8 +1,4 @@
-const socket = io({
-    query: {
-      newUser: false
-    }
-  });
+const socket = window.client.socket;
 
   document.addEventListener('DOMContentLoaded', function () {
     document.getElementById("forgotPasswordForm").addEventListener('submit', async function (event) {
@@ -11,10 +7,12 @@ const socket = io({
         const message = document.getElementById("message");
         const username = document.getElementsByName("username")[0].value;
 
+        window.client.username = username;
+
         message.style.display = "none"; 
     
         const forgotPasswordRequest = 'ForgotPassword$' + username;
-        const forgotPasswordPayload = await sendToServerPayload(forgotPasswordRequest);
+        const forgotPasswordPayload = await window.client.sendToServerPayload(forgotPasswordRequest);
 
         socket.emit('ClientMessage', forgotPasswordPayload);
 
@@ -26,7 +24,7 @@ const socket = io({
             }
             else
             {
-                window.location.href = '/code-verification';
+                window.client.loadNextPage('/code-verification');
             }
         });
     });

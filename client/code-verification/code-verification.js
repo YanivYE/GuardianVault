@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             else
             {
+                window.client.logedIn = true;
                 window.client.loadNextPage('/menu');
             }
         });

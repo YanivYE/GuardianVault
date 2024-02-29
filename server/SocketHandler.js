@@ -5,6 +5,7 @@ const Parser = require("./Parser");
 class SocketHandler {
     constructor(socket) {
         this.socket = socket;
+        this.parser = new Parser.Parser(socket);
     }
 
     async handleClientConnection() {      
@@ -13,15 +14,11 @@ class SocketHandler {
         sharedCryptography.setEncryptionKey(sharedKey);
 
         this.receivePayloadFromClient();
-
-        this.socket.on('disconnect', async () => {
-            console.log('User disconnected');
-        });
     }
 
     receivePayloadFromClient() {
-        const parser = new Parser.Parser(this.socket);
         this.socket.on('ClientMessage', async (clientMessagePayload) => {
+            console.log("here");
             const payload = Buffer.from(clientMessagePayload, 'base64').toString('hex');
         
             const iv = payload.substr(0, 32);   
@@ -30,7 +27,7 @@ class SocketHandler {
             
             const decryptedData = sharedCryptography.decryptData(iv, encryptedData, authTag);
 
-            parser.parseClientMessage(decryptedData);
+            this.parser.parseClientMessage(decryptedData);
         });
     }
 }

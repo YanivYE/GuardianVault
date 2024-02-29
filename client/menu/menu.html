@@ -2,9 +2,7 @@
 <html lang="en">
 <head>
   <link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
   <script src="menu.js"></script>
-  <script src="../PayloadGenerator.js"></script>
   <style>
     body {
       background-size: cover;
@@ -111,12 +109,12 @@
   <div class="container-login100" style="background-image: url('images/bg-01.jpg');">
     <h1 id="title">Welcome!</h1>
     <div class="button-container">
-      <button class="button" onclick="window.location.href='../download/download.html'">
+      <button id="downlaod" class="button">
         <img src="images/download.png" alt="Download Icon">
         Download
       </button>
   
-      <button class="button" onclick="window.location.href='../upload/upload.html'">
+      <button id="upload" class="button">
         <img src="images/upload.png" alt="Upload Icon">
         Upload
       </button>

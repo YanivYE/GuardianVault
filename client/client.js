@@ -3,6 +3,7 @@ class Client {
         this.sharedKey = null;
         this.socket = null;
         this.logedIn = false;
+        this.username = "";
     }
 
     async init() {

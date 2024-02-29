@@ -4,11 +4,12 @@ const path = require('path');
 const socketIO = require('socket.io');
 const config = require('./Config');
 const Handler = require('./SocketHandler');
+const { v4: uuidv4 } = require('uuid');
 
 // create app & server
 const app = express();
 const server = http.createServer(app);
-const socket = socketIO(server);
+const io = socketIO(server);
 
 // Serve static files
 function serveStaticFiles() {
@@ -88,6 +89,8 @@ function serveClientPage() {
 }
 
 function startServer() {
+  const connectedUsers = {};
+  
   serveStaticFiles();
   serveClientPage();
 
@@ -99,12 +102,26 @@ function startServer() {
     console.log(`Server is running on http://${config.LOCAL_IP}:${config.PORT}`);
   });
 
-  socket.on('connection', (socket) => {
-    console.log('User connected');
+  io.on('connection', (socket) => {
+    const userId = generateUniqueUserId();
+ 
+    console.log(`User ${userId} connected`);
     const socketHandler = new Handler.SocketHandler(socket);
-    
+
+    connectedUsers[userId] = socket;
+
     socketHandler.handleClientConnection();
+
+    socket.on('disconnect', () => {
+        console.log(`User ${userId} disconnected`);
+        delete connectedUsers[userId];
+    });
   });
+}
+
+function generateUniqueUserId() {
+  // Generate a unique ID (e.g., UUID)
+  return uuidv4();
 }
 
 startServer();

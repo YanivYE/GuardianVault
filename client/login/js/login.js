@@ -91,6 +91,9 @@
     async function logging() {
         const username = document.getElementsByName("username")[0].value;
         const password = document.getElementsByName("password")[0].value;
+
+        window.client.username = username;
+        
         const loginPayload = await window.client.sendToServerPayload('Login$' + username + '$' + password);
         // Send login information to the server
         socket.emit('ClientMessage', loginPayload);     

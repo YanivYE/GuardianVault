@@ -1,11 +1,7 @@
 (function ($) {
     "use strict";
 
-    const socket = io({
-        query: {
-          newUser: false
-        }
-      });
+    const socket =  window.client.socket;
 
     /*==================================================================
     [ Focus input ]*/
@@ -171,29 +167,31 @@
 
     async function signingUp() 
     {
+        const errorMessage = document.getElementById('errorMessage');
         const username = document.getElementsByName("username")[0].value;
         const email = document.getElementsByName("email")[0].value;
         const password = document.getElementsByName("password")[0].value;
-        const signupPayload = await sendToServerPayload('SignUp$' + username + '$' + email + '$' + password);
+
+        window.client.username = username;
+        
+        const signupPayload = await window.client.sendToServerPayload('SignUp$' + username + '$' + email + '$' + password);
         socket.emit('ClientMessage', signupPayload);   
         
         socket.on('signupResult', async (operationResult) => {
             if(operationResult === "UsernameFail")
             {
-                const errorMessage = document.getElementById('errorMessage');
                 errorMessage.textContent = "SignUp failed. Username already exists";
                 errorMessage.style.display = 'block';
             }
             else if(operationResult === "EmailFail")
             {
-                const errorMessage = document.getElementById('errorMessage');
                 errorMessage.textContent = "SignUp failed. Email already exists";
                 errorMessage.style.display = 'block';
             }
             else
             {
-                window.location.href = '/menu'; 
-                window.sessionStorage.setItem("LogedUserIdentify", await hashValue(username)); 
+                window.client.logedIn = true;
+                window.client.loadNextPage('/menu');
             }
         });
     }

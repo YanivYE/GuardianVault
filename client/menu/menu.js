@@ -1,29 +1,31 @@
-const socket = io({
-    query: {
-      newUser: false
-    }
-  });
+const socket =  window.client.socket;
 
 document.addEventListener('DOMContentLoaded', async function () 
 {
-    if (window.sessionStorage.getItem('LogedUserIdentify') == null) {
-      window.location.href = '/login'; // Redirect to login page if not logged in
+    if (!window.client.logedIn) {
+      window.client.loadNextPage('/login'); // Redirect to login page if not logged in
     }
 
-    const username = await getUserName();
+    const username = window.client.username;
     document.getElementById("title").textContent=`Welcome ${username}!`;
 
-    const logoutButton = document.getElementById('logoutButton');
-
-    logoutButton.addEventListener('click', function() {
+    document.getElementById('logoutButton').addEventListener('click', function() {
         userLogout();
+    });
+
+    document.getElementById('download').addEventListener('click', function() {
+      window.client.loadNextPage('/download');
+    });
+
+    document.getElementById('upload').addEventListener('click', function() {
+      window.client.loadNextPage('/upload');
     });
 
     async function userLogout()
     {
         document.getElementById('logoutLoader').style.display = 'block';
         const logoutRequest = 'Logout$';
-        const logoutPayload = await sendToServerPayload(logoutRequest);
+        const logoutPayload = await window.client.sendToServerPayload(logoutRequest);
 
         socket.emit('ClientMessage', logoutPayload);
 
@@ -31,22 +33,8 @@ document.addEventListener('DOMContentLoaded', async function ()
             if(logoutResult === 'Success')
             {
               document.getElementById('logoutLoader').style.display = 'none';
-              window.location.href = '/login';
+              window.client.loadNextPage('/login');
             }
         });
-    }
-
-    async function getUserName()
-    {
-      const getUserNameRequest = 'getUserName$';
-      const getUserNamePayload = await sendToServerPayload(getUserNameRequest);
-
-      return new Promise((resolve, reject) => {
-        socket.emit('ClientMessage', getUserNamePayload);
-
-        socket.once('usernameResult', (username) => {
-            resolve(username);
-        });
-      });
     }
 });

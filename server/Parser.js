@@ -4,7 +4,6 @@ const FileHandler = require("./FileHandler");
 const DriveHandler = require("./DriveHandler");
 const EmailSender = require("./EmailSender");
 const fs = require('fs');
-const { Session } = require("inspector");
 
 class Parser{
     constructor(socket)

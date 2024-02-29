@@ -1,11 +1,7 @@
 (function ($) {
     "use strict";
 
-    const socket = io({
-        query: {
-          newUser: false
-        }
-      });
+    const socket = window.client.socket;
 
     /*==================================================================
     [ Focus input ]*/
@@ -57,14 +53,13 @@
                 message.style.color = "green"
                 message.innerText = "Password reset successfully!";
                 const resetPasswordRequest = 'ResetPassword$' + password;
-                const resetPasswordPayload = await sendToServerPayload(resetPasswordRequest);
+                const resetPasswordPayload = await window.client.sendToServerPayload(resetPasswordRequest);
 
                 socket.emit('ClientMessage', resetPasswordPayload);
 
                 socket.on('resetPasswordResult', async (resetPasswordResult) => {
-                    window.sessionStorage.setItem("LogedUserIdentify", await hashValue(password)); 
-
-                    window.location.href = '/menu';
+                    window.client.logedIn = true;
+                    window.client.loadNextPage('/menu');
                 });
             } else {
                 message.style.display = "block";
