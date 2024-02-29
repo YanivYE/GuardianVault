@@ -1,12 +1,8 @@
-const socket = io({
-    query: {
-      newUser: false
-    }
-  });
+const socket = window.client.socket;
 
 document.addEventListener('DOMContentLoaded', async function () {
-    if (window.sessionStorage.getItem('LogedUserIdentify') == null) {
-      window.location.href = '/login'; 
+    if (!window.client.logedIn) {
+        window.client.loadNextPage('/login'); // Redirect to login page if not logged in
     }
 
     var publicButton = document.getElementById("publicButton");
@@ -246,7 +242,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     async function validateFileName(fileName, shareWithUsers) {
         return new Promise(async (resolve, reject) => {
             const validateFileNameRequest = 'validateName$' + fileName + '$' + shareWithUsers;
-            const validateFileNamePayload = await sendToServerPayload(validateFileNameRequest);
+            const validateFileNamePayload = await window.client.sendToServerPayload(validateFileNameRequest);
     
             socket.emit('ClientMessage', validateFileNamePayload);
             
@@ -264,7 +260,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     async function sendFileBlock(block, blockIndex, totalBlocks) {
         try {
             const uploadFileBlockRequest = 'UploadFileBlock$' + blockIndex + '$' + block + '$' + totalBlocks;
-            const uploadFileBlockPayload = await sendToServerPayload(uploadFileBlockRequest);
+            const uploadFileBlockPayload = await window.client.sendToServerPayload(uploadFileBlockRequest);
             
             socket.emit('ClientMessage', uploadFileBlockPayload);
     
@@ -285,7 +281,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     async function getUsersListFromServer() {
         try {
-            const userListPayload = await sendToServerPayload('UsersList$');
+            const userListPayload = await window.client.sendToServerPayload('UsersList$');
             socket.emit('ClientMessage', userListPayload); 
     
             return new Promise((resolve, reject) => {

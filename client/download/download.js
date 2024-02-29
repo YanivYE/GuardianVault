@@ -1,15 +1,10 @@
-const socket = io({
-    query: {
-      newUser: false
-    }
-  });
-
+const socket = window.client.socket;
 
 document.addEventListener('DOMContentLoaded', async function () 
 {
-    if (window.sessionStorage.getItem('LogedUserIdentify') == null) {
-        window.location.href = '/login'; // Redirect to login page if not logged in
-    }
+    if (!window.client.logedIn) {
+        window.client.loadNextPage('/login'); // Redirect to login page if not logged in
+      }
 
     let files = await getUserOwnFilesListFromServer();
 
@@ -80,7 +75,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 
     async function getUserOwnFilesListFromServer() {
         try {
-            const ownFileListPayload = await sendToServerPayload('ownFileList$');
+            const ownFileListPayload = await window.client.sendToServerPayload('ownFileList$');
             socket.emit('ClientMessage', ownFileListPayload); // Not sure why you're emitting here, but you can handle it based on your application's logic
 
             return new Promise((resolve, reject) => {
@@ -103,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 
     async function getUserSharedFilesListFromServer() {
         try {
-            const sharedFileListPayload = await sendToServerPayload('sharedFileList$');
+            const sharedFileListPayload = await window.client.sendToServerPayload('sharedFileList$');
             socket.emit('ClientMessage', sharedFileListPayload); // Not sure why you're emitting here, but you can handle it based on your application's logic
 
             return new Promise((resolve, reject) => {
@@ -259,7 +254,7 @@ document.addEventListener('DOMContentLoaded', async function ()
         message.style.display = "none"; 
         document.getElementById('downloadLoader').style.display = 'block';
         const downloadFileRequest = 'DownloadFile$' + fileName + '$' + fileOwner;
-        const downloadFilePayload = await sendToServerPayload(downloadFileRequest);
+        const downloadFilePayload = await window.client.sendToServerPayload(downloadFileRequest);
         socket.emit('ClientMessage', downloadFilePayload);
 
         const fileData = await assembleFileContent();
@@ -319,7 +314,7 @@ document.addEventListener('DOMContentLoaded', async function ()
             let receivedBlocks = 0;
     
             socket.on('fileBlock', async (fileBlockPayload) => {
-                const serverPayload = await receivePayloadFromServer(fileBlockPayload);
+                const serverPayload = await window.client.receivePayloadFromServer(fileBlockPayload);
                 const [blockIndex, block, totalBlocksStr] = serverPayload.split('$');
 
                 const currentBlockIndex = parseInt(blockIndex);
@@ -347,7 +342,7 @@ document.addEventListener('DOMContentLoaded', async function ()
         message.style.display = "none"; 
         document.getElementById('downloadLoader').style.display = 'block';
         const deleteFileRequest = 'DeleteFile$' + fileName + '$' + fileOwner;
-        const deleteFilePayload = await sendToServerPayload(deleteFileRequest);
+        const deleteFilePayload = await window.client.sendToServerPayload(deleteFileRequest);
         socket.emit('ClientMessage', deleteFilePayload);
         socket.on('deleteFileResult', async (deleteFileResult) => {
             if(deleteFileResult === 'Success')

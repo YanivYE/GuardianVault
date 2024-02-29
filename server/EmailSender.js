@@ -31,6 +31,7 @@ class EmailSender
     sendEmailVerificationCode(userEmail)
     {        
         const verificationCode = this.generateVerificationCode();
+        console.log(verificationCode);
         const mailDetails = {
             from: config.EMAIL,
             to: userEmail, // recipient email address

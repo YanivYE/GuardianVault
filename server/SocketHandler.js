@@ -18,7 +18,6 @@ class SocketHandler {
 
     receivePayloadFromClient() {
         this.socket.on('ClientMessage', async (clientMessagePayload) => {
-            console.log("here");
             const payload = Buffer.from(clientMessagePayload, 'base64').toString('hex');
         
             const iv = payload.substr(0, 32);   

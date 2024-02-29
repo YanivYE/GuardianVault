@@ -1,4 +1,4 @@
-const socket =  window.client.socket;
+// const socket = window.client.socket;
 
 document.addEventListener('DOMContentLoaded', async function () 
 {
