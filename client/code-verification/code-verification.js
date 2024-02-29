@@ -1,8 +1,4 @@
-const socket = io({
-    query: {
-      newUser: false
-    }
-  });
+const socket = window.client.socket;
 
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById("verifyCodeForm").addEventListener('submit', async function (event) {
@@ -14,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         message.style.display = "none"; 
 
         const verifyCodeRequest = 'VerifyEmailCode$' + verificationCode;
-        const verifyCodePayload = await sendToServerPayload(verifyCodeRequest);
+        const verifyCodePayload = await window.client.sendToServerPayload(verifyCodeRequest);
 
         socket.emit('ClientMessage', verifyCodePayload);
 
@@ -26,12 +22,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             else if(codeVerificationResult === "passwordReset")
             {
-                window.location.href = '/reset-password';
+                window.client.loadNextPage('/reset-password');
             }
             else
             {
-                window.sessionStorage.setItem("LogedUserIdentify", await hashValue(verificationCode)); 
-                window.location.href = '/menu';
+                window.client.loadNextPage('/menu');
             }
         });
     });

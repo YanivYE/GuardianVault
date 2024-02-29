@@ -99,8 +99,7 @@
         socket.on('loginResult', async (operationResult) => {
             if(operationResult === "Success")
             {
-                console.log("good");
-                // window.location.href = '/code-verification';
+                window.client.loadNextPage('/code-verification');
             }
             else{
                 const errorMessage = document.getElementById('errorMessage');
@@ -111,11 +110,11 @@
     }
 
     document.getElementById('signupButton').addEventListener('click', () => {
-        window.location.href = '/signup';
+        window.client.loadNextPage('/signup');
     });
 
     document.getElementById('forgotPass').addEventListener('click', () => {
-        window.location.href = '/forgot-password';
+        window.client.loadNextPage('/forgot-password');
     });
 
 })(jQuery);

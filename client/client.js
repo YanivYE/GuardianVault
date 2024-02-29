@@ -2,6 +2,7 @@ class Client {
     constructor() {
         this.sharedKey = null;
         this.socket = null;
+        this.logedIn = false;
     }
 
     async init() {
