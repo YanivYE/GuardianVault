@@ -7,13 +7,15 @@ class SocketHandler {
         this.socket = socket;
     }
 
-    async handleSocketConnection() {      
+    async handleClientConnection() {      
         const sharedKey = await keyExchange.performKeyExchange(this.socket);
 
         sharedCryptography.setEncryptionKey(sharedKey);
 
+        this.receivePayloadFromClient();
+
         this.socket.on('disconnect', async () => {
-            console.log('Key Exchange complete');
+            console.log('User disconnected');
         });
     }
 

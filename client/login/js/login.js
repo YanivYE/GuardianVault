@@ -1,11 +1,7 @@
 (function ($) {
     "use strict";
 
-    const socket = io({
-        query: {
-          newUser: false
-        }
-      });
+    const socket = window.client.socket;
 
     /*==================================================================
     [ Focus input ]*/
@@ -95,7 +91,7 @@
     async function logging() {
         const username = document.getElementsByName("username")[0].value;
         const password = document.getElementsByName("password")[0].value;
-        const loginPayload = await sendToServerPayload('Login$' + username + '$' + password);
+        const loginPayload = await window.client.sendToServerPayload('Login$' + username + '$' + password);
         // Send login information to the server
         socket.emit('ClientMessage', loginPayload);     
         
@@ -103,7 +99,8 @@
         socket.on('loginResult', async (operationResult) => {
             if(operationResult === "Success")
             {
-                window.location.href = '/code-verification';
+                console.log("good");
+                // window.location.href = '/code-verification';
             }
             else{
                 const errorMessage = document.getElementById('errorMessage');

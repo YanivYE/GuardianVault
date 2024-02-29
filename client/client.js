@@ -13,26 +13,6 @@ class Client {
             console.error(error);
         }
     }
-
-    getSharedKey()
-    {
-        return this.sharedKey;
-    }
-
-    getSocket()
-    {
-        return this.socket;
-    }
-
-    setSharedKey(key)
-    {
-        this.sharedKey = key;
-    }
-
-    setSocket(socket)
-    {
-        this.socket = socket;
-    }
     
     async waitForInitialization() {
         return new Promise((resolve, reject) => {
@@ -56,12 +36,6 @@ class Client {
         this.socket.on('server-public-key', async (serverPublicKeyBase64) => {
             await this.performKeyExchange(serverPublicKeyBase64);
         });
-    }
-
-    printDetails()
-    {
-        console.log(this.sharedKey);
-        console.log(this.socket);
     }
 
     async initSocket() {
@@ -185,6 +159,21 @@ class Client {
             throw error;
         }
     }
+
+    loadNextPage(url) {
+        // Fetch the content of the login page asynchronously
+        fetch(url)
+          .then(response => response.text())
+          .then(html => {
+              // Replace the entire document's content with the content fetched from login.html
+              document.open();
+              document.write(html);
+              document.close();
+          })
+          .catch(error => {
+              console.error('Error loading login page:', error);
+          });
+      }
 }
 
 // Utility functions
