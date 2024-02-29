@@ -1,5 +1,4 @@
 const DBHandler = require("./DataBaseHandler");
-const sessionStorage = require('express-session');
 const FileHandler = require("./FileHandler");
 const DriveHandler = require("./DriveHandler");
 const EmailSender = require("./EmailSender");
@@ -13,6 +12,9 @@ class Parser{
         this.EmailSender = new EmailSender.EmailSender();
         this.FileHandler = null;
         this.DriveHandler = null;
+        this.username = "";
+        this.password = "";
+        this.verificationCode = "";
     }
 
     parseClientMessage(message)
@@ -73,32 +75,33 @@ class Parser{
     async parseLoginRequest(loginRequest)
     {
         let operationResult = "Fail";
-        const [username, password] = loginRequest.split('$');
+        [this.username, this.password] = loginRequest.split('$');
 
-        if(await this.DBHandler.validateUserLogin(username, password))
+        if(await this.DBHandler.validateUserLogin(this.username, this.password))
         {
             operationResult = "Success";
-            console.log(username + " connected");
+            console.log(this.username + " connected");
 
-            let userEmailResult = await this.DBHandler.getUserEmail(username);
+            let userEmailResult = await this.DBHandler.getUserEmail(this.username);
 
-            const code = this.EmailSender.sendEmailVerificationCode(userEmailResult);
+            this.verificationCode = this.EmailSender.sendEmailVerificationCode(userEmailResult);
 
-            sessionStorage.Session += '#Username:' + username + '#Password:' + password + '#Code:' + code;
+            this.initHandlers(this.username, this.password);
         }
         this.socket.emit('loginResult', operationResult);
     }
 
     async parseSignupRequest(signupRequest)
     {
-        const [username, email, password] = signupRequest.split('$');
+        [this.username, email, this.password] = signupRequest.split('$');
 
-        const operationResult = await this.DBHandler.validateUserSignup(username, email, password);
+        const operationResult = await this.DBHandler.validateUserSignup(this.username, email, this.password);
 
         if(operationResult === "Success")
         {
-            sessionStorage.Session += '#Username:' + username + '#Password:' + password;
             console.log(username + " connected");
+
+            this.initHandlers(this.username, this.password);
         }
 
         this.socket.emit('signupResult', operationResult);
@@ -122,22 +125,19 @@ class Parser{
         this.uploadFinished = false;
         const [fileName, usersString] = validationData.split('$');
 
-        const { username, password } = this.getConnectedUserDetails();
         const users = usersString.split(',');
 
-        const operationResult = await this.DBHandler.validateFileName(fileName, username);
+        const operationResult = await this.DBHandler.validateFileName(fileName, this.username);
 
         this.socket.emit('validateNameResult', operationResult);
 
         if(operationResult === "Success")
         {            
-            this.FileHandler = new FileHandler.FileHandler(this.socket, fileName, username, password);
-
-            this.DBHandler.setUsersPermissions(users, fileName, username, password);
+            this.DBHandler.setUsersPermissions(users, fileName, this.username, this.password);
 
             const usersEmailMap = await this.initializeUsersEmailsMap(users);
 
-            this.EmailSender.sendUsersNotifications(username, fileName, usersEmailMap);
+            this.EmailSender.sendUsersNotifications(this.username, fileName, usersEmailMap);
         }
     }
 
@@ -160,19 +160,15 @@ class Parser{
         let ownerPassword = "";
         let [fileName, fileOwner] = downloadFileRequest.split('$');
 
-        const { username, password } = this.getConnectedUserDetails();
-
-        if(fileOwner === 'null')    // connected user
+        if(fileOwner === 'null')    // the current connected user
         {
-            fileOwner = username;
-            ownerPassword = password;
+            fileOwner = this.username;
+            ownerPassword = this.password;
         }
         else
         {
             ownerPassword = await this.DBHandler.getFileEncryptionPassword(fileOwner, fileName);
         }
-
-        this.FileHandler = new FileHandler.FileHandler(this.socket, fileName, fileOwner, ownerPassword);
 
         this.FileHandler.downloadFile();
     }
@@ -182,14 +178,10 @@ class Parser{
         let ownerPassword = "";
         let [fileName, fileOwner] = fileData.split('$');
 
-        const { username, password } = this.getConnectedUserDetails();
-
         if(fileOwner === 'null')    // connected user
         {
-            fileOwner = username;
-            ownerPassword = password;
-
-            this.DriveHandler = new DriveHandler.DriveHandler(fileOwner, ownerPassword);
+            fileOwner = this.username;
+            ownerPassword = this.password;
 
             await this.DriveHandler.deleteFile(fileName);
 
@@ -211,8 +203,8 @@ class Parser{
 
         if(userEmailResult != "Fail")
         {
-            const code = this.EmailSender.sendEmailVerificationCode(userEmailResult);
-            sessionStorage.Session += '#Username:' + username + '#Code:' + code;
+            this.verificationCode = this.EmailSender.sendEmailVerificationCode(userEmailResult);
+            this.username = username;
             userEmailResult = "Success";
         } 
 
@@ -222,19 +214,17 @@ class Parser{
     verifyEmailCode(verifyCodeRequest)
     {
         let result = "Fail";
-        const {username, password} = this.getConnectedUserDetails();
 
         const enteredCode = verifyCodeRequest.split('$')[0];
 
-        const verificationCode = this.getCurrentCode();
-
-        if(enteredCode === verificationCode)
+        if(enteredCode === this.verificationCode)
         {
-            if(password !== '')
+            if(this.password !== '')    // through login
             {
                 result = "2fa";
             }
-            else{
+            else    // through forgot password
+            {
                 result = "passwordReset";
             }
         }
@@ -246,89 +236,49 @@ class Parser{
     {
         const newPassword = resetPasswordRequest.split('$')[0];
 
-        const {username} = this.getConnectedUserDetails();
+        this.password = newPassword;
 
-        sessionStorage.Session += '#Password:' + newPassword;
+        this.initHandlers(this.username, this.password);
 
-        await this.DBHandler.updateUserPassword(username, newPassword);
+        await this.DBHandler.updateUserPassword(this.username, newPassword);
 
         this.socket.emit('resetPasswordResult', 'Success');
-    }
-
-    getUsername()
-    {
-        const {username} = this.getConnectedUserDetails();
-
-        this.socket.emit('usernameResult', username);
     }
 
     async getUsersList()
     {
         let usersList = await this.DBHandler.getUsersList();
-        const {username} = this.getConnectedUserDetails();
-        usersList.splice(usersList.indexOf(username), 1);
+        usersList.splice(usersList.indexOf(this.username), 1);
         this.socket.emit('usersListResult', usersList);
     }
 
     async getOwnFilesList()
     {
-        const {username} = this.getConnectedUserDetails();
-        const filesList = await this.DBHandler.getUserFilesList(username);
+        const filesList = await this.DBHandler.getUserFilesList(this.username);
         this.socket.emit('ownFileListResult', filesList);
     }
 
     async getSharedFilesList()
     {
-        const {username} = this.getConnectedUserDetails();
-        const filesList = await this.DBHandler.getUserSharedFilesList(username);
+        const filesList = await this.DBHandler.getUserSharedFilesList(this.username);
         this.socket.emit('sharedFileListResult', filesList);
     }
 
     async userLogout()
     {
-        const {username, password} = this.getConnectedUserDetails();
-
-        this.DriveHandler = new DriveHandler.DriveHandler(username, password);
-
         await this.DriveHandler.deleteUser();
    
-        await this.DBHandler.deleteUser(username);
+        await this.DBHandler.deleteUser(this.username);
 
         this.socket.emit('logoutResult', 'Success');
 
-        console.log('user ' + username + ' loged out');
+        console.log('user ' + this.username + ' loged out');
     }
 
-    getConnectedUserDetails() 
+    initHandlers(username, password)
     {
-        let username = "";
-        let password = "";
-        const parts = sessionStorage.Session.split('#');
-    
-        for (const part of parts) {
-            if (part.includes('Username:')) {
-                username = part.split('Username:')[1]; // Extract username
-            }
-            if (part.includes('Password:')) {
-                password = part.split('Password:')[1]; // Extract password
-            }
-        }
-    
-        return { username: username, password: password };
-    }
-
-    getCurrentCode() 
-    {
-        let code = "";
-        const parts = sessionStorage.Session.split('#');
-    
-        for (const part of parts) {
-            if (part.includes('Code:')) {
-                code = part.split('Code:')[1]; // Extract username
-            }
-        }
-    
-        return code;
+        this.FileHandler = new FileHandler.FileHandler(this.socket, username, password);
+        this.DriveHandler = new DriveHandler.DriveHandler(username, password);
     }
 
     initializeSystem() {
