@@ -8,6 +8,7 @@ class FileHandler
         this.socket = socket;
         this.fileContent = "";
         this.DriveHandler = new DriveHandler.DriveHandler(username, password);
+        this.fileName = "";
     }
 
     generateServerPayload(data) {
@@ -26,6 +27,11 @@ class FileHandler
             this.uploadFile();
         }
         this.socket.emit('uploadBlockResult', 'Success');
+    }
+
+    setFileName(fileName)
+    {
+        this.fileName = fileName;
     }
 
     async uploadFile(fileName) {

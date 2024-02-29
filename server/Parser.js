@@ -141,6 +141,8 @@ class Parser{
             const usersEmailMap = await this.initializeUsersEmailsMap(users);
 
             this.EmailSender.sendUsersNotifications(this.username, fileName, usersEmailMap);
+
+            this.FileHandler.setFileName(fileName);
         }
     }
 
@@ -177,7 +179,7 @@ class Parser{
             ownerPassword = await this.DBHandler.getFileEncryptionPassword(fileOwner, fileName);
         }
 
-        this.FileHandler.downloadFile();
+        this.FileHandler.downloadFile(fileName);
     }
 
     async deleteFile(fileData)
