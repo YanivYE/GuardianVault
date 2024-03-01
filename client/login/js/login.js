@@ -102,7 +102,7 @@
             }
             else{
                 const errorMessage = document.getElementById('errorMessage');
-                errorMessage.textContent = "Login failed. Username or password are incorrect";
+                errorMessage.innerText = "Login failed. Username or password are incorrect";
                 errorMessage.style.display = 'block';
             }
         });

@@ -3,12 +3,14 @@ const sharedCryptography = require("./Crypto");
 
 class FileHandler
 {
-    constructor(socket, username, password)
+    constructor(socket)
     {
         this.socket = socket;
         this.fileContent = "";
-        this.DriveHandler = new DriveHandler.DriveHandler(username, password);
+        this.DriveHandler = new DriveHandler.DriveHandler();
         this.fileName = "";
+        this.username = "";
+        this.encryptionPassword = "";
     }
 
     assembleFileContent(fileChunk, isLastChunk)
@@ -21,15 +23,17 @@ class FileHandler
         this.socket.emit('uploadBlockResult', 'Success');
     }
 
-    setFileName(fileName)
+    setUploadDetails(fileName, username, password)
     {
         this.fileName = fileName;
+        this.username = username;
+        this.encryptionPassword = password;
     }
 
     async uploadFile() {
         try {
             // Assuming this.fileName and this.fileContent are available
-            await this.DriveHandler.handleFileUpload(this.fileName, this.fileContent);
+            await this.DriveHandler.handleFileUpload(this.fileName, this.fileContent, this.encryptionPassword, this.username);
         
             // Emit the success result
             this.socket.emit('UploadFileResult', "Success");
@@ -40,12 +44,12 @@ class FileHandler
         }
     }
 
-    async downloadFile(fileName) {
+    async downloadFile(fileName, dirName, decryptionPassword) {
         try {
             let offset = 0;
             const blockSize = 1024 * 500; // 500KB 
     
-            this.fileContent = await this.DriveHandler.handleFileDownload(fileName);
+            this.fileContent = await this.DriveHandler.handleFileDownload(fileName, dirName, decryptionPassword);
     
             const fileSize = this.fileContent.length;
             const totalBlocks = Math.ceil(fileSize / blockSize);

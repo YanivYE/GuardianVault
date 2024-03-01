@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', async function () 
 {
+    debugger;
     const socket = window.client.socket;
 
     if (!window.client.logedIn) {
@@ -256,8 +257,11 @@ document.addEventListener('DOMContentLoaded', async function ()
         const downloadFileRequest = 'DownloadFile$' + fileName + '$' + fileOwner;
         const downloadFilePayload = await window.client.sendToServerPayload(downloadFileRequest);
         socket.emit('ClientMessage', downloadFilePayload);
+        console.log("hrrllo");
 
         const fileData = await assembleFileContent();
+
+        console.log("assembled");
         
         document.getElementById('downloadLoader').style.display = 'none';
         
@@ -317,13 +321,20 @@ document.addEventListener('DOMContentLoaded', async function ()
                 const serverPayload = await window.client.receivePayloadFromServer(fileBlockPayload);
                 const [blockIndex, block, totalBlocksStr] = serverPayload.split('$');
 
+                console.log(blockIndex, totalBlocksStr);
+
+
                 const currentBlockIndex = parseInt(blockIndex);
                 const currentTotalBlocks = parseInt(totalBlocksStr);
+
+                console.log(totalBlocks);
     
                 if (totalBlocks === -1) {
                     totalBlocks = currentTotalBlocks;
                 }
     
+                console.log(totalBlocks);
+
                 if (currentBlockIndex === receivedBlocks) {
                     fileData += block;
                     receivedBlocks++;

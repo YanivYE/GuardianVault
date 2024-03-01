@@ -7,7 +7,7 @@ const config = require('./Config');
 
 class DriveHandler 
 {
-    constructor(username, userPassword)
+    constructor()
     {
         this.oauth2Client = new google.auth.OAuth2(
           config.CLIENT_ID,
@@ -22,12 +22,11 @@ class DriveHandler
           auth: this.oauth2Client,
         });
 
-        this.atRestCrypto = new EncryptionAtRest.EncryptionAtRest(userPassword);
+        this.atRestCrypto = new EncryptionAtRest.EncryptionAtRest();
         this.compressor = new Compressor.Compressor();
-        this.dirName = username;
     }
 
-    async createFolder() {
+    async createFolder(username) {
         const {GoogleAuth} = require('google-auth-library');
         const {google} = require('googleapis');
 
@@ -36,7 +35,7 @@ class DriveHandler
         });
         const service = google.drive({version: 'v3', auth});
         const fileMetadata = {
-            name: this.dirName,
+            name: username,
             mimeType: 'application/vnd.google-apps.folder',
         };
         try {
@@ -55,7 +54,7 @@ class DriveHandler
     }
 
   
-    async uploadFile(filePath) {
+    async uploadFile(filePath, username) {
       try {
           // Get the file name and extension
           const fileName = path.basename(filePath);
@@ -72,7 +71,7 @@ class DriveHandler
           }[fileExtension.toLowerCase()] || 'application/octet-stream'; // Default to binary data if not recognized
 
           // Find the folder ID of the specified username
-          const folderId = await this.findFolderIdByUsername();
+          const folderId = await this.findFolderIdByUsername(username);
 
           // Ensure that the file is uploaded to the directory named after the username
           const response = await this.drive.files.create({
@@ -93,11 +92,11 @@ class DriveHandler
       }
     }
 
-    async deleteFile(fileName)
+    async deleteFile(fileName ,dirName)
     {
       try {
           // Get the file ID by name in the folder
-          const fileId = await this.getFileIdByNameInFolder(fileName);
+          const fileId = await this.getFileIdByNameInFolder(fileName, dirName);
 
           if (fileId) {
               // Delete the file
@@ -110,10 +109,10 @@ class DriveHandler
       }
     }
 
-    async deleteUser() {
+    async deleteUser(username) {
         try {
             // Find the folder ID of the user's directory
-            const folderId = await this.findFolderIdByUsername();
+            const folderId = await this.findFolderIdByUsername(username);
     
             // Retrieve all files in the user's directory
             const filesResponse = await this.drive.files.list({
@@ -138,16 +137,16 @@ class DriveHandler
         }
     }
   
-    async findFolderIdByUsername() {
+    async findFolderIdByUsername(username) {
       try {
           const response = await this.drive.files.list({
-              q: `name='${this.dirName}' and mimeType = 'application/vnd.google-apps.folder'`,
+              q: `name='${username}' and mimeType = 'application/vnd.google-apps.folder'`,
           });
   
           if (response.data.files.length.valueOf() > 0) {
               return response.data.files[0].id;
           } else {
-              return await this.createFolder();
+              return await this.createFolder(username);
           }
       } catch (error) {
           console.error('Error finding folder ID:', error.message);
@@ -166,9 +165,9 @@ class DriveHandler
       }
     }
 
-    async handleFileUpload(fileName, fileData)
+    async handleFileUpload(fileName, fileData, encryptionPassword, username)
     {
-      const encryptedFileData = this.atRestCrypto.encryptFile(fileData);
+      const encryptedFileData = this.atRestCrypto.encryptFile(fileData, encryptionPassword);
 
       const compressedData = this.compressor.compressFile(encryptedFileData);
       const comprFilePath = path.join(__dirname, fileName + '.gz');
@@ -177,7 +176,7 @@ class DriveHandler
 
       // GOOGLE DRIVE 
       
-      await this.uploadFile(comprFilePath);
+      await this.uploadFile(comprFilePath, username);
 
       // Delete the file
       fs.unlink(comprFilePath, (err) => {
@@ -186,21 +185,21 @@ class DriveHandler
       }});
     }
 
-    async handleFileDownload(fileName)
+    async handleFileDownload(fileName, dirName, decryptionPassword)
     {
-        const compressedData = await this.retrieveFromDrive(fileName);
+        const compressedData = await this.retrieveFromDrive(fileName, dirName);
 
         const decompressedData = this.compressor.decompressFile(compressedData);
-        const decryptedFileData = this.atRestCrypto.decryptFile(decompressedData);
+        const decryptedFileData = this.atRestCrypto.decryptFile(decompressedData, decryptionPassword);
 
         return decryptedFileData;
     }
 
-    async getFileIdByNameInFolder(fileName) {
+    async getFileIdByNameInFolder(fileName, dirName) {
         try {
           // First, find the folder ID by its name
           const folderResponse = await this.drive.files.list({
-            q: `name='${this.dirName}' and mimeType='application/vnd.google-apps.folder'`,
+            q: `name='${dirName}' and mimeType='application/vnd.google-apps.folder'`,
           });
           if (folderResponse.data.files.length > 0) {
             const folderId = folderResponse.data.files[0].id;
@@ -223,10 +222,10 @@ class DriveHandler
         }
     }
       
-    async retrieveFromDrive(fileName) {
+    async retrieveFromDrive(fileName, dirName) {
         try {
             const result = await this.drive.files.get({
-                fileId: await this.getFileIdByNameInFolder(fileName),
+                fileId: await this.getFileIdByNameInFolder(fileName, dirName),
                 alt: 'media'
             }, { responseType: 'stream' });
     

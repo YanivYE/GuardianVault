@@ -11,8 +11,8 @@ class Parser{
         this.socket = socket;
         this.DBHandler = new DBHandler.DataBaseHandler();
         this.EmailSender = new EmailSender.EmailSender();
-        this.FileHandler = null;
-        this.DriveHandler = null;
+        this.FileHandler = new FileHandler.FileHandler(this.socket);
+        this.DriveHandler = new DriveHandler.DriveHandler();
         this.username = "";
         this.password = "";
         this.verificationCode = "";
@@ -86,8 +86,6 @@ class Parser{
             let userEmailResult = await this.DBHandler.getUserEmail(this.username);
 
             this.verificationCode = this.EmailSender.sendEmailVerificationCode(userEmailResult);
-
-            this.initHandlers(this.username, this.password);
         }
         this.socket.emit('loginResult', operationResult);
     }
@@ -104,8 +102,6 @@ class Parser{
         if(operationResult === "Success")
         {
             console.log(username + " connected");
-
-            this.initHandlers(this.username, this.password);
         }
 
         this.socket.emit('signupResult', operationResult);
@@ -135,6 +131,8 @@ class Parser{
 
         this.socket.emit('validateNameResult', operationResult);
 
+        this.FileHandler.setUploadDetails(fileName, this.username, this.password);
+
         if(operationResult === "Success")
         {            
             this.DBHandler.setUsersPermissions(users, fileName, this.username, this.password);
@@ -142,8 +140,6 @@ class Parser{
             const usersEmailMap = await this.initializeUsersEmailsMap(users);
 
             this.EmailSender.sendUsersNotifications(this.username, fileName, usersEmailMap);
-
-            this.FileHandler.setFileName(fileName);
         }
     }
 
@@ -180,20 +176,18 @@ class Parser{
             ownerPassword = await this.DBHandler.getFileEncryptionPassword(fileOwner, fileName);
         }
 
-        this.FileHandler.downloadFile(fileName);
+        this.FileHandler.downloadFile(fileName, fileOwner, ownerPassword);
     }
 
     async deleteFile(fileData)
     {
-        let ownerPassword = "";
         let [fileName, fileOwner] = fileData.split('$');
 
         if(fileOwner === 'null')    // connected user
         {
             fileOwner = this.username;
-            ownerPassword = this.password;
 
-            await this.DriveHandler.deleteFile(fileName);
+            await this.DriveHandler.deleteFile(fileName, fileOwner);
 
             await this.DBHandler.deleteOwnFile(fileName, fileOwner);
         }
@@ -248,8 +242,6 @@ class Parser{
 
         this.password = newPassword;
 
-        this.initHandlers(this.username, this.password);
-
         await this.DBHandler.updateUserPassword(this.username, newPassword);
 
         this.socket.emit('resetPasswordResult', 'Success');
@@ -276,19 +268,13 @@ class Parser{
 
     async userLogout()
     {
-        await this.DriveHandler.deleteUser();
+        await this.DriveHandler.deleteUser(this.username);
    
         await this.DBHandler.deleteUser(this.username);
 
         this.socket.emit('logoutResult', 'Success');
 
         console.log('user ' + this.username + ' loged out');
-    }
-
-    initHandlers(username, password)
-    {
-        this.FileHandler = new FileHandler.FileHandler(this.socket, username, password);
-        this.DriveHandler = new DriveHandler.DriveHandler(username, password);
     }
 
     initializeSystem() {
