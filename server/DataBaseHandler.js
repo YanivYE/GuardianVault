@@ -154,16 +154,14 @@ class DataBaseHandler{
     
             // Find the permission document corresponding to the found file document
             const permission = await Permission.findOne({ file: file._id });
-            if (!permission) {
-                console.error('Permission not found.');
-                return;
-            }
     
             // Delete the file from the Files collection
             await File.deleteOne({ _id: file._id });
     
-            // Delete the associated permission from the Permissions collection
-            await Permission.deleteOne({ _id: permission._id });
+            if(permission)
+            {
+                await Permission.deleteOne({ _id: permission._id });
+            }
     
             console.log(`File '${fileName}' owned by '${fileOwner}' deleted successfully.`);
         } catch (error) {

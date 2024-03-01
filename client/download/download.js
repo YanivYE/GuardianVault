@@ -1,13 +1,17 @@
 document.addEventListener('DOMContentLoaded', async function () 
 {
-    debugger;
     const socket = window.client.socket;
 
     if (!window.client.logedIn) {
         window.client.loadNextPage('/login'); // Redirect to login page if not logged in
       }
 
+    debugger;
+
+
     let files = await getUserOwnFilesListFromServer();
+
+    console.log(files);
 
     let sharedFiles = await getUserSharedFilesListFromServer();
 
@@ -70,6 +74,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 
     async function displayUserFiles()
     {
+
         populateFileList();
         displaySharedFiles();
     }
@@ -83,6 +88,7 @@ document.addEventListener('DOMContentLoaded', async function ()
                 socket.on('ownFileListPayload', async (filesListPayload) => {
                     const filesString = await window.client.receivePayloadFromServer(filesListPayload);
                     const filesList = filesString.split(',');
+
                     resolve(filesList);
                 });
 
@@ -105,9 +111,12 @@ document.addEventListener('DOMContentLoaded', async function ()
             socket.emit('ClientMessage', sharedFileListPayload); // Not sure why you're emitting here, but you can handle it based on your application's logic
 
             return new Promise((resolve, reject) => {
-                socket.on('sharedFileListResult', async (filesListPayload) => {
+                socket.on('sharedFileListPayload', async (filesListPayload) => {
                     const filesString = await window.client.receivePayloadFromServer(filesListPayload);
-                    const filesList = filesString.split(',');
+                    
+                    const filesList = convertStringToFilesList(filesString);
+                    console.log(filesList);
+
                     resolve(filesList);
                 });
 
@@ -124,6 +133,17 @@ document.addEventListener('DOMContentLoaded', async function ()
         }
     }
 
+    function convertStringToFilesList(str) {
+        const filesList = [];
+        const userFilesPairs = str.split('#');
+        for (const pair of userFilesPairs) {
+            const [user, files] = pair.split(':');
+            const fileList = files.split(',');
+            filesList.push({ user, files: fileList });
+        }
+        return filesList;
+    }
+
     // Function to populate file list
     function populateFileList(filteredFiles = []) {
         var fileListItems = document.getElementById("fileListItems");
@@ -132,7 +152,10 @@ document.addEventListener('DOMContentLoaded', async function ()
         // Use the filtered files if provided, otherwise use the original files array
         const filesToDisplay = filteredFiles.length > 0 ? filteredFiles : files;
 
+        console.log(filesToDisplay);
+
         filesToDisplay.forEach(function(file) {
+            console.log(file);
             var listItem = document.createElement("li");
             var fileButton = document.createElement("button"); // Create button element
             fileButton.textContent = file; // Set button text
@@ -261,11 +284,8 @@ document.addEventListener('DOMContentLoaded', async function ()
         const downloadFileRequest = 'DownloadFile$' + fileName + '$' + fileOwner;
         const downloadFilePayload = await window.client.sendToServerPayload(downloadFileRequest);
         socket.emit('ClientMessage', downloadFilePayload);
-        console.log("hrrllo");
 
         const fileData = await assembleFileContent();
-
-        console.log("assembled");
         
         document.getElementById('downloadLoader').style.display = 'none';
         
@@ -325,13 +345,8 @@ document.addEventListener('DOMContentLoaded', async function ()
                 const serverPayload = await window.client.receivePayloadFromServer(fileBlockPayload);
                 const [blockIndex, block, totalBlocksStr] = serverPayload.split('$');
 
-                console.log(blockIndex, totalBlocksStr);
-
-
                 const currentBlockIndex = parseInt(blockIndex);
                 const currentTotalBlocks = parseInt(totalBlocksStr);
-
-                console.log(totalBlocks);
     
                 if (totalBlocks === -1) {
                     totalBlocks = currentTotalBlocks;

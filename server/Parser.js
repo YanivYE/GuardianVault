@@ -259,6 +259,7 @@ class Parser{
     {
         const filesList = await this.DBHandler.getUserFilesList(this.username);
         const filesString = filesList.join(',');
+        console.log(filesList, filesString);
         const payload = sharedCryptography.generateServerPayload(filesString);
         this.socket.emit('ownFileListPayload', payload);
     }
@@ -266,7 +267,8 @@ class Parser{
     async getSharedFilesList()   
     {
         const filesList = await this.DBHandler.getUserSharedFilesList(this.username);
-        const filesString = filesList.join(',');
+        const filesString = filesList.map(({ user, files }) => `${user}:${files.join(',')}`).join('#');
+        console.log(filesList, filesString);
         const payload = sharedCryptography.generateServerPayload(filesString);
         this.socket.emit('sharedFileListPayload', payload);
     }
