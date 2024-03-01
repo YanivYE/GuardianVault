@@ -18,15 +18,9 @@ class SocketHandler {
 
     listenForClientMessage() {
         this.socket.on('ClientMessage', async (clientMessagePayload) => {
-            const payload = Buffer.from(clientMessagePayload, 'base64').toString('hex');
-        
-            const iv = payload.substr(0, 32);   
-            const encryptedData = payload.substr(32, payload.length - 96);
-            const authTag = payload.substr(payload.length - 32, 32);
-            
-            const decryptedData = sharedCryptography.decryptData(iv, encryptedData, authTag);
+            const message = sharedCryptography.recieveClientPayload(clientMessagePayload);
 
-            this.parser.parseClientMessage(decryptedData);
+            this.parser.parseClientMessage(message);
         });
     }
 }

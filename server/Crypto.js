@@ -17,6 +17,19 @@ class CryptographyTunnel {
         return payloadBase64;
     }
 
+    recieveClientPayload(clientPayload)
+    {
+        const payload = Buffer.from(clientPayload, 'base64').toString('hex');
+        
+        const iv = payload.substr(0, 32);   
+        const encryptedData = payload.substr(32, payload.length - 96);
+        const authTag = payload.substr(payload.length - 32, 32);
+        
+        const decryptedData = this.decryptData(iv, encryptedData, authTag);
+
+        return decryptedData;
+    }
+
     encryptData(data) {
         // Generate a random IV (Initialization Vector)
         const iv = crypto.randomBytes(16);
