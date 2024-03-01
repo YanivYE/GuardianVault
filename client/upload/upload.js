@@ -286,9 +286,17 @@ document.addEventListener('DOMContentLoaded', async function () {
     
             return new Promise((resolve, reject) => {
                 socket.on('usersListPayload', async (usersListPayload) => {
-                    const usersString = await window.client.receivePayloadFromServer(usersListPayload);
-                    const usersList = usersString.split(',');
-                    resolve(usersList);
+                    if(usersListPayload === "empty")
+                    {
+                        resolve([]);
+                    }
+                    else{
+                        const usersString = await window.client.receivePayloadFromServer(usersListPayload);
+                    
+                        const usersList = usersString.split(',');
+                        resolve(usersList);
+                    }
+                    
                 });
     
                 // Optionally, handle any errors that might occur while receiving the users list

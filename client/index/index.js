@@ -1,5 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
-  
+
   window.client = new Client();
   window.client.init();
 
@@ -7,4 +6,4 @@ document.addEventListener("DOMContentLoaded", () => {
     window.client.loadNextPage('/login');
   });
     
-});
+

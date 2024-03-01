@@ -15,7 +15,26 @@
   src: url('../fonts/ubuntu/Ubuntu-Bold.ttf'); 
 }
 
+#backArrow {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
 
+#backArrow a {
+  font-size: 24px;
+  color: #ffffff;
+  background-color: #333333;
+  padding: 10px;
+  border-radius: 50%;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+#backArrow a:hover {
+  background-color: #555555;
+}
 
 
 /*//////////////////////////////////////////////////////////////////

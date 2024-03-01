@@ -15,6 +15,27 @@
   src: url('../fonts/ubuntu/Ubuntu-Bold.ttf'); 
 }
 
+#backArrow {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+#backArrow a {
+  display: block;
+  background-color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  text-align: center;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  line-height: 40px;
+}
+
+#backArrow a i {
+  color: #333;
+}
 
 
 

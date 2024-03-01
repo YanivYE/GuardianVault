@@ -251,7 +251,11 @@ class Parser{
         let usersList = await this.DBHandler.getUsersList();
         usersList.splice(usersList.indexOf(this.username), 1);
         const usersString = usersList.join(',');
-        const payload = sharedCryptography.generateServerPayload(usersString);
+        let payload = sharedCryptography.generateServerPayload(usersString);
+        if(usersList.length === 0)
+        {
+            payload = "empty";
+        }
         this.socket.emit('usersListPayload', payload);
     }
 
@@ -259,8 +263,11 @@ class Parser{
     {
         const filesList = await this.DBHandler.getUserFilesList(this.username);
         const filesString = filesList.join(',');
-        console.log(filesList, filesString);
-        const payload = sharedCryptography.generateServerPayload(filesString);
+        let payload = sharedCryptography.generateServerPayload(filesString);
+        if(filesList.length === 0)
+        {
+            payload = "empty";
+        }
         this.socket.emit('ownFileListPayload', payload);
     }
 
@@ -268,8 +275,11 @@ class Parser{
     {
         const filesList = await this.DBHandler.getUserSharedFilesList(this.username);
         const filesString = filesList.map(({ user, files }) => `${user}:${files.join(',')}`).join('#');
-        console.log(filesList, filesString);
-        const payload = sharedCryptography.generateServerPayload(filesString);
+        let payload = sharedCryptography.generateServerPayload(filesString);
+        if(filesList.length === 0)
+        {
+            payload = "empty";
+        }
         this.socket.emit('sharedFileListPayload', payload);
     }
 
