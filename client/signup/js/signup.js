@@ -2,6 +2,8 @@
     "use strict";
 
     const socket =  window.client.socket;
+    const errorMessage = document.getElementById('errorMessage');
+    errorMessage.textContent = "";
 
     /*==================================================================
     [ Focus input ]*/
@@ -167,7 +169,6 @@
 
     async function signingUp() 
     {
-        const errorMessage = document.getElementById('errorMessage');
         const username = document.getElementsByName("username")[0].value;
         const email = document.getElementsByName("email")[0].value;
         const password = document.getElementsByName("password")[0].value;

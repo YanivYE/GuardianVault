@@ -116,7 +116,7 @@ class Parser{
             isLastBlock = true;
         }
 
-        this.FileHandler.assembleFileContent(blockContent, isLastBlock);
+        await this.FileHandler.assembleFileContent(blockContent, isLastBlock);
     }
 
     async validateFileName(validationData)
@@ -135,7 +135,7 @@ class Parser{
 
         if(operationResult === "Success")
         {            
-            this.DBHandler.setUsersPermissions(users, fileName, this.username, this.password);
+            await this.DBHandler.setUsersPermissions(users, fileName, this.username, this.password);
 
             const usersEmailMap = await this.initializeUsersEmailsMap(users);
 
@@ -154,7 +154,6 @@ class Parser{
 
                 map.set(user, userEmail);
             }
-            
         }
 
         return map;
@@ -247,23 +246,29 @@ class Parser{
         this.socket.emit('resetPasswordResult', 'Success');
     }
 
-    async getUsersList()
+    async getUsersList()    
     {
         let usersList = await this.DBHandler.getUsersList();
         usersList.splice(usersList.indexOf(this.username), 1);
-        this.socket.emit('usersListResult', usersList);
+        const usersString = usersList.join(',');
+        const payload = sharedCryptography.generateServerPayload(usersString);
+        this.socket.emit('usersListPayload', payload);
     }
 
-    async getOwnFilesList()
+    async getOwnFilesList()  
     {
         const filesList = await this.DBHandler.getUserFilesList(this.username);
-        this.socket.emit('ownFileListResult', filesList);
+        const filesString = filesList.join(',');
+        const payload = sharedCryptography.generateServerPayload(filesString);
+        this.socket.emit('ownFileListPayload', payload);
     }
 
-    async getSharedFilesList()
+    async getSharedFilesList()   
     {
         const filesList = await this.DBHandler.getUserSharedFilesList(this.username);
-        this.socket.emit('sharedFileListResult', filesList);
+        const filesString = filesList.join(',');
+        const payload = sharedCryptography.generateServerPayload(filesString);
+        this.socket.emit('sharedFileListPayload', payload);
     }
 
     async userLogout()

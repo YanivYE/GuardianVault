@@ -285,7 +285,9 @@ document.addEventListener('DOMContentLoaded', async function () {
             socket.emit('ClientMessage', userListPayload); 
     
             return new Promise((resolve, reject) => {
-                socket.on('usersListResult', (usersList) => {
+                socket.on('usersListPayload', async (usersListPayload) => {
+                    const usersString = await window.client.receivePayloadFromServer(usersListPayload);
+                    const usersList = usersString.split(',');
                     resolve(usersList);
                 });
     

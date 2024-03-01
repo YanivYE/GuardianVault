@@ -80,7 +80,9 @@ document.addEventListener('DOMContentLoaded', async function ()
             socket.emit('ClientMessage', ownFileListPayload); // Not sure why you're emitting here, but you can handle it based on your application's logic
 
             return new Promise((resolve, reject) => {
-                socket.on('ownFileListResult', (filesList) => {
+                socket.on('ownFileListPayload', async (filesListPayload) => {
+                    const filesString = await window.client.receivePayloadFromServer(filesListPayload);
+                    const filesList = filesString.split(',');
                     resolve(filesList);
                 });
 
@@ -103,7 +105,9 @@ document.addEventListener('DOMContentLoaded', async function ()
             socket.emit('ClientMessage', sharedFileListPayload); // Not sure why you're emitting here, but you can handle it based on your application's logic
 
             return new Promise((resolve, reject) => {
-                socket.on('sharedFileListResult', (filesList) => {
+                socket.on('sharedFileListResult', async (filesListPayload) => {
+                    const filesString = await window.client.receivePayloadFromServer(filesListPayload);
+                    const filesList = filesString.split(',');
                     resolve(filesList);
                 });
 
