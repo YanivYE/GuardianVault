@@ -1,5 +1,5 @@
 module.exports = {
-  LOCAL_IP: '16.171.33.16',
+  LOCAL_IP: '172.31.47.29',
   PORT: 8201,
   CLIENT_ID: '1026189505165-i8g7sk21dj4hlpcnnaqq1s1c0dfbkuf2.apps.googleusercontent.com',
   CLIENT_SECRET: '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',
