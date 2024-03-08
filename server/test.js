@@ -1,7 +1,7 @@
 const http = require('http');
 
 // Define IP address and port
-const IP_ADDRESS = '127.0.0.1'; // Change this to your desired IP address
+const IP_ADDRESS = '172.31.47.29'; // Change this to your desired IP address
 const PORT = 3000; // Change this to your desired port number
 
 // Create HTTP server
