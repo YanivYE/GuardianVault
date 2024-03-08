@@ -1,6 +1,6 @@
 
   window.client = new Client();
-  window.client.init();
+  await window.client.init();
 
   document.getElementById('loginButton').addEventListener('click', () => {
     window.client.loadNextPage('/login');

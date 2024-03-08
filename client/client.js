@@ -4,6 +4,7 @@ class Client {
         this.socket = null;
         this.logedIn = false;
         this.username = "";
+        this.previousPage = null;
     }
 
     async init() {
@@ -95,6 +96,7 @@ class Client {
                     256
                 );
     
+                console.log(arrayBufferToHexString(this.sharedKey));
                 this.sharedKey = await hexToCryptoKey(arrayBufferToHexString(this.sharedKey));
     
                 resolve(); // Resolve the promise to indicate key exchange completion
@@ -165,17 +167,31 @@ class Client {
     loadNextPage(url) {
         // Fetch the content of the login page asynchronously
         fetch(url)
-          .then(response => response.text())
-          .then(html => {
-              // Replace the entire document's content with the content fetched from login.html
-              document.open();
-              document.write(html);
-              document.close();
-          })
-          .catch(error => {
-              console.error('Error loading login page:', error);
-          });
-      }
+            .then(response => response.text())
+            .then(html => {
+                this.previousPage = document.documentElement.innerHTML;
+                // Replace the entire document's content with the content fetched from login.html
+                document.open();
+                document.write(html);
+                document.close();
+            })
+            .catch(error => {
+                console.error('Error loading login page:', error);
+            });
+    }
+
+    goBack() {
+        if (this.previousPage !== null) {
+            // Restore the previous content
+            document.open();
+            document.write(this.previousPage);
+            document.close();
+            // Clear the stored previous content
+            this.previousPage = null;
+        } else {
+            console.error('No previous content to go back to.');
+        }
+    }
 }
 
 // Utility functions
