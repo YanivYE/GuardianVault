@@ -1,24 +1,26 @@
 const keyExchange = require("./ServerKeyExchange");
-const sharedCryptography = require("./Crypto");
+const CryptographyTunnel = require("./Crypto");
 const Parser = require("./Parser");
 
 class SocketHandler {
     constructor(socket) {
         this.socket = socket;
-        this.parser = new Parser.Parser(socket);
+        this.parser = null;
+        this.crypto = null;
     }
 
     async handleClientConnection() {      
         const sharedKey = await keyExchange.performKeyExchange(this.socket);
 
-        sharedCryptography.setEncryptionKey(sharedKey);
+        this.crypto = new CryptographyTunnel.CryptographyTunnel(sharedKey);
 
+        this.parser = new Parser.Parser(this.socket, this.crypto);
         this.listenForClientMessage();
     }
 
     listenForClientMessage() {
         this.socket.on('ClientMessage', async (clientMessagePayload) => {
-            const message = sharedCryptography.recieveClientPayload(clientMessagePayload);
+            const message = this.crypto.recieveClientPayload(clientMessagePayload);
 
             this.parser.parseClientMessage(message);
         });

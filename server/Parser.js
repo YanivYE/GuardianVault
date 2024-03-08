@@ -2,17 +2,17 @@ const DBHandler = require("./DataBaseHandler");
 const FileHandler = require("./FileHandler");
 const DriveHandler = require("./DriveHandler");
 const EmailSender = require("./EmailSender");
-const sharedCryptography = require("./Crypto");
 const fs = require('fs');
 
 class Parser{
-    constructor(socket)
+    constructor(socket, crypto)
     {
         this.socket = socket;
         this.DBHandler = new DBHandler.DataBaseHandler();
         this.EmailSender = new EmailSender.EmailSender();
-        this.FileHandler = new FileHandler.FileHandler(this.socket);
+        this.FileHandler = new FileHandler.FileHandler(this.socket, crypto);
         this.DriveHandler = new DriveHandler.DriveHandler();
+        this.crypto = crypto;
         this.username = "";
         this.password = "";
         this.verificationCode = "";
@@ -251,7 +251,11 @@ class Parser{
         let usersList = await this.DBHandler.getUsersList();
         usersList.splice(usersList.indexOf(this.username), 1);
         const usersString = usersList.join(',');
-        const payload = sharedCryptography.generateServerPayload(usersString);
+        let payload = this.crypto.generateServerPayload(usersString);
+        if(usersList.length === 0)
+        {
+            payload = "empty";
+        }
         this.socket.emit('usersListPayload', payload);
     }
 
@@ -259,8 +263,11 @@ class Parser{
     {
         const filesList = await this.DBHandler.getUserFilesList(this.username);
         const filesString = filesList.join(',');
-        console.log(filesList, filesString);
-        const payload = sharedCryptography.generateServerPayload(filesString);
+        let payload = this.crypto.generateServerPayload(filesString);
+        if(filesList.length === 0)
+        {
+            payload = "empty";
+        }
         this.socket.emit('ownFileListPayload', payload);
     }
 
@@ -268,8 +275,11 @@ class Parser{
     {
         const filesList = await this.DBHandler.getUserSharedFilesList(this.username);
         const filesString = filesList.map(({ user, files }) => `${user}:${files.join(',')}`).join('#');
-        console.log(filesList, filesString);
-        const payload = sharedCryptography.generateServerPayload(filesString);
+        let payload = this.crypto.generateServerPayload(filesString);
+        if(filesList.length === 0)
+        {
+            payload = "empty";
+        }
         this.socket.emit('sharedFileListPayload', payload);
     }
 

@@ -1,11 +1,7 @@
 const crypto = require('crypto');
 
 class CryptographyTunnel {
-    constructor() {
-        this.aesGcmKey = null;
-    }
-
-    setEncryptionKey(encryptionKey) {
+    constructor(encryptionKey) {
         this.aesGcmKey = encryptionKey;
     }
 
@@ -68,4 +64,4 @@ class CryptographyTunnel {
 }
 
 // Export an instance of CryptographyTunnel directly
-module.exports = new CryptographyTunnel();
+module.exports = {CryptographyTunnel};

@@ -4,14 +4,9 @@ document.addEventListener('DOMContentLoaded', async function ()
 
     if (!window.client.logedIn) {
         window.client.loadNextPage('/login'); // Redirect to login page if not logged in
-      }
-
-    debugger;
-
+    }
 
     let files = await getUserOwnFilesListFromServer();
-
-    console.log(files);
 
     let sharedFiles = await getUserSharedFilesListFromServer();
 
@@ -86,10 +81,19 @@ document.addEventListener('DOMContentLoaded', async function ()
 
             return new Promise((resolve, reject) => {
                 socket.on('ownFileListPayload', async (filesListPayload) => {
-                    const filesString = await window.client.receivePayloadFromServer(filesListPayload);
-                    const filesList = filesString.split(',');
+                    if(filesListPayload === "empty")
+                    {
+                        resolve([]);
+                    }
+                    else{
+                        const filesString = await window.client.receivePayloadFromServer(filesListPayload);
 
-                    resolve(filesList);
+                        const filesList = filesString.split(',');
+
+                        resolve(filesList);
+                    }
+                    
+                    
                 });
 
                 // Optionally, handle any errors that might occur while receiving the users list
@@ -112,12 +116,18 @@ document.addEventListener('DOMContentLoaded', async function ()
 
             return new Promise((resolve, reject) => {
                 socket.on('sharedFileListPayload', async (filesListPayload) => {
-                    const filesString = await window.client.receivePayloadFromServer(filesListPayload);
+                    if(filesListPayload === "empty")
+                    {
+                        resolve([]);
+                    }
+                    else{
+                        const filesString = await window.client.receivePayloadFromServer(filesListPayload);
                     
-                    const filesList = convertStringToFilesList(filesString);
-                    console.log(filesList);
+                        const filesList = convertStringToFilesList(filesString);
 
-                    resolve(filesList);
+                        resolve(filesList);
+                    }
+                    
                 });
 
                 // Optionally, handle any errors that might occur while receiving the users list
@@ -137,9 +147,13 @@ document.addEventListener('DOMContentLoaded', async function ()
         const filesList = [];
         const userFilesPairs = str.split('#');
         for (const pair of userFilesPairs) {
-            const [user, files] = pair.split(':');
-            const fileList = files.split(',');
-            filesList.push({ user, files: fileList });
+            if(pair !== '')
+            {
+                const [user, files] = pair.split(':');
+                const fileList = files.split(',');
+                filesList.push({ user, files: fileList });
+            }
+            
         }
         return filesList;
     }
@@ -152,10 +166,7 @@ document.addEventListener('DOMContentLoaded', async function ()
         // Use the filtered files if provided, otherwise use the original files array
         const filesToDisplay = filteredFiles.length > 0 ? filteredFiles : files;
 
-        console.log(filesToDisplay);
-
         filesToDisplay.forEach(function(file) {
-            console.log(file);
             var listItem = document.createElement("li");
             var fileButton = document.createElement("button"); // Create button element
             fileButton.textContent = file; // Set button text
@@ -352,8 +363,6 @@ document.addEventListener('DOMContentLoaded', async function ()
                     totalBlocks = currentTotalBlocks;
                 }
     
-                console.log(totalBlocks);
-
                 if (currentBlockIndex === receivedBlocks) {
                     fileData += block;
                     receivedBlocks++;

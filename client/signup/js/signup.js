@@ -3,7 +3,6 @@
 
     const socket =  window.client.socket;
     const errorMessage = document.getElementById('errorMessage');
-    errorMessage.textContent = "";
 
     /*==================================================================
     [ Focus input ]*/
@@ -100,6 +99,7 @@
         document.querySelector('.btn-show-pass').addEventListener('click', function () {
             togglePassword();
         });
+
     });
 
     document.getElementById('password').addEventListener('input', function() {

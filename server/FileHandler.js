@@ -1,13 +1,13 @@
 const DriveHandler = require("./DriveHandler");
-const sharedCryptography = require("./Crypto");
 
 class FileHandler
 {
-    constructor(socket)
+    constructor(socket, crypto)
     {
         this.socket = socket;
         this.fileContent = "";
         this.DriveHandler = new DriveHandler.DriveHandler();
+        this.crypto = crypto;
         this.fileName = "";
         this.username = "";
         this.encryptionPassword = "";
@@ -60,7 +60,7 @@ class FileHandler
                     const blockIndex = Math.ceil(offset / blockSize);
     
                     const sendFileBlockRequest = blockIndex + '$' + block + '$' + totalBlocks;
-                    const fileBlockPayload = sharedCryptography.generateServerPayload(sendFileBlockRequest);
+                    const fileBlockPayload = this.crypto.generateServerPayload(sendFileBlockRequest);
     
                     this.socket.emit('fileBlock', fileBlockPayload);
     

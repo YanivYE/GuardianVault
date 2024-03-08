@@ -88,9 +88,7 @@ function serveClientPage() {
   });
 }
 
-function startServer() {
-  const connectedUsers = {};
-  
+function startServer() {  
   serveStaticFiles();
   serveClientPage();
 
@@ -108,13 +106,10 @@ function startServer() {
     console.log(`User ${userId} connected`);
     const socketHandler = new Handler.SocketHandler(socket);
 
-    connectedUsers[userId] = socket;
-
     socketHandler.handleClientConnection();
 
     socket.on('disconnect', () => {
         console.log(`User ${userId} disconnected`);
-        delete connectedUsers[userId];
     });
   });
 }
