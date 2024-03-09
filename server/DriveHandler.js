@@ -3,7 +3,7 @@ const fs = require('fs');
 const { google } = require('googleapis');
 const EncryptionAtRest = require("./EncryptionAtRest");
 const Compressor = require("./Compressor");
-const config = require('./Config');
+const config = require('./config');
 
 class DriveHandler 
 {

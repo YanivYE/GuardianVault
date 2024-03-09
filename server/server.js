@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const socketIO = require('socket.io');
-const config = require('./Config');
+const config = require('./config');
 const Handler = require('./SocketHandler');
 const { v4: uuidv4 } = require('uuid');
 
