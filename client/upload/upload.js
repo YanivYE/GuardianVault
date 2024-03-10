@@ -67,12 +67,15 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             // List of PHP file extensions
             const phpExtensions = ['php', 'php3', 'php4', 'php5', 'phtml'];
+            const JSExtentiosns = ['js', 'mjs', 'jsx', 'ts', 'tsx'];
+            const executableExtentions = ['exe', 'bat', 'sh', 'cmd'];
         
             // Check if the file extension is in the list of PHP extensions
-            if (phpExtensions.includes(fileExtension)) {
+            if (phpExtensions.includes(fileExtension) || JSExtentiosns.includes(fileExtension) || executableExtentions.includes(fileExtension)) 
+            {
                 message.style.display = "block"; // Show error message
                 message.style.color = "red";
-                message.innerText = "PHP files are not allowed!!!"; // Set error message text
+                message.innerText = "Any PHP, JavaScript and executable \nfile types are not allowed!"; // Set error message text
             }
             else
             {
