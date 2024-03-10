@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     var userSelectGroup = document.getElementById("userSelectGroup");
     var uploadForm = document.getElementById("uploadForm");
     var message = document.getElementById("message"); // Error message element
+    var loader = document.getElementById('uploadLoader');
 
     // Hide the userSelectGroup field initially
     userSelectGroup.style.display = "none";
@@ -41,126 +42,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             checkbox.checked = selectAllCheckbox.checked;
         });
     });
-
-    // Add event listener for form submission
-    uploadForm.addEventListener('submit', async function(event) {
-        event.preventDefault(); // Prevent default form submission
-        
-        // Validate inputs
-        var fileName = document.getElementById("fileName").value.trim();
-        var fileStatus = publicButton.classList.contains("active") || privateButton.classList.contains("active");
-        var users = []; // Initialize users as an empty array
-        var privateUpload = true;
-    
-        if (publicButton.classList.contains("active")) {
-            privateUpload = false;
-            var checkedCheckboxes = document.querySelectorAll('input[name="users"]:checked');
-            users = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
-        }
-    
-        var fileInput = document.getElementById('fileInput');
-        var file = fileInput.files[0]; // Get the selected file
-        
-        // Check if all inputs are valid
-        if (fileName !== '' && fileStatus && (privateUpload || users.length > 0) && file) {
-            const fileExtension = file.name.split('.').pop().toLowerCase(); // Extract the file extension and convert it to lowercase
-
-            // List of PHP file extensions
-            const phpExtensions = ['php', 'php3', 'php4', 'php5', 'phtml'];
-            const JSExtentiosns = ['js', 'mjs', 'jsx', 'ts', 'tsx'];
-            const executableExtentions = ['exe', 'bat', 'sh', 'cmd'];
-        
-            // Check if the file extension is in the list of PHP extensions
-            if (phpExtensions.includes(fileExtension) || JSExtentiosns.includes(fileExtension) || executableExtentions.includes(fileExtension)) 
-            {
-                message.style.display = "block"; // Show error message
-                message.style.color = "red";
-                message.innerText = "Any PHP, JavaScript and executable \nfile types are not allowed!"; // Set error message text
-            }
-            else
-            {
-                const fileNameAndExtention = fileName + '.' + fileExtension;
-                const validationResult = await validateFileName(fileNameAndExtention, users);
-                if(validationResult === "Success")
-                {
-                    // All inputs are valid, proceed with form submission
-                    const reader = new FileReader();
-
-                    reader.onload = async (event) => {
-                        let fileContent = event.target.result;
-                        await uploadFile(fileContent);
-                    };
-                    reader.readAsDataURL(file);
-                }
-                else
-                {
-                    // Display error message
-                    message.style.display = "block"; // Show error message
-                    message.style.color = "red";
-                    message.innerText = "File name is already taken"; // Set error message text
-                }
-            }
-        } 
-        else 
-        {
-            // Display error message
-            message.style.display = "block"; // Show error message
-            message.style.color = "red";
-            message.innerText = "Please fill out all required fields."; // Set error message text
-        }
-    });
-
-    async function uploadFile(fileContent) {
-        const blockSize = 1024 * 500; // 500KB chunk size
-        const fileSize = fileContent.length;
-        const totalBlocks = Math.ceil(fileSize / blockSize);
-        let offset = 0;
-    
-        message.style.display = "none";
-        document.getElementById('uploadLoader').style.display = 'block';
-    
-        function sendNextBlock() {
-            if (offset < fileSize) {
-                const block = fileContent.slice(offset, offset + blockSize);
-                const blockIndex = Math.ceil(offset / blockSize);
-                
-                sendFileBlock(block, blockIndex, totalBlocks)
-                    .then(uploadBlockResult => {
-                        if (uploadBlockResult === "Success") {
-                            offset += blockSize;
-                            sendNextBlock(); // Upload the next chunk recursively
-                        } else {
-                            // Handle the case where chunk upload failed
-                            console.error('Failed to upload block ' + blockIndex);
-                            document.getElementById('uploadLoader').style.display = 'none';
-                            message.style.display = "block";
-                            message.style.color = "red";
-                            message.innerText = "Error occurred while uploading the file.";
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error uploading block: ', error);
-                        // Handle the error
-                        document.getElementById('uploadLoader').style.display = 'none';
-                        message.style.display = "block";
-                        message.style.color = "red";
-                        message.innerText = "Error occurred while uploading the file.";
-                    });
-            } else {
-                // All chunks have been uploaded successfully
-                console.log("All blocks uploaded successfully");
-                document.getElementById('uploadLoader').style.display = 'none';
-                message.style.display = "block";
-                message.style.color = "green";
-                message.innerText = "File uploaded successfully!";
-            }
-        }
-    
-        // Start uploading the first chunk
-        sendNextBlock();
-    }
-
-    
 
     var users = await getUsersListFromServer();
 
@@ -242,6 +123,170 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
     }
 
+    function errorAlert(errorMessage)
+    {
+        message.style.display = "block"; // Show error message
+        message.style.color = "red";
+        message.innerText = errorMessage;
+    }
+
+    function successAlert(successMessage)
+    {
+        message.style.display = "block";
+        message.style.color = "green";
+        message.innerText = successMessage;
+    }
+
+    async function getUsersListFromServer() {
+        try {
+            const userListPayload = await window.client.sendToServerPayload('UsersList$');
+            socket.emit('ClientMessage', userListPayload); 
+    
+            return new Promise((resolve, reject) => {
+                socket.on('usersListPayload', async (usersListPayload) => {
+                    if(usersListPayload === "empty")
+                    {
+                        resolve([]);
+                    }
+                    else{
+                        const usersString = await window.client.receivePayloadFromServer(usersListPayload);
+                    
+                        const usersList = usersString.split(',');
+                        resolve(usersList);
+                    }
+                    
+                });
+    
+                // Optionally, handle any errors that might occur while receiving the users list
+                socket.on('error', (error) => {
+                    reject(error);
+                });
+            }).then(async (usersList) => {
+                return usersList; // Return the usersList after resolving the promise
+            });
+        } catch (error) {
+            console.error("Error getting users list from server:", error);
+            // Handle the error as needed
+        }
+    }
+
+    // Add event listener for form submission
+    uploadForm.addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent default form submission
+        
+        // Validate inputs
+        var fileName = document.getElementById("fileName").value.trim();
+        var fileStatus = publicButton.classList.contains("active") || privateButton.classList.contains("active");
+        var users = []; // Initialize users as an empty array
+        var privateUpload = true;
+    
+        if (publicButton.classList.contains("active")) {
+            privateUpload = false;
+            var checkedCheckboxes = document.querySelectorAll('input[name="users"]:checked');
+            users = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
+        }
+    
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0]; // Get the selected file
+        
+        // Check if all inputs are valid
+        if (fileName !== '' && fileStatus && (privateUpload || users.length > 0) && file) {
+            const fileExtension = file.name.split('.').pop().toLowerCase(); // Extract the file extension and convert it to lowercase
+
+            // List of PHP file extensions
+            const phpExtensions = ['php', 'php3', 'php4', 'php5', 'phtml'];
+            const JSExtentiosns = ['js', 'mjs', 'jsx', 'ts', 'tsx'];
+            const executableExtentions = ['exe', 'bat', 'sh', 'cmd'];
+        
+            // Check if the file extension is in the list of PHP extensions
+            if (phpExtensions.includes(fileExtension) || JSExtentiosns.includes(fileExtension) || executableExtentions.includes(fileExtension)) 
+            {
+                errorAlert("Any PHP, JavaScript and executable \nfile types are not allowed!");
+            }
+            else
+            {
+                const filePath = fileName + '.' + fileExtension;
+                const validationResult = await validateFileName(filePath, users);
+                if(validationResult === "Success")
+                {
+                    const fileSize = file.size;
+
+                    if(fileSize > 1024 * 1024 * 100)    // 100MB
+                    {
+                        errorAlert("File too large, limit is 100MB")
+                    }
+                    else
+                    {
+                        // All inputs are valid, proceed with form submission
+                        const reader = new FileReader();
+
+                        reader.onload = async (event) => {
+                            let fileContent = event.target.result;
+
+                            await uploadFile(fileContent, fileSize);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+                else
+                {
+                    errorAlert("File name is already taken");
+                }
+            }
+        } 
+        else 
+        {
+            errorAlert("Please fill out all required fields first");
+        }
+    });
+
+    async function uploadFile(fileContent, fileSize) {
+        const blockSize = 1024 * 500; // 500KB chunk size
+        const totalBlocks = Math.ceil(fileSize / blockSize);
+        let offset = 0;
+    
+        message.style.display = "none";
+        loader.style.display = 'block';
+    
+        function sendNextBlock() {
+            if (offset < fileSize) {
+                const block = fileContent.slice(offset, offset + blockSize);
+                const blockIndex = Math.ceil(offset / blockSize);
+                
+                sendFileBlock(block, blockIndex, totalBlocks)
+                    .then(uploadBlockResult => {
+                        if (uploadBlockResult === "Success") {
+                            offset += blockSize;
+                            sendNextBlock(); // Upload the next chunk recursively
+                        } else {
+                            // Handle the case where chunk upload failed
+                            console.error('Failed to upload block ' + blockIndex);
+                            loader.style.display = 'none';
+                            errorAlert("Error occurred while uploading the file\nPlease try again later");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error uploading block: ', error);
+                        // Handle the error
+                        loader.style.display = 'none';
+                        errorAlert("Error occurred while uploading the file\nPlease try again later");
+                    });
+            } else {
+                // All chunks have been uploaded successfully
+                console.log("All blocks uploaded successfully");
+                loader.style.display = 'none';
+                successAlert("File uploaded successfully!");
+            }
+        }
+    
+        // Start uploading the first chunk
+        sendNextBlock();
+    }
+
+    
+
+    
+
     async function validateFileName(fileName, shareWithUsers) {
         return new Promise(async (resolve, reject) => {
             const validateFileNameRequest = 'validateName$' + fileName + '$' + shareWithUsers;
@@ -282,36 +327,5 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
     
 
-    async function getUsersListFromServer() {
-        try {
-            const userListPayload = await window.client.sendToServerPayload('UsersList$');
-            socket.emit('ClientMessage', userListPayload); 
     
-            return new Promise((resolve, reject) => {
-                socket.on('usersListPayload', async (usersListPayload) => {
-                    if(usersListPayload === "empty")
-                    {
-                        resolve([]);
-                    }
-                    else{
-                        const usersString = await window.client.receivePayloadFromServer(usersListPayload);
-                    
-                        const usersList = usersString.split(',');
-                        resolve(usersList);
-                    }
-                    
-                });
-    
-                // Optionally, handle any errors that might occur while receiving the users list
-                socket.on('error', (error) => {
-                    reject(error);
-                });
-            }).then(async (usersList) => {
-                return usersList; // Return the usersList after resolving the promise
-            });
-        } catch (error) {
-            console.error("Error getting users list from server:", error);
-            // Handle the error as needed
-        }
-    }
 });

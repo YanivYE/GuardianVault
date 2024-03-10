@@ -96,7 +96,6 @@ class Client {
                     256
                 );
     
-                console.log(arrayBufferToHexString(this.sharedKey));
                 this.sharedKey = await hexToCryptoKey(arrayBufferToHexString(this.sharedKey));
     
                 resolve(); // Resolve the promise to indicate key exchange completion
