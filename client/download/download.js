@@ -58,12 +58,12 @@ document.addEventListener('DOMContentLoaded', async function ()
         // Gather selected files
         const selectedFiles = document.querySelectorAll('.file-button[style="background: gray;"]');
         
-        selectedFiles.forEach(file => {
+        selectedFiles.forEach(async file => { 
             // Extract owner's name and file name from the button's text content
             const fileName = file.textContent;
             const owner = file.getAttribute('owner');
             
-            downloadFile(fileName, owner);
+            await downloadFile(fileName, owner);
         });
     });
 
@@ -290,7 +290,8 @@ document.addEventListener('DOMContentLoaded', async function ()
     async function downloadFile(fileName, fileOwner)
     {
         var fileDownloaded = false;
-        message.style.display = "none"; 
+        message.style.display = "none";
+        document.getElementById('downloadButton').disabled = true;
         document.getElementById('downloadLoader').style.display = 'block';
         const downloadFileRequest = 'DownloadFile$' + fileName + '$' + fileOwner;
         const downloadFilePayload = await window.client.sendToServerPayload(downloadFileRequest);
@@ -330,6 +331,7 @@ document.addEventListener('DOMContentLoaded', async function ()
                         message.style.display = "block";
                         message.style.color = "green";
                         message.innerText = "File downloaded successfully!";
+                        document.getElementById('downloadButton').disabled = false;
                     } else {
                         console.error('Failed to download file:', xhr.statusText);
                     }

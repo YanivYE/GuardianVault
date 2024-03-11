@@ -217,6 +217,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     }
                     else
                     {
+                        document.getElementById("uploadButton").disabled = true;
                         // All inputs are valid, proceed with form submission
                         const reader = new FileReader();
 
@@ -276,6 +277,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 console.log("All blocks uploaded successfully");
                 loader.style.display = 'none';
                 successAlert("File uploaded successfully!");
+                document.getElementById("uploadButton").disabled = false;
             }
         }
     

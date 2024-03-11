@@ -10,8 +10,12 @@ document.addEventListener('DOMContentLoaded', async function ()
     const username = window.client.username;
     document.getElementById("title").textContent=`Welcome ${username}!`;
 
-    document.getElementById('logoutButton').addEventListener('click', function() {
+    const logoutButton = document.getElementById('logoutButton');
+
+    logoutButton.addEventListener('click', function() {
         userLogout();
+        logoutButton.disabled = true;
+
     });
 
     document.getElementById('download').addEventListener('click', function() {

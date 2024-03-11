@@ -58,7 +58,9 @@ class DriveHandler
       try {
           // Get the file name and extension
           const fileName = path.basename(filePath);
-          const fileExtension = path.extname(filePath).substr(1); // Remove the dot
+          const parts = filePath.split(".");
+
+          const fileExtension = parts[parts.length - 2];// Remove the dot
 
           // Determine the MIME type based on the file extension
           const mimeType = {
