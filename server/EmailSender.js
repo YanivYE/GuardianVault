@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const Utils = require('./Utils');
 const config = require('./config');
 
 class EmailSender
@@ -28,7 +29,7 @@ class EmailSender
 
     sendEmailVerificationCode(userEmail)
     {        
-        const verificationCode = this.generateVerificationCode();
+        const verificationCode = Utils.generateVerificationCode();
         console.log(verificationCode);
         const mailDetails = {
             from: config.EMAIL,
@@ -41,14 +42,7 @@ class EmailSender
         return verificationCode;
     }
  
-    generateVerificationCode()
-    {
-        let code = '';
-        for (let i = 0; i < 6; i++) {
-            code += Math.floor(Math.random() * 10); // Generate a random digit (0-9)
-        }
-        return code;
-    }
+    
 
     sendUsersNotifications(fileOwner, fileName, usersEmailsMap) 
     {

@@ -2,6 +2,7 @@ const DBHandler = require("./DataBaseHandler");
 const FileHandler = require("./FileHandler");
 const DriveHandler = require("./DriveHandler");
 const EmailSender = require("./EmailSender");
+const Utils = require('./Utils');
 const fs = require('fs');
 
 class Parser{
@@ -12,82 +13,81 @@ class Parser{
         this.EmailSender = new EmailSender.EmailSender();
         this.FileHandler = new FileHandler.FileHandler(this.socket, crypto);
         this.DriveHandler = new DriveHandler.DriveHandler();
-        this.crypto = crypto;
         this.username = "";
         this.password = "";
         this.verificationCode = "";
     }
 
-    parseClientMessage(message)
+    parseClientMessage(clientMessage)
     {
-        const parts = message.split('$');
-
-        const operation = parts[0];
-
-        const additionalData = parts.slice(1).join("$");
+        let responseType = "", responseData = "";
+        const [operation, additionalData] = clientMessage.split('$');
 
         switch(operation)
         {
             case "Login":
-                this.parseLoginRequest(additionalData);
+                [responseType, responseData] = this.parseLoginRequest(additionalData);
                 break;
             case "SignUp":
-                this.parseSignupRequest(additionalData);
+                [responseType, responseData] = this.parseSignupRequest(additionalData);
                 break;
             case "UploadFileBlock":
-                this.parseUploadFileBlockRequest(additionalData);
+                [responseType, responseData] = this.parseUploadFileBlockRequest(additionalData);
+                break;
+            case "validateName":
+                [responseType, responseData] = this.validateFileName(additionalData);
                 break;
             case "DownloadFile":
                 this.parseDownloadFileRequest(additionalData);
                 break;
-            case "validateName":
-                this.validateFileName(additionalData);
-                break;
             case "DeleteFile":
-                this.deleteFile(additionalData);
+                [responseType, responseData] = this.deleteFile(additionalData);
                 break;
             case "ForgotPassword":
-                this.forgotPassword(additionalData);
+                [responseType, responseData] = this.forgotPassword(additionalData);
                 break;
             case "VerifyEmailCode":
-                this.verifyEmailCode(additionalData);
+                [responseType, responseData] = this.verifyEmailCode(additionalData);
                 break;
             case "ResetPassword":
-                this.resetPassword(additionalData);
-                break;
-            case "getUserName":
-                this.getUsername();
+                [responseType, responseData] = this.resetPassword(additionalData);
                 break;
             case "UsersList":
-                this.getUsersList();
+                [responseType, responseData] = this.getUsersList();
                 break;
             case "ownFileList":
-                this.getOwnFilesList()
+                [responseType, responseData] = this.getOwnFilesList()
                 break;
             case "sharedFileList":
-                this.getSharedFilesList()
+                [responseType, responseData] = this.getSharedFilesList()
                 break;
             case "Logout":
-                this.userLogout();
+                [responseType, responseData] = this.userLogout();
+                break;
+            default:
+                responseType = "Unknown";
+                responseData = "Unknown operation";
                 break;
         }
+
+        return [responseType, responseData];
     }
 
     async parseLoginRequest(loginRequest)
     {
-        let operationResult = "Fail";
+        let loginResult = "Fail";
         [this.username, this.password] = loginRequest.split('$');
 
         if(await this.DBHandler.validateUserLogin(this.username, this.password))
         {
-            operationResult = "Success";
-            console.log(this.username + " connected");
+            loginResult = "Success";
+            console.log(`${username} connected`);
 
-            let userEmailResult = await this.DBHandler.getUserEmail(this.username);
+            const userEmail = await this.DBHandler.getUserEmail(this.username);
 
-            this.verificationCode = this.EmailSender.sendEmailVerificationCode(userEmailResult);
+            this.verificationCode = this.EmailSender.sendEmailVerificationCode(userEmail);
         }
-        this.socket.emit('loginResult', operationResult);
+        return {responseType: 'loginResult', responseData: loginResult};
     }
 
     async parseSignupRequest(signupRequest)
@@ -97,17 +97,17 @@ class Parser{
         this.username = username;
         this.password = password;
 
-        const operationResult = await this.DBHandler.validateUserSignup(this.username, email, this.password);
+        const signupResult = await this.DBHandler.validateUserSignup(this.username, email, this.password);
 
-        if(operationResult === "Success")
+        if(signupResult === "Success")
         {
-            console.log(username + " connected");
+            console.log(`${username} connected`);
         }
 
-        this.socket.emit('signupResult', operationResult);
+        return {responseType: 'signupResult', responseData: signupResult};
     }
 
-    async parseUploadFileBlockRequest(uploadFileBlockRequest) {
+    parseUploadFileBlockRequest(uploadFileBlockRequest) {
         var isLastBlock = false;
         const [blockIndex, blockContent, totalBlocks] = uploadFileBlockRequest.split('$');
 
@@ -116,48 +116,32 @@ class Parser{
             isLastBlock = true;
         }
 
-        await this.FileHandler.assembleFileContent(blockContent, isLastBlock);
+        const blockResult = this.FileHandler.assembleFileContent(blockContent, isLastBlock);
+        
+        return {responseType: 'uploadBlockResult', responseData: blockResult};
     }
 
     async validateFileName(validationData)
     {
-        this.fileContent = "";
-        this.uploadFinished = false;
         const [fileName, usersString] = validationData.split('$');
 
         const users = usersString.split(',');
 
-        const operationResult = await this.DBHandler.validateFileName(fileName, this.username);
-
-        this.socket.emit('validateNameResult', operationResult);
+        const fileNameResult = await this.DBHandler.validateFileName(fileName, this.username);
 
         this.FileHandler.setUploadDetails(fileName, this.username, this.password);
 
-        if(operationResult === "Success")
+        if(fileNameResult === "Success")
         {            
             await this.DBHandler.setUsersPermissions(users, fileName, this.username, this.password);
 
-            const usersEmailMap = await this.initializeUsersEmailsMap(users);
+            const usersEmailMap = await Utils.initializeUsersEmailsMap(this.DBHandler, users);
 
             this.EmailSender.sendUsersNotifications(this.username, fileName, usersEmailMap);
         }
+
+        return {responseType: 'validateNameResult', responseData: fileNameResult};
     }
-
-    async initializeUsersEmailsMap(usersArray)
-    {
-        let map = new Map();
-        for(const user of usersArray)
-        {
-            if(user !== '')
-            {
-                const userEmail = await this.DBHandler.getUserEmail(user);
-
-                map.set(user, userEmail);
-            }
-        }
-
-        return map;
-    }   
 
 
     async parseDownloadFileRequest(downloadFileRequest)
@@ -195,7 +179,7 @@ class Parser{
             await this.DBHandler.deleteSharedFile(fileName, fileOwner);
         }
 
-        this.socket.emit('deleteFileResult', 'Success');
+        return {responseType: 'deleteFileResult', responseData: 'Success'};
     }
 
     async forgotPassword(forgotPasswordRequest)
@@ -204,19 +188,19 @@ class Parser{
 
         let userEmailResult = await this.DBHandler.getUserEmail(username);
 
-        if(userEmailResult != "Fail")
+        if(userEmailResult !== "Fail")
         {
             this.verificationCode = this.EmailSender.sendEmailVerificationCode(userEmailResult);
             this.username = username;
             userEmailResult = "Success";
         } 
 
-        this.socket.emit('forgotPasswordResult', userEmailResult);
+        return {responseType: 'forgotPasswordResult', responseData: userEmailResult};
     }
 
     verifyEmailCode(verifyCodeRequest)
     {
-        let result = "Fail";
+        let verificationResult = "Fail";
 
         const enteredCode = verifyCodeRequest.split('$')[0];
 
@@ -224,15 +208,15 @@ class Parser{
         {
             if(this.password !== '')    // through login
             {
-                result = "2fa";
+                verificationResult = "2fa";
             }
             else    // through forgot password
             {
-                result = "passwordReset";
+                verificationResult = "passwordReset";
             }
         }
         
-        this.socket.emit('codeVerificationResult', result);
+        return {responseType: 'codeVerificationResult', responseData: verificationResult};
     }
 
     async resetPassword(resetPasswordRequest)
@@ -243,44 +227,41 @@ class Parser{
 
         await this.DBHandler.updateUserPassword(this.username, newPassword);
 
-        this.socket.emit('resetPasswordResult', 'Success');
+        return {responseType: 'resetPasswordResult', responseData: 'Success'};
     }
 
     async getUsersList()    
     {
         let usersList = await this.DBHandler.getUsersList();
         usersList.splice(usersList.indexOf(this.username), 1);
-        const usersString = usersList.join(',');
-        let payload = this.crypto.generateServerPayload(usersString);
+        let usersString = usersList.join(',');
         if(usersList.length === 0)
         {
-            payload = "empty";
+            usersString = "empty";
         }
-        this.socket.emit('usersListPayload', payload);
+        return {responseType: 'usersListResult', responseData: usersString};
     }
 
     async getOwnFilesList()  
     {
         const filesList = await this.DBHandler.getUserFilesList(this.username);
-        const filesString = filesList.join(',');
-        let payload = this.crypto.generateServerPayload(filesString);
+        let filesString = filesList.join(',');
         if(filesList.length === 0)
         {
-            payload = "empty";
+            filesString = "empty";
         }
-        this.socket.emit('ownFileListPayload', payload);
+        return {responseType: 'ownFileListResult', responseData: filesString};
     }
 
     async getSharedFilesList()   
     {
         const filesList = await this.DBHandler.getUserSharedFilesList(this.username);
-        const filesString = filesList.map(({ user, files }) => `${user}:${files.join(',')}`).join('#');
-        let payload = this.crypto.generateServerPayload(filesString);
+        let filesString = filesList.map(({ user, files }) => `${user}:${files.join(',')}`).join('#');
         if(filesList.length === 0)
         {
-            payload = "empty";
+            filesString = "empty";
         }
-        this.socket.emit('sharedFileListPayload', payload);
+        return {responseType: 'sharedFileListResult', responseData: filesString};
     }
 
     async userLogout()
@@ -289,9 +270,9 @@ class Parser{
    
         await this.DBHandler.deleteUser(this.username);
 
-        this.socket.emit('logoutResult', 'Success');
+        console.log(`User ${this.username} logged out`);
 
-        console.log('user ' + this.username + ' loged out');
+        return {responseType: 'logoutResult', responseData: 'Success'};
     }
 
     initializeSystem() {

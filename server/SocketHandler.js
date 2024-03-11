@@ -1,28 +1,34 @@
 const keyExchange = require("./ServerKeyExchange");
 const CryptographyTunnel = require("./Crypto");
 const Parser = require("./Parser");
+const { assert } = require("elliptic/lib/elliptic/utils");
 
 class SocketHandler {
     constructor(socket) {
         this.socket = socket;
-        this.parser = null;
-        this.crypto = null;
     }
 
     async handleClientConnection() {      
         const sharedKey = await keyExchange.performKeyExchange(this.socket);
 
-        this.crypto = new CryptographyTunnel.CryptographyTunnel(sharedKey);
+        const crypto = new CryptographyTunnel.CryptographyTunnel(sharedKey);
 
-        this.parser = new Parser.Parser(this.socket, this.crypto);
-        this.listenForClientMessage();
+        const parser = new Parser.Parser(this.socket, crypto);
+        this.listenForClientMessage(crypto, parser);
     }
 
-    listenForClientMessage() {
+    listenForClientMessage(crypto, parser) {
         this.socket.on('ClientMessage', async (clientMessagePayload) => {
-            const message = this.crypto.recieveClientPayload(clientMessagePayload);
+            const message = crypto.recieveClientPayload(clientMessagePayload);
 
-            this.parser.parseClientMessage(message);
+            const [responseType, responseData] = parser.parseClientMessage(message);
+
+            if(responseType !== "" && responseData !== "")  // except for download file request
+            {
+                const serverPayload = crypto.generateServerPayload(responseData);
+
+                this.socket.emit(responseType, serverPayload);
+            }
         });
     }
 }

@@ -20,7 +20,7 @@ class FileHandler
         {
             this.uploadFile();
         }
-        this.socket.emit('uploadBlockResult', 'Success');
+        return 'Success';
     }
 
     setUploadDetails(fileName, username, password)
@@ -39,7 +39,6 @@ class FileHandler
             this.socket.emit('UploadFileResult', "Success");
         } catch (error) {
             // If an error occurs during file upload or writing, emit an error result
-            this.socket.emit('UploadFileResult', "Error");
             console.error('Error uploading file:', error);
         }
     }

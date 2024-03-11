@@ -4,7 +4,7 @@ const path = require('path');
 const socketIO = require('socket.io');
 const config = require('./config');
 const Handler = require('./SocketHandler');
-const { v4: uuidv4 } = require('uuid');
+const Utils = require('./Utils');
 
 // create app & server
 const app = express();
@@ -101,7 +101,7 @@ function startServer() {
   });
 
   io.on('connection', (socket) => {
-    const userId = generateUniqueUserId();
+    const userId = Utils.generateUniqueUserId();
  
     console.log(`User ${userId} connected`);
     const socketHandler = new Handler.SocketHandler(socket);
@@ -112,11 +112,6 @@ function startServer() {
         console.log(`User ${userId} disconnected`);
     });
   });
-}
-
-function generateUniqueUserId() {
-  // Generate a unique ID (e.g., UUID)
-  return uuidv4();
 }
 
 startServer();
