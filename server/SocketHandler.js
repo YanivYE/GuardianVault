@@ -1,7 +1,6 @@
 const keyExchange = require("./ServerKeyExchange");
 const CryptographyTunnel = require("./Crypto");
 const Parser = require("./Parser");
-const { assert } = require("elliptic/lib/elliptic/utils");
 
 class SocketHandler {
     constructor(socket) {
