@@ -5,9 +5,9 @@ class FileHandler
     constructor(socket, crypto)
     {
         this.socket = socket;
-        this.fileContent = "";
         this.DriveHandler = new DriveHandler.DriveHandler();
         this.crypto = crypto;
+        this.fileContent = "";
         this.fileName = "";
         this.username = "";
         this.encryptionPassword = "";

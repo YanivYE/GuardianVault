@@ -7,9 +7,9 @@ class EmailSender
     constructor()
     {
         this.transporter = nodemailer.createTransport({
-            service: 'gmail',
-            host: 'smtp.gmail.com',
-            port: 465,
+            service: config.EMAIL_SERVICE,
+            host: config.HOST,
+            port: config.SMTP_PORT,
             secure: true,
             auth: {
                 user: config.EMAIL,
@@ -35,15 +35,13 @@ class EmailSender
             from: config.EMAIL,
             to: userEmail, // recipient email address
             subject: 'Verification Code',
-            text: 'Your verification code is: ' + verificationCode
+            text: `Your verification code is: ${verificationCode}`
         };
         this.sendEmail(mailDetails);
 
         return verificationCode;
     }
  
-    
-
     sendUsersNotifications(fileOwner, fileName, usersEmailsMap) 
     {
         for (const [user, email] of usersEmailsMap) 
@@ -55,13 +53,12 @@ class EmailSender
         }
     }
 
-    sendNotification(fileOwner, fileName, sendToEmail)
-    {
+    sendNotification(fileOwner, fileName, sendToEmail) {
         const mailDetails = {
             from: config.EMAIL,
-            to: sendToEmail, 
+            to: sendToEmail,
             subject: 'Access Notification',
-            text: fileOwner + ' shared the file: ' + fileName + ' with you'
+            text: `${fileOwner} shared the file: ${fileName} with you`
         };
         this.sendEmail(mailDetails);
     }
