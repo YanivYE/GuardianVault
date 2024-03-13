@@ -12,11 +12,11 @@ const server = http.createServer(app);
 const io = socketIO(server);
 
 // Serve static files
-app.use("/static", express.static(path.resolve(__dirname, "frontend", "static")));
+app.use("/static", express.static(path.resolve(__dirname, "../frontend", "static")));
 
 // Serve client page - SPA
 app.get("/", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "frontend", "index.html"));
+  res.sendFile(path.resolve(__dirname, "../frontend", "index.html"));
 });
 
 // Start server
