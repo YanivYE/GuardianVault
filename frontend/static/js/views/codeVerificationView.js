@@ -17,7 +17,7 @@ export default class CodeVerificationView extends AbstractView{
         }
     }
 
-    static async loadScript() {
+    async loadScript() {
         if (!this.scriptLoaded) {
             try {
                 await import("../scripts/codeVerification.js");

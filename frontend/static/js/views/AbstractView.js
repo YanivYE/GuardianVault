@@ -10,10 +10,5 @@ export default class AbstractView {
         return "";
     }
 
-    static async loadScript() {}
-    
-    async render() {
-        await this.constructor.loadScript();
-        return await this.getHtml();
-    }
+    async loadScript() {}
 }

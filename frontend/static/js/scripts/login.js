@@ -1,116 +1,121 @@
+(function ($) {
+    "use strict";
 
-const socket = window.client.socket;
+    debugger;
 
-// /*==================================================================
-// [ Focus input ]*/
-// $('.input100').each(function(){
-//     $(this).on('blur', function(){
-//         if($(this).val().trim() != "") {
-//             $(this).addClass('has-val');
-//         }
-//         else {
-//             $(this).removeClass('has-val');
-//         }
-//     })    
-// })
+    const socket = window.client.socket;
 
-// /*==================================================================
-// [ Validate ]*/
-// var input = $('.validate-input .input100');
+    /*==================================================================
+    [ Focus input ]*/
+    $('.input100').each(function(){
+        $(this).on('blur', function(){
+            if($(this).val().trim() != "") {
+                $(this).addClass('has-val');
+            }
+            else {
+                $(this).removeClass('has-val');
+            }
+        })    
+    })
 
-// $('.validate-form').on('submit', function(event){
-//     event.preventDefault(); // Prevent default form submission
+    /*==================================================================
+    [ Validate ]*/
+    var input = $('.validate-input .input100');
 
-//     var check = true;
+    $('.validate-form').on('submit', function(event){
+        event.preventDefault(); // Prevent default form submission
 
-//     for(var i=0; i<input.length; i++) {
-//         if(validate(input[i]) == false){
-//             showValidate(input[i]);
-//             check=false;
-//         }
-//     }
-//     if(check)
-//     {
-//         logging(); // Call the logging function if validation passes
-//     }
-// });
+        var check = true;
 
-// $('.validate-form .input100').each(function(){
-//     $(this).focus(function(){
-//         hideValidate(this);
-//     });
-// });
+        for(var i=0; i<input.length; i++) {
+            if(validate(input[i]) == false){
+                showValidate(input[i]);
+                check=false;
+            }
+        }
+        if(check)
+        {
+            logging(); // Call the logging function if validation passes
+        }
+    });
 
-// function validate(input) {
-//     if($(input).val().trim() == ''){
-//         return false;
-//     }
-//     return true; // Add more specific validation rules if needed
-// }
+    $('.validate-form .input100').each(function(){
+        $(this).focus(function(){
+           hideValidate(this);
+        });
+    });
 
-// function showValidate(input) {
-//     var thisAlert = $(input).parent();
-//     $(thisAlert).addClass('alert-validate');
-// }
+    function validate(input) {
+        if($(input).val().trim() == ''){
+            return false;
+        }
+        return true; // Add more specific validation rules if needed
+    }
 
-// function hideValidate(input) {
-//     var thisAlert = $(input).parent();
-//     $(thisAlert).removeClass('alert-validate');
-// }
+    function showValidate(input) {
+        var thisAlert = $(input).parent();
+        $(thisAlert).addClass('alert-validate');
+    }
 
-// /*==================================================================
-// [ Show pass ]*/
-// document.addEventListener('DOMContentLoaded', function () {
-//     function togglePassword() {
-//         const eye = document.querySelector("#eye");
-//         const passwordInput = document.querySelector("#password");
+    function hideValidate(input) {
+        var thisAlert = $(input).parent();
+        $(thisAlert).removeClass('alert-validate');
+    }
 
-//         const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-//         passwordInput.setAttribute("type", type);
+    /*==================================================================
+    [ Show pass ]*/
+    document.addEventListener('DOMContentLoaded', function () {
+        function togglePassword() {
+            const eye = document.querySelector("#eye");
+            const passwordInput = document.querySelector("#password");
 
-//         // Corrected the class name for the eye icon
-//         eye.classList.toggle("fa-eye-slash", type === "password");
-//     }
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
 
-//     // Call the togglePassword function on document load
-//     togglePassword();
-//     togglePassword();
+            // Corrected the class name for the eye icon
+            eye.classList.toggle("fa-eye-slash", type === "password");
+        }
 
-//     // Add an event listener for the Show Password button
-//     document.querySelector('.btn-show-pass').addEventListener('click', function () {
-//         togglePassword();
-//     });
-// });
+        // Call the togglePassword function on document load
+        togglePassword();
+        togglePassword();
 
-// async function logging() {
-//     const username = document.getElementsByName("username")[0].value;
-//     const password = document.getElementsByName("password")[0].value;
+        // Add an event listener for the Show Password button
+        document.querySelector('.btn-show-pass').addEventListener('click', function () {
+            togglePassword();
+        });
+    });
 
-//     window.client.username = username;
-    
-//     const loginPayload = await window.client.sendToServerPayload('Login$' + username + '$' + password);
-//     // Send login information to the server
-//     this.socket.emit('ClientMessage', loginPayload);     
-    
-//     // Wait for acknowledgement from the server
-//     this.socket.on('loginResult', async (operationResult) => {
-//         if(operationResult === "Success")
-//         {
-//             window.client.loadNextPage('/code-verification');
-//         }
-//         else{
-//             const errorMessage = document.getElementById('errorMessage');
-//             errorMessage.innerText = "Login failed. Username or password are incorrect";
-//             errorMessage.style.display = 'block';
-//         }
-//     });
-// }
+    async function logging() {
+        const username = document.getElementsByName("username")[0].value;
+        const password = document.getElementsByName("password")[0].value;
 
-// document.getElementById('signupButton').addEventListener('click', () => {
-//     window.client.loadNextPage('/signup');
-// });
+        window.client.username = username;
+        
+        const loginPayload = await window.client.sendToServerPayload('Login$' + username + '$' + password);
+        // Send login information to the server
+        socket.emit('ClientMessage', loginPayload);     
+        
+        // Wait for acknowledgement from the server
+        socket.on('loginResult', async (operationResult) => {
+            if(operationResult === "Success")
+            {
+                window.client.loadNextPage('/code-verification');
+            }
+            else{
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.innerText = "Login failed. Username or password are incorrect";
+                errorMessage.style.display = 'block';
+            }
+        });
+    }
 
-// document.getElementById('forgotPass').addEventListener('click', () => {
-//     window.client.loadNextPage('/forgot-password');
-// });
+    document.getElementById('signupButton').addEventListener('click', () => {
+        window.client.navigateTo('/signup');
+    });
 
+    document.getElementById('forgotPass').addEventListener('click', () => {
+        window.client.navigateTo('/forgotPassword');
+    });
+
+})(jQuery);

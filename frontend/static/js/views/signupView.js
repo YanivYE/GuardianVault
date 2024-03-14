@@ -17,7 +17,7 @@ export default class SignupView extends AbstractView {
         }
     }
 
-    static async loadScript() {
+    async loadScript() {
         if (!this.scriptLoaded) {
             try {
                 await import("../scripts/signup.js");

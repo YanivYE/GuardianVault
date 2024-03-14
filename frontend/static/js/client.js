@@ -220,7 +220,8 @@ export default class Client {
     
         const view = new match.route.view();
     
-        document.querySelector("#app").innerHTML = await view.render();
+        document.querySelector("#app").innerHTML = await view.getHtml();
+        await view.loadScript();
     };
     
 

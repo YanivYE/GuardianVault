@@ -17,7 +17,7 @@ export default class MenuView extends AbstractView{
     }
   }
 
-  static async loadScript() {
+  async loadScript() {
     if (!this.scriptLoaded) {
         try {
             await import("../scripts/menu.js");

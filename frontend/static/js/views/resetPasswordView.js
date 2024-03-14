@@ -17,7 +17,7 @@ export default class ResetPasswordView extends AbstractView{
     }
   }
 
-  static async loadScript() {
+  async loadScript() {
         if (!this.scriptLoaded) {
             try {
                 await import("../scripts/resetPassword.js");

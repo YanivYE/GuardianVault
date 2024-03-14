@@ -17,7 +17,7 @@ export default class UploadView extends AbstractView{
     }
   }
 
-  static async loadScript() {
+  async loadScript() {
         if (!this.scriptLoaded) {
             try {
                 await import("../scripts/upload.js");
