@@ -1,22 +1,4 @@
-// import AbstractView from "./views/AbstractView.js";
 import Client from "./client.js"
-
-// export default class extends AbstractView{
-//   constructor() {
-//     this.setTitle("Home");
-//   }
-
-//   async getHtml() {
-//     try {
-//         const response = await fetch('/');
-//         const html = await response.text();
-//         return html;
-//     } catch (error) {
-//         console.error('Error fetching HTML:', error);
-//         return null; // or handle the error accordingly
-//     }
-//   }
-// }
 
 window.client = new Client();
 await window.client.init();
@@ -41,7 +23,7 @@ setTimeout(function() {
   document.getElementById('connectionStatus').classList.add('animating');
 }, 300);
 
-document.getElementById('loginButton').addEventListener('click', () => {
+document.getElementById('loginButton').addEventListener('click', async () => {
   window.client.navigateTo('/login');
 });
     

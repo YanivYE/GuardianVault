@@ -1,4 +1,3 @@
-// import Home from "./index.js"
 import LoginView from "./views/loginView.js"
 import SignupView from "./views/signupView.js"
 import ForgotPasswordView from "./views/forgotPasswordView.js"
@@ -24,8 +23,20 @@ export default class Client {
             await this.initSocket(); // Initialize socket
             await this.setupEventListeners(); // Set up event listeners
             await this.waitForInitialization(); // Wait for both socket and key exchange
+            this.startRouterLoop();
         } catch (error) {
             console.error(error);
+        }
+    }
+
+    async startRouterLoop() {
+        while (true) {
+            await new Promise(resolve => {
+                window.addEventListener("popstate", async () => {
+                    this.router();
+                    resolve(); // Resolve the promise once the router is called
+                });
+            });
         }
     }
     
@@ -175,23 +186,21 @@ export default class Client {
         }
     }
 
-    navigateTo(url) {
+    async navigateTo(url) {
         history.pushState(null, null, url);
         this.router();
     };
     
-    async router() 
-    {
+    async router() {
         const routes = [
-          // { path: "/", view: Home }, // add index html - generate index class
-          { path: "/login", view: LoginView},
-          { path: "/signup", view: SignupView},
-          { path: "/forgotPassword", view: ForgotPasswordView},
-          { path: "/codeVerification", view: CodeVerificationView},
-          { path: "/resetPassword", view: ResetPasswordView},
-          { path: "/menu", view: MenuView},
-          { path: "/upload", view: UploadView},
-          { path: "/download", view: DownloadView}
+            { path: "/login", view: LoginView },
+            { path: "/signup", view: SignupView },
+            { path: "/forgotPassword", view: ForgotPasswordView },
+            { path: "/codeVerification", view: CodeVerificationView },
+            { path: "/resetPassword", view: ResetPasswordView },
+            { path: "/menu", view: MenuView },
+            { path: "/upload", view: UploadView },
+            { path: "/download", view: DownloadView }
         ];
     
         // Test each route for potential match
@@ -205,14 +214,14 @@ export default class Client {
         let match = potentialMatches.find(potentialMatch => potentialMatch.isMatch);
     
         if (!match) {
-            match = {
-                route: routes[0],
-                isMatch: true
-            };
+            // refresh page and return to index
+            window.location.reload();
         }
     
         const view = new match.route.view();
     
         document.querySelector("#app").innerHTML = await view.render();
     };
+    
+
 }
