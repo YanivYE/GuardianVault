@@ -1,13 +1,10 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome to GuardianVault</title>
-  <script type="module" src="index.js"></script>
-  <script src="../client.js"></script>
-  <style>
-      /* Add the font-face rules for Ubuntu-Regular and Ubuntu-Bold */
+  <!-- INCLUDE ALL CSS HERE -->
+  <!-- <style>
   @font-face {
     font-family: 'Ubuntu-Regular';
     src: url('../fonts/ubuntu/Ubuntu-Regular.ttf'); 
@@ -167,43 +164,27 @@
     #connectionStatus.animating {
       animation: pulse 1s infinite; /* Apply the pulse animation */
     }
-  </style>
+  </style> -->
 </head>
 <body>
-  <div class="container-login100" style="background-image: url('images/bg-01.jpg');">
-    <div id="topContent">
-      <h1>Welcome to GuardianVault</h1>
-      <h1>Made by Yaniv Yehezkel and Elior Yousefi.</h1> <!-- Added spaces -->
+  <div id="app">
+    <div class="container-login100" style="background-image: url('static/css/images/bg-01.jpg');">
+      <div id="topContent">
+        <h1>Welcome to GuardianVault</h1>
+        <h1>Made by Yaniv Yehezkel and Elior Yousefi.</h1> 
+      </div>
+      <div id="contentContainer"></div>
+      <div class="container-login100-form-btn">
+        <p id="connectionStatus">Establishing a secure connection</p>
+        <button id="loginButton" class="login100-form-btn" disabled>
+          Continue
+        </button>
+      </div>
     </div>
-    <div id="contentContainer"></div>
-    <div class="container-login100-form-btn">
-      <p id="connectionStatus">Establishing a secure connection</p>
-      <button id="loginButton" class="login100-form-btn" disabled>
-        Continue
-      </button>
-    </div>
+    <!-- <script type="module" src="static/js/client.js"></script> -->
+    <script type="module" src="static/js/index.js"></script>
   </div>
-
-  <script>
-    // Add click event listener to the button
-    document.getElementById('loginButton').addEventListener('click', function(event) {
-        if (this.hasAttribute('disabled')) {
-          event.preventDefault(); // Prevent default action (click) during the first 3 seconds
-        }
-      });
-
-      // Set timeout to enable the button after 3 seconds
-      setTimeout(function() {
-        var loginButton = document.getElementById('loginButton');
-        loginButton.removeAttribute('disabled');
-        document.getElementById('connectionStatus').textContent = 'Established';
-        document.getElementById('connectionStatus').classList.remove('animating'); // Remove animation class
-      }, 1500);
-
-      // Add animation class while establishing connection
-      setTimeout(function() {
-        document.getElementById('connectionStatus').classList.add('animating');
-      }, 300);
-  </script>
 </body>
-</html>
+</html> 
+
+
