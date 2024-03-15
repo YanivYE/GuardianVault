@@ -13,14 +13,14 @@ class SocketHandler {
         const crypto = new CryptographyTunnel.CryptographyTunnel(sharedKey);
 
         const parser = new Parser.Parser(this.socket, crypto);
-        this.listenForClientMessage(crypto, parser);
+        await this.listenForClientMessage(crypto, parser);
     }
 
-    listenForClientMessage(crypto, parser) {
+    async listenForClientMessage(crypto, parser) {
         this.socket.on('ClientMessage', async (clientMessagePayload) => {
             const message = crypto.recieveClientPayload(clientMessagePayload);
 
-            const [responseType, responseData] = parser.parseClientMessage(message);
+            const [responseType, responseData] = await parser.parseClientMessage(message);
 
             if(responseType !== "" && responseData !== "")  // except for download file request
             {

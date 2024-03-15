@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             else
             {
-                window.client.loadNextPage('/code-verification');
+                window.client.navigateTo('/codeVerification');
             }
         });
     });

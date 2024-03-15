@@ -24,12 +24,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             else if(codeVerificationResult === "passwordReset")
             {
-                window.client.loadNextPage('/reset-password');
+                window.client.navigateTo('/resetPassword');
             }
             else
             {
                 window.client.logedIn = true;
-                window.client.loadNextPage('/menu');
+                window.client.navigateTo('/menu');
             }
         });
     });

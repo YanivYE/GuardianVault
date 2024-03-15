@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async function ()
     const socket = window.client.socket;
 
     if (!window.client.logedIn) {
-      window.client.loadNextPage('/login'); // Redirect to login page if not logged in
+      window.client.navigateTo('/login'); // Redirect to login page if not logged in
     }
 
     const username = window.client.username;
@@ -18,11 +18,11 @@ document.addEventListener('DOMContentLoaded', async function ()
     });
 
     document.getElementById('download').addEventListener('click', function() {
-      window.client.loadNextPage('/download');
+      window.client.navigateTo('/download');
     });
 
     document.getElementById('upload').addEventListener('click', function() {
-      window.client.loadNextPage('/upload');
+      window.client.navigateTo('/upload');
     });
 
     async function userLogout()
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async function ()
             {
               window.client.logedIn = false;
               document.getElementById('logoutLoader').style.display = 'none';
-              window.client.loadNextPage('/index');
+              window.client.navigateTo('/index');
 
               window.client = null; // or window.client = undefined;
               window.location.reload(); 

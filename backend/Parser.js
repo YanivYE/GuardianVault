@@ -18,51 +18,58 @@ class Parser{
         this.verificationCode = "";
     }
 
-    parseClientMessage(clientMessage)
+    async parseClientMessage(clientMessage)
     {
         let responseType = "", responseData = "";
-        const [operation, additionalData] = clientMessage.split('$');
+        const fields = clientMessage.split('$');
+
+        const operation = fields[0];
+
+        // add csrf token at index 0
+
+        const additionalData = fields.slice(1).join("$");
+
 
         switch(operation)
         {
             case "Login":
-                [responseType, responseData] = this.parseLoginRequest(additionalData);
+                [responseType, responseData] = await this.parseLoginRequest(additionalData);
                 break;
             case "SignUp":
-                [responseType, responseData] = this.parseSignupRequest(additionalData);
+                [responseType, responseData] = await this.parseSignupRequest(additionalData);
                 break;
             case "UploadFileBlock":
                 [responseType, responseData] = this.parseUploadFileBlockRequest(additionalData);
                 break;
             case "validateName":
-                [responseType, responseData] = this.validateFileName(additionalData);
+                [responseType, responseData] = await this.validateFileName(additionalData);
                 break;
             case "DownloadFile":
-                this.parseDownloadFileRequest(additionalData);
+                await this.parseDownloadFileRequest(additionalData);
                 break;
             case "DeleteFile":
-                [responseType, responseData] = this.deleteFile(additionalData);
+                [responseType, responseData] = await this.deleteFile(additionalData);
                 break;
             case "ForgotPassword":
-                [responseType, responseData] = this.forgotPassword(additionalData);
+                [responseType, responseData] = await this.forgotPassword(additionalData);
                 break;
             case "VerifyEmailCode":
                 [responseType, responseData] = this.verifyEmailCode(additionalData);
                 break;
             case "ResetPassword":
-                [responseType, responseData] = this.resetPassword(additionalData);
+                [responseType, responseData] = await this.resetPassword(additionalData);
                 break;
             case "UsersList":
-                [responseType, responseData] = this.getUsersList();
+                [responseType, responseData] = await this.getUsersList();
                 break;
             case "ownFileList":
-                [responseType, responseData] = this.getOwnFilesList()
+                [responseType, responseData] = await this.getOwnFilesList()
                 break;
             case "sharedFileList":
-                [responseType, responseData] = this.getSharedFilesList()
+                [responseType, responseData] = await this.getSharedFilesList()
                 break;
             case "Logout":
-                [responseType, responseData] = this.userLogout();
+                [responseType, responseData] = await this.userLogout();
                 break;
             default:
                 responseType = "Unknown";
@@ -81,7 +88,7 @@ class Parser{
         if(await this.DBHandler.validateUserLogin(this.username, this.password))
         {
             loginResult = "Success";
-            console.log(`${username} connected`);
+            console.log(`${this.username} connected`);
 
             const userEmail = await this.DBHandler.getUserEmail(this.username);
 
