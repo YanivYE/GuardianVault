@@ -128,16 +128,15 @@ export default class Client {
         });
     }
 
-    async transferToServer(request, resultType)
-    {
+    async transferToServer(request, resultType) {
         const payload = await window.client.sendToServerPayload(request);
-        // Send login information to the server
-        socket.emit('ClientMessage', payload);     
-        
-        // Wait for acknowledgement from the server
-        socket.on(resultType, async (resultPayload) => {
-            const operationResult = await this.receivePayloadFromServer(resultPayload);
-            return operationResult;
+        return new Promise((resolve, reject) => {
+            this.socket.emit('ClientMessage', payload);
+    
+            this.socket.once(resultType, async (resultPayload) => {
+                const operationResult = await this.receivePayloadFromServer(resultPayload);
+                resolve(operationResult);
+            });
         });
     }
 

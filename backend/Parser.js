@@ -94,7 +94,7 @@ class Parser{
 
             this.verificationCode = this.EmailSender.sendEmailVerificationCode(userEmail);
         }
-        return {responseType: 'loginResult', responseData: loginResult};
+        return ['loginResult', loginResult];
     }
 
     async parseSignupRequest(signupRequest)
@@ -108,10 +108,10 @@ class Parser{
 
         if(signupResult === "Success")
         {
-            console.log(`${username} connected`);
+            console.log(`${this.username} connected`);
         }
 
-        return {responseType: 'signupResult', responseData: signupResult};
+        return ['signupResult', signupResult];
     }
 
     parseUploadFileBlockRequest(uploadFileBlockRequest) {
@@ -125,7 +125,7 @@ class Parser{
 
         const blockResult = this.FileHandler.assembleFileContent(blockContent, isLastBlock);
         
-        return {responseType: 'uploadBlockResult', responseData: blockResult};
+        return ['uploadBlockResult', blockResult];
     }
 
     async validateFileName(validationData)
@@ -147,7 +147,7 @@ class Parser{
             this.EmailSender.sendUsersNotifications(this.username, fileName, usersEmailMap);
         }
 
-        return {responseType: 'validateNameResult', responseData: fileNameResult};
+        return ['validateNameResult', fileNameResult];
     }
 
 
@@ -186,7 +186,7 @@ class Parser{
             await this.DBHandler.deleteSharedFile(fileName, fileOwner);
         }
 
-        return {responseType: 'deleteFileResult', responseData: 'Success'};
+        return ['deleteFileResult', 'Success'];
     }
 
     async forgotPassword(forgotPasswordRequest)
@@ -202,7 +202,7 @@ class Parser{
             userEmailResult = "Success";
         } 
 
-        return {responseType: 'forgotPasswordResult', responseData: userEmailResult};
+        return ['forgotPasswordResult', userEmailResult];
     }
 
     verifyEmailCode(verifyCodeRequest)
@@ -223,7 +223,7 @@ class Parser{
             }
         }
         
-        return {responseType: 'codeVerificationResult', responseData: verificationResult};
+        return ['codeVerificationResult', verificationResult];
     }
 
     async resetPassword(resetPasswordRequest)
@@ -234,7 +234,7 @@ class Parser{
 
         await this.DBHandler.updateUserPassword(this.username, newPassword);
 
-        return {responseType: 'resetPasswordResult', responseData: 'Success'};
+        return ['resetPasswordResult', 'Success'];
     }
 
     async getUsersList()    
@@ -246,7 +246,7 @@ class Parser{
         {
             usersString = "empty";
         }
-        return {responseType: 'usersListResult', responseData: usersString};
+        return ['usersListResult', usersString];
     }
 
     async getOwnFilesList()  
@@ -257,7 +257,7 @@ class Parser{
         {
             filesString = "empty";
         }
-        return {responseType: 'ownFileListResult', responseData: filesString};
+        return ['ownFileListResult', filesString];
     }
 
     async getSharedFilesList()   
@@ -268,7 +268,7 @@ class Parser{
         {
             filesString = "empty";
         }
-        return {responseType: 'sharedFileListResult', responseData: filesString};
+        return ['sharedFileListResult', filesString];
     }
 
     async userLogout()
@@ -279,7 +279,7 @@ class Parser{
 
         console.log(`User ${this.username} logged out`);
 
-        return {responseType: 'logoutResult', responseData: 'Success'};
+        return ['logoutResult', 'Success'];
     }
 
     initializeSystem() {

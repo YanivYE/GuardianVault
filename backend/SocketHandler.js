@@ -13,10 +13,10 @@ class SocketHandler {
         const crypto = new CryptographyTunnel.CryptographyTunnel(sharedKey);
 
         const parser = new Parser.Parser(this.socket, crypto);
-        await this.listenForClientMessage(crypto, parser);
+        this.listenForClientMessage(crypto, parser);
     }
 
-    async listenForClientMessage(crypto, parser) {
+    listenForClientMessage(crypto, parser) {
         this.socket.on('ClientMessage', async (clientMessagePayload) => {
             const message = crypto.recieveClientPayload(clientMessagePayload);
 

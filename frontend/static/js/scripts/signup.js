@@ -1,7 +1,6 @@
 (function ($) {
     "use strict";
 
-    const socket =  window.client.socket;
     const errorMessage = document.getElementById('errorMessage');
 
     /*==================================================================
@@ -175,26 +174,24 @@
 
         window.client.username = username;
         
-        const signupPayload = await window.client.sendToServerPayload('SignUp$' + username + '$' + email + '$' + password);
-        socket.emit('ClientMessage', signupPayload);   
-        
-        socket.on('signupResult', async (operationResult) => {
-            if(operationResult === "UsernameFail")
-            {
-                errorMessage.textContent = "SignUp failed. Username already exists";
-                errorMessage.style.display = 'block';
-            }
-            else if(operationResult === "EmailFail")
-            {
-                errorMessage.textContent = "SignUp failed. Email already exists";
-                errorMessage.style.display = 'block';
-            }
-            else
-            {
-                window.client.logedIn = true;
-                window.client.navigateTo('/menu');
-            }
-        });
+        const signupRequest = 'SignUp$' + username + '$' + email + '$' + password;
+        const signupResult = await window.client.transferToServer(signupRequest, 'signupResult');
+
+        if(signupResult === "UsernameFail")
+        {
+            errorMessage.textContent = "SignUp failed. Username already exists";
+            errorMessage.style.display = 'block';
+        }
+        else if(signupResult === "EmailFail")
+        {
+            errorMessage.textContent = "SignUp failed. Email already exists";
+            errorMessage.style.display = 'block';
+        }
+        else
+        {
+            window.client.logedIn = true;
+            window.client.navigateTo('/menu');
+        } 
     }
 
 })(jQuery);

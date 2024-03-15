@@ -1,10 +1,6 @@
 (function ($) {
     "use strict";
 
-    debugger;
-
-    const socket = window.client.socket;
-
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function(){
@@ -22,7 +18,7 @@
     [ Validate ]*/
     var input = $('.validate-input .input100');
 
-    $('.validate-form').on('submit', function(event){
+    $('.validate-form').on('submit', async function(event){
         event.preventDefault(); // Prevent default form submission
 
         var check = true;
@@ -35,7 +31,7 @@
         }
         if(check)
         {
-            logging(); // Call the logging function if validation passes
+            await logging(); // Call the logging function if validation passes
         }
     });
 
@@ -92,22 +88,19 @@
 
         window.client.username = username;
         
-        const loginPayload = await window.client.sendToServerPayload('Login$' + username + '$' + password);
-        // Send login information to the server
-        socket.emit('ClientMessage', loginPayload);     
+        const loginRequest = 'Login$' + username + '$' + password;
+        const loginResult = await window.client.transferToServer(loginRequest, 'loginResult');
+
+        if(loginResult === "Success")
+        {
+            window.client.navigateTo('/codeVerification');
+        }
+        else{
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.innerText = "Login failed. Username or password are incorrect";
+            errorMessage.style.display = 'block';
+        }
         
-        // Wait for acknowledgement from the server
-        socket.on('loginResult', async (operationResult) => {
-            if(operationResult === "Success")
-            {
-                window.client.loadNextPage('/code-verification');
-            }
-            else{
-                const errorMessage = document.getElementById('errorMessage');
-                errorMessage.innerText = "Login failed. Username or password are incorrect";
-                errorMessage.style.display = 'block';
-            }
-        });
     }
 
     document.getElementById('signupButton').addEventListener('click', () => {
