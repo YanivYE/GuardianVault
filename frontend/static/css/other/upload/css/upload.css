@@ -1,20 +1,4 @@
 
-
-
-
-/*//////////////////////////////////////////////////////////////////
-[ FONT ]*/
-
-@font-face {
-  font-family: Ubuntu-Regular;
-  src: url('../fonts/ubuntu/Ubuntu-Regular.ttf'); 
-}
-
-@font-face {
-  font-family: Ubuntu-Bold;
-  src: url('../fonts/ubuntu/Ubuntu-Bold.ttf'); 
-}
-
 #backArrow {
   position: fixed;
   bottom: 20px;
@@ -34,176 +18,6 @@
 
 #backArrow a:hover {
   background-color: #555555;
-}
-
-
-/*//////////////////////////////////////////////////////////////////
-[ RESTYLE TAG ]*/
-
-* {
-    margin: 0px; 
-    padding: 0px; 
-    box-sizing: border-box;
-}
-
-body, html {
-    height: 100%;
-    font-family: Ubuntu-Regular, sans-serif;
-}
-
-/*---------------------------------------------*/
-a {
-    font-family: Ubuntu-Regular;
-    font-size: 14px;
-    line-height: 1.7;
-    color: #ffffff;
-    margin: 0px;
-    transition: all 0.4s;
-    -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-}
-
-a:focus {
-    outline: none !important;
-}
-
-a:hover {
-    text-decoration: none;
-  color: #fff;
-}
-
-/*---------------------------------------------*/
-h1,h2,h3,h4,h5,h6 {
-    margin: 0px;
-}
-
-p {
-    font-family: Ubuntu-Regular;
-    font-size: 14px;
-    line-height: 1.7;
-    color: #ffffff;
-    margin: 0px;
-}
-
-ul, li {
-    margin: 0px;
-    list-style-type: none;
-}
-
-
-/*---------------------------------------------*/
-input {
-    outline: none;
-    border: none;
-}
-
-textarea {
-  outline: none;
-  border: none;
-}
-
-textarea:focus, input:focus {
-  border-color: transparent !important;
-}
-
-input:focus::-webkit-input-placeholder { color:transparent; }
-input:focus:-moz-placeholder { color:transparent; }
-input:focus::-moz-placeholder { color:transparent; }
-input:focus:-ms-input-placeholder { color:transparent; }
-
-textarea:focus::-webkit-input-placeholder { color:transparent; }
-textarea:focus:-moz-placeholder { color:transparent; }
-textarea:focus::-moz-placeholder { color:transparent; }
-textarea:focus:-ms-input-placeholder { color:transparent; }
-
-input::-webkit-input-placeholder { color: #ffffff;}
-input:-moz-placeholder { color: #ffffff;}
-input::-moz-placeholder { color: #ffffff;}
-input:-ms-input-placeholder { color: #ffffff;}
-
-textarea::-webkit-input-placeholder { color: #ffffff;}
-textarea:-moz-placeholder { color: #ffffff;}
-textarea::-moz-placeholder { color: #ffffff;}
-textarea:-ms-input-placeholder { color: #ffffff;}
-
-label {
-  margin: 0;
-  display: block;
-}
-
-/*---------------------------------------------*/
-button {
-    outline: none !important;
-    border: none;
-    background: transparent;
-}
-
-button:hover {
-    cursor: pointer;
-}
-
-iframe {
-    border: none !important;
-}
-
-
-/*//////////////////////////////////////////////////////////////////
-[ Utility ]*/
-.txt1 {
-  font-family: Poppins-Regular;
-  font-size: 13px;
-  color: #e5e5e5;
-  line-height: 1.5;
-}
-
-
-/*//////////////////////////////////////////////////////////////////
-[ login ]*/
-
-.limiter {
-  width: 100%;
-  margin: 0 auto;
-}
-
-.container-login100 {
-  width: 100%;  
-  min-height: 100vh;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  padding: 15px;
-
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  position: relative;
-  z-index: 1;  
-}
-
-.container-login100::before {
-  content: "";
-  display: block;
-  position: absolute;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background-color: rgba(0,0,0,0.65);
-}
-
-.wrap-upload100 {
-  width: 390px;
-  border-radius: 10px;
-  overflow: hidden;
-
-  background: transparent;
 }
 
 
@@ -850,4 +664,98 @@ label[for="private"], label[for="public"] {
   box-sizing: border-box; /* Ensure padding doesn't affect overall size */
   margin-bottom: 30px; /* Add margin bottom to move the box up */
 
+}
+
+.file-upload {
+  position: relative;
+  overflow: hidden;
+  width: 200px; /* Adjust the width as needed */
+  height: 200px; /* Adjust the height as needed */
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-upload-icon {
+  font-size: 36px;
+  color: #666;
+}
+
+.file-upload-text {
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-status-buttons {
+  display: flex;
+  justify-content: flex-start; /* Adjusted alignment to start from the left */
+  margin-bottom: 10px;
+}
+
+.file-status-button {
+  padding: 10px 20px;
+  border: 2px solid #8c8c8c; /* Adjusted border color */
+  border-radius: 5px;
+  background-color: #e6e6e6; /* Adjusted background color */
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  margin-right: 5px;
+}
+
+.file-status-button:last-child {
+  margin-right: 0;
+}
+
+.file-status-button:hover {
+  background-color: #d9d9d9; /* Darker background color on hover */
+}
+
+.file-status-button.active {
+  background-color: #0056b3; /* Darker background color for active button */
+  color: #fff;
+  border-color: #0056b3; /* Darker border color for active button */
+}
+
+.checkbox-item {
+  display: flex; /* Use flexbox */
+  align-items: center; /* Align items vertically */
+  margin-bottom: 5px;
+}
+
+.checkbox-item input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.loader {
+  border: 4px solid #f3f3f3; /* Light grey */
+  border-top: 4px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 2s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
