@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const socket = window.client.socket;
 
     document.getElementById("forgotPasswordForm").addEventListener('submit', async function (event) {
         event.preventDefault();
@@ -10,23 +9,20 @@ document.addEventListener('DOMContentLoaded', function () {
         window.client.username = username;
 
         message.style.display = "none"; 
-    
+
         const forgotPasswordRequest = 'ForgotPassword$' + username;
-        const forgotPasswordPayload = await window.client.sendToServerPayload(forgotPasswordRequest);
+        const forgotPasswordResult = await window.client.transferToServer(forgotPasswordRequest, 'forgotPasswordResult');
+    
+        if(forgotPasswordResult === "Fail")
+        {
+            message.style.display = "block";
+            message.innerText = "Username doesn't exist";
+        }
+        else
+        {
+            window.client.navigateTo('/codeVerification');
+        }
 
-        socket.emit('ClientMessage', forgotPasswordPayload);
-
-        socket.on('forgotPasswordResult', async (forgotPasswordResult) => {
-            if(forgotPasswordResult === "Fail")
-            {
-                message.style.display = "block";
-                message.innerText = "Username doesn't exist";
-            }
-            else
-            {
-                window.client.navigateTo('/codeVerification');
-            }
-        });
     });
 });
 

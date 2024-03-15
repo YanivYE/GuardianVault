@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', async function () 
 {
-    const socket = window.client.socket;
-
     if (!window.client.logedIn) {
       window.client.navigateTo('/login'); // Redirect to login page if not logged in
     }
@@ -28,21 +26,18 @@ document.addEventListener('DOMContentLoaded', async function ()
     async function userLogout()
     {
         document.getElementById('logoutLoader').style.display = 'block';
+
         const logoutRequest = 'Logout$';
-        const logoutPayload = await window.client.sendToServerPayload(logoutRequest);
+        const logoutResult = await window.client.transferToServer(logoutRequest, 'logoutResult');
 
-        socket.emit('ClientMessage', logoutPayload);
+        if(logoutResult === 'Success')
+        {
+          window.client.logedIn = false;
+          document.getElementById('logoutLoader').style.display = 'none';
+          window.client.navigateTo('/index');
 
-        socket.on('logoutResult', async (logoutResult) => {
-            if(logoutResult === 'Success')
-            {
-              window.client.logedIn = false;
-              document.getElementById('logoutLoader').style.display = 'none';
-              window.client.navigateTo('/index');
-
-              window.client = null; // or window.client = undefined;
-              window.location.reload(); 
-            }
-        });
+          window.client = null; // or window.client = undefined;
+          window.location.reload(); 
+        }
     }
 });
