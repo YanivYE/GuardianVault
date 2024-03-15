@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', async function () 
 {
-    const socket = window.client.socket;
-
     if (!window.client.logedIn) {
         window.client.navigateTo('/login'); // Redirect to login page if not logged in
     }
@@ -76,33 +74,18 @@ document.addEventListener('DOMContentLoaded', async function ()
 
     async function getUserOwnFilesListFromServer() {
         try {
-            const ownFileListPayload = await window.client.sendToServerPayload('ownFileList$');
-            socket.emit('ClientMessage', ownFileListPayload); // Not sure why you're emitting here, but you can handle it based on your application's logic
+            const ownFileListRequest = 'ownFileList$';
+            const ownFileListResult = await window.client.transferToServer(ownFileListRequest, 'ownFileListResult');
 
-            return new Promise((resolve, reject) => {
-                socket.on('ownFileListPayload', async (filesListPayload) => {
-                    if(filesListPayload === "empty")
-                    {
-                        resolve([]);
-                    }
-                    else{
-                        const filesString = await window.client.receivePayloadFromServer(filesListPayload);
+            if(ownFileListResult === "empty")
+            {
+                return [];
+            }
+            else{
+                const filesList = ownFileListResult.split(',');
 
-                        const filesList = filesString.split(',');
-
-                        resolve(filesList);
-                    }
-                    
-                    
-                });
-
-                // Optionally, handle any errors that might occur while receiving the users list
-                socket.on('error', (error) => {
-                    reject(error);
-                });
-            }).then((filesList) => {
-                return filesList; // Return the usersList after resolving the promise
-            });
+                return filesList;
+            }
         } catch (error) {
             console.error("Error getting users list from server:", error);
             // Handle the error as needed
@@ -111,32 +94,18 @@ document.addEventListener('DOMContentLoaded', async function ()
 
     async function getUserSharedFilesListFromServer() {
         try {
-            const sharedFileListPayload = await window.client.sendToServerPayload('sharedFileList$');
-            socket.emit('ClientMessage', sharedFileListPayload); // Not sure why you're emitting here, but you can handle it based on your application's logic
+            const sharedFileListRequest = 'sharedFileList$';
+            const sharedFileListResult = await window.client.transferToServer(sharedFileListRequest, 'sharedFileListResult');
 
-            return new Promise((resolve, reject) => {
-                socket.on('sharedFileListPayload', async (filesListPayload) => {
-                    if(filesListPayload === "empty")
-                    {
-                        resolve([]);
-                    }
-                    else{
-                        const filesString = await window.client.receivePayloadFromServer(filesListPayload);
-                    
-                        const filesList = convertStringToFilesList(filesString);
+            if(sharedFileListResult === "empty")
+            {
+                return [];
+            }
+            else{
+                const filesList = convertStringToFilesList(sharedFileListResult);
 
-                        resolve(filesList);
-                    }
-                    
-                });
-
-                // Optionally, handle any errors that might occur while receiving the users list
-                socket.on('error', (error) => {
-                    reject(error);
-                });
-            }).then((filesList) => {
-                return filesList; // Return the usersList after resolving the promise
-            });
+                return filesList;
+            }
         } catch (error) {
             console.error("Error getting users list from server:", error);
             // Handle the error as needed
@@ -382,23 +351,25 @@ document.addEventListener('DOMContentLoaded', async function ()
     {
         message.style.display = "none"; 
         document.getElementById('downloadLoader').style.display = 'block';
+
         const deleteFileRequest = 'DeleteFile$' + fileName + '$' + fileOwner;
-        const deleteFilePayload = await window.client.sendToServerPayload(deleteFileRequest);
-        socket.emit('ClientMessage', deleteFilePayload);
-        socket.on('deleteFileResult', async (deleteFileResult) => {
-            if(deleteFileResult === 'Success')
-            {
-                files = await getUserOwnFilesListFromServer();
+        const deleteFileResult = await window.client.transferToServer(deleteFileRequest, 'deleteFileResult');
 
-                sharedFiles = await getUserSharedFilesListFromServer();
+        if(deleteFileResult === 'Success')
+        {
+            files = await getUserOwnFilesListFromServer();
 
-                document.getElementById('downloadLoader').style.display = 'none';
-                displayUserFiles();
-                message.style.display = "block";
-                message.style.color = "green";
-                message.innerText = "File deleted successfully!";
-            }
-        });
+            sharedFiles = await getUserSharedFilesListFromServer();
+
+            document.getElementById('downloadLoader').style.display = 'none';
+
+            displayUserFiles();
+
+            message.style.display = "block";
+            message.style.color = "green";
+            message.innerText = "File deleted successfully!";
+        }
+        
     }
 
 });

@@ -34,9 +34,6 @@ class FileHandler
         try {
             // Assuming this.fileName and this.fileContent are available
             await this.DriveHandler.handleFileUpload(this.fileName, this.fileContent, this.encryptionPassword, this.username);
-        
-            // Emit the success result
-            this.socket.emit('UploadFileResult', "Success");
         } catch (error) {
             // If an error occurs during file upload or writing, emit an error result
             console.error('Error uploading file:', error);
