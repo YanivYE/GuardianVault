@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', async function () {
-    const socket = window.client.socket;
 
     if (!window.client.logedIn) {
         window.client.navigateTo('/login'); // Redirect to login page if not logged in
@@ -139,31 +138,18 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     async function getUsersListFromServer() {
         try {
-            const userListPayload = await window.client.sendToServerPayload('UsersList$');
-            socket.emit('ClientMessage', userListPayload); 
-    
-            return new Promise((resolve, reject) => {
-                socket.on('usersListPayload', async (usersListPayload) => {
-                    if(usersListPayload === "empty")
-                    {
-                        resolve([]);
-                    }
-                    else{
-                        const usersString = await window.client.receivePayloadFromServer(usersListPayload);
-                    
-                        const usersList = usersString.split(',');
-                        resolve(usersList);
-                    }
-                    
-                });
-    
-                // Optionally, handle any errors that might occur while receiving the users list
-                socket.on('error', (error) => {
-                    reject(error);
-                });
-            }).then(async (usersList) => {
-                return usersList; // Return the usersList after resolving the promise
-            });
+
+            const usersListRequest = 'UsersList$';
+            const usersListResult = await window.client.transferToServer(usersListRequest, 'usersListResult');
+
+            if(usersListResult === "empty")
+            {
+                return [];
+            }
+            else{
+                const usersList = usersListResult.split(',');
+                return usersList;
+            }
         } catch (error) {
             console.error("Error getting users list from server:", error);
             // Handle the error as needed
@@ -285,49 +271,20 @@ document.addEventListener('DOMContentLoaded', async function () {
         sendNextBlock();
     }
 
-    
-
-    
-
     async function validateFileName(fileName, shareWithUsers) {
-        return new Promise(async (resolve, reject) => {
-            const validateFileNameRequest = 'validateName$' + fileName + '$' + shareWithUsers;
-            const validateFileNamePayload = await window.client.sendToServerPayload(validateFileNameRequest);
-    
-            socket.emit('ClientMessage', validateFileNamePayload);
-            
-            socket.on('validateNameResult', (validateNameResult) => {
-                resolve(validateNameResult); // Resolve the promise with the result
-            });
-    
-            // Handle errors if any
-            socket.on('error', (error) => {
-                reject(error); // Reject the promise with the error
-            });
-        });
+
+        const validateFileNameRequest = 'validateName$' + fileName + '$' + shareWithUsers;
+        const validateNameResult = await window.client.transferToServer(validateFileNameRequest, 'validateNameResult');
+
+        return validateNameResult
     }
 
     async function sendFileBlock(block, blockIndex, totalBlocks) {
-        try {
-            const uploadFileBlockRequest = 'UploadFileBlock$' + blockIndex + '$' + block + '$' + totalBlocks;
-            const uploadFileBlockPayload = await window.client.sendToServerPayload(uploadFileBlockRequest);
-            
-            socket.emit('ClientMessage', uploadFileBlockPayload);
-    
-            return new Promise((resolve, reject) => {
-                socket.once('uploadBlockResult', uploadBlockResult => {
-                    resolve(uploadBlockResult);
-                });
-    
-                socket.once('error', error => {
-                    reject(error);
-                });
-            });
-        } catch (error) {
-            throw error;
-        }
-    }
-    
+        
+        const uploadFileBlockRequest = 'UploadFileBlock$' + blockIndex + '$' + block + '$' + totalBlocks;
+        const uploadBlockResult = await window.client.transferToServer(uploadFileBlockRequest, 'uploadBlockResult');
 
+        return uploadBlockResult;
+    }
     
 });
