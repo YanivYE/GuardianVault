@@ -16,7 +16,10 @@
 }
 
 
-
+#app
+{
+  width: 100%;
+}
 
 /*//////////////////////////////////////////////////////////////////
 [ RESTYLE TAG ]*/
@@ -149,6 +152,7 @@ iframe {
 
 .container-index100 {
   width: 100%;  
+  max-width: 100%;
   min-height: 100vh;
   display: -webkit-box;
   display: -webkit-flex;
