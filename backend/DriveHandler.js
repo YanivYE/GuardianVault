@@ -8,22 +8,26 @@ const config = require('./config');
 class DriveHandler 
 {
     constructor()
-    {
-        this.oauth2Client = new google.auth.OAuth2(
-          config.CLIENT_ID,
-          config.CLIENT_SECRET,
-          config.REDIRECT_URI
-        );
-          
-        this.oauth2Client.setCredentials({ refresh_token: config.REFRESH_TOKEN });
-        
-        this.drive = google.drive({
-          version: 'v3',
-          auth: this.oauth2Client,
-        });
-
+    {   
+        this.drive = this.connectToDrive();
         this.atRestCrypto = new EncryptionAtRest.EncryptionAtRest();
         this.compressor = new Compressor.Compressor();
+    }
+
+    connectToDrive()
+    {
+        let oauth2Client = new google.auth.OAuth2(
+            config.CLIENT_ID,
+            config.CLIENT_SECRET,
+            config.REDIRECT_URI
+        );
+            
+        oauth2Client.setCredentials({ refresh_token: config.REFRESH_TOKEN });
+          
+        return google.drive({
+            version: 'v3',
+            auth: oauth2Client,
+        });
     }
 
     async createFolder(username) {

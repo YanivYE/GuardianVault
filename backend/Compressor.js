@@ -2,9 +2,7 @@ const zlib = require('zlib');
 
 class Compressor
 {
-    constructor()
-    {
-    }
+    constructor() {}
 
     compressFile(decompressedFileData)
     {

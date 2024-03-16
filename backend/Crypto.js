@@ -45,8 +45,6 @@ class CryptographyTunnel {
         // Return the IV, ciphertext, and authentication tag
         return { iv: iv, ciphertext: encrypted, authTag: authTag };
     }
-    
-    
 
     decryptData(iv, ciphertext, tag) {
         // Create the AES-GCM decipher
