@@ -13,6 +13,7 @@ class SocketHandler {
         const crypto = new CryptographyTunnel.CryptographyTunnel(sharedKey);
 
         const parser = new Parser.Parser(this.socket, crypto);
+        
         this.listenForClientMessage(crypto, parser);
     }
 

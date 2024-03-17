@@ -1,3 +1,5 @@
+debugger;
+
 if (!window.client.logedIn) {
     window.client.navigateTo('/login'); // Redirect to login page if not logged in
 }
@@ -64,7 +66,7 @@ users.forEach(function(user) {
 });
 
 // Add event listener for file selection
-var fileInput = document.getElementById('fileUpload');
+var fileInput = document.getElementById('fileInput-upload');
 fileInput.addEventListener('change', displayUploadedFile);
 
 // Function to display the uploaded file
@@ -171,7 +173,7 @@ uploadForm.addEventListener('submit', async function(event) {
         users = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
     }
 
-    var fileInput = document.getElementById('fileInput');
+    var fileInput = document.getElementById('fileInput-upload');
     var file = fileInput.files[0]; // Get the selected file
     
     // Check if all inputs are valid
@@ -259,7 +261,6 @@ async function uploadFile(fileContent, fileSize) {
                 });
         } else {
             // All chunks have been uploaded successfully
-            console.log("All blocks uploaded successfully");
             loader.style.display = 'none';
             successAlert("File uploaded successfully!");
             document.getElementById("uploadButton").disabled = false;

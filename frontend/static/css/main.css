@@ -1,19 +1,5 @@
-
-
-
-
 /*//////////////////////////////////////////////////////////////////
 [ FONT ]*/
-
-@font-face {
-  font-family: Ubuntu-Regular;
-  src: url('../fonts/ubuntu/Ubuntu-Regular.ttf'); 
-}
-
-@font-face {
-  font-family: Ubuntu-Bold;
-  src: url('../fonts/ubuntu/Ubuntu-Bold.ttf'); 
-}
 
 
 #app
@@ -21,6 +7,17 @@
   width: 100%;
   height: 100%;
 }
+
+/* @font-face {
+  font-family: Ubuntu-Regular;
+  src: url('../fonts/ubuntu/Ubuntu-Regular.ttf'); 
+} */
+
+@font-face {
+  font-family: Ubuntu-Bold;
+  src: url('../fonts/ubuntu/Ubuntu-Bold.ttf'); 
+}
+
 
 /*//////////////////////////////////////////////////////////////////
 [ RESTYLE TAG ]*/
@@ -3021,7 +3018,6 @@ label[for="private"], label[for="public"] {
   margin-right: 15px; /* Adjust the margin between radio buttons and labels */
 }
 
-/* Style the uploaded file container */
 #uploadedFile {
   margin-top: 10px;
   font-family: Ubuntu-Regular;
