@@ -62,8 +62,8 @@
     [ Show pass ]*/
     document.addEventListener('DOMContentLoaded', function () {
         function togglePassword() {
-            const eye = document.querySelector("#eye");
-            const passwordInput = document.querySelector("#password");
+            const eye = document.querySelector("#eye-login");
+            const passwordInput = document.querySelector("#password-login");
 
             const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
             passwordInput.setAttribute("type", type);

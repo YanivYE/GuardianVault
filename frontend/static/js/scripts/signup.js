@@ -5,7 +5,7 @@
 
     /*==================================================================
     [ Focus input ]*/
-    $('.input100').each(function(){
+    $('.input-signup100').each(function(){
         $(this).on('blur', function(){
             if($(this).val().trim() != "") {
                 $(this).addClass('has-val');
@@ -18,7 +18,7 @@
 
     /*==================================================================
     [ Validate ]*/
-    var input = $('.validate-input .input100');
+    var input = $('.validate-input-signup .input-signup100');
 
     $('.validate-form').on('submit', function(event){
         event.preventDefault(); // Prevent default form submission
@@ -38,7 +38,7 @@
         }
     });
 
-    $('.validate-form .input100').each(function(){
+    $('.validate-form .input-signup100').each(function(){
         $(this).focus(function(){
            hideValidate(this);
         });
@@ -56,7 +56,7 @@
         }
         if ($(input).attr('type') == 'password') {
             const password = $(input).val().trim();
-            const strengthText = document.getElementById('password-strength-text').textContent;
+            const strengthText = document.getElementById('password-strength-signup-text').textContent;
 
             // Check if the password strength is "Strong" or "Excellent!"
             if (strengthText !== 'Strong' && strengthText !== 'Excellent!') {
@@ -80,8 +80,8 @@
     document.addEventListener('DOMContentLoaded', function () {
 
         function togglePassword() {
-            const eye = document.querySelector("#eye");
-            const passwordInput = document.querySelector("#password");
+            const eye = document.querySelector("#eye-signup");
+            const passwordInput = document.querySelector("#password-signup");
 
             const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
             passwordInput.setAttribute("type", type);
@@ -95,13 +95,13 @@
         togglePassword();
 
         // Add an event listener for the Show Password button
-        document.querySelector('.btn-show-pass').addEventListener('click', function () {
+        document.querySelector('.btn-show-pass-signup').addEventListener('click', function () {
             togglePassword();
         });
 
     });
 
-    document.getElementById('password').addEventListener('input', function() {
+    document.getElementById('password-signup').addEventListener('input', function() {
         const password = this.value;
         checkPasswordStrength(password);
     });
@@ -113,10 +113,10 @@
         const regexUpper = /(?=.*[A-Z])/;
         const regexSpecial = /(?=.*[!@#$%^&*-])/;
 
-        const lengthCheck = document.getElementById('length-check');
-        const lowerCheck = document.getElementById('lower-check');
-        const upperCheck = document.getElementById('upper-check');
-        const specialCheck = document.getElementById('special-check');
+        const lengthCheck = document.getElementById('length-check-signup');
+        const lowerCheck = document.getElementById('lower-check-signup');
+        const upperCheck = document.getElementById('upper-check-signup');
+        const specialCheck = document.getElementById('special-check-signup');
 
         lengthCheck.checked = regexLength.test(password);
         lowerCheck.checked = regexLower.test(password);
@@ -126,7 +126,7 @@
         const strength = (regexLength.test(password) + regexLower.test(password) +
                           regexUpper.test(password) + regexSpecial.test(password)) / 4;
 
-        const strengthBar = document.getElementById('strength-bar');
+        const strengthBar = document.getElementById('strength-bar-signup');
         strengthBar.style.width = (strength * 100) + '%';
         strengthBar.style.backgroundColor = getStrengthColor(strength);
 
