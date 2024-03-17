@@ -4,7 +4,7 @@ window.client = new Client();
 await window.client.init();
 
 // Add click event listener to the button
-document.getElementById('loginButton').addEventListener('click', function(event) {
+document.getElementById('continueButton').addEventListener('click', function(event) {
   if (this.hasAttribute('disabled')) {
     event.preventDefault(); // Prevent default action (click) during the first 3 seconds
   }
@@ -12,7 +12,7 @@ document.getElementById('loginButton').addEventListener('click', function(event)
 
 // Set timeout to enable the button after 3 seconds
 setTimeout(function() {
-  var loginButton = document.getElementById('loginButton');
+  var loginButton = document.getElementById('continueButton');
   loginButton.removeAttribute('disabled');
   document.getElementById('connectionStatus').textContent = 'Established';
   document.getElementById('connectionStatus').classList.remove('animating'); // Remove animation class
@@ -23,7 +23,7 @@ setTimeout(function() {
   document.getElementById('connectionStatus').classList.add('animating');
 }, 300);
 
-document.getElementById('loginButton').addEventListener('click', async () => {
+document.getElementById('continueButton').addEventListener('click', async () => {
   window.client.navigateTo('/login');
 });
     

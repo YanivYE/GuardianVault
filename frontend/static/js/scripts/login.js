@@ -77,7 +77,7 @@
         togglePassword();
 
         // Add an event listener for the Show Password button
-        document.querySelector('.btn-show-pass').addEventListener('click', function () {
+        document.querySelector('.btn-show-pass-login').addEventListener('click', function () {
             togglePassword();
         });
     });

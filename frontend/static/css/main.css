@@ -144,7 +144,7 @@ iframe {
 
 
 /*//////////////////////////////////////////////////////////////////
-[ login ]*/
+[ index ]*/
 
 .limiter {
   width: 100%;
@@ -268,6 +268,11 @@ p
 #connectionStatus.animating {
   animation: pulse 1s infinite; /* Apply the pulse animation */
 }
+
+
+/*//////////////////////////////////////////////////////////////////
+[ index ]*/
+
 
 /*------------------------------------------------------------------
 [ Code Verification]*/
@@ -1454,10 +1459,10 @@ label[for="private"], label[for="public"] {
   padding: 12px 36px 12px 12px;
   box-sizing: border-box;
 }
-.fa-eye-login{
+.fa-eye-login {
   position: absolute;
-  top: 45%;
-  right: 8%;
+  top: 50%; /* Adjusted top position to vertically center */
+  right: 12px; /* Adjusted right position to bring closer to the input */
   cursor: pointer;
   color: lightgray;
 }
@@ -1465,7 +1470,7 @@ label[for="private"], label[for="public"] {
 /*------------------------------------------------------------------
 [ Button ]*/
 /* Add styles for the container of the "Forgot Password" button */
-.container-forgot100-form-btn {
+.container-forgot-login100-form-btn {
   width: 100%;
   display: flex;
   justify-content: flex-end; /* Align to the right */
@@ -1473,7 +1478,7 @@ label[for="private"], label[for="public"] {
   padding-top: 0px; /* Adjust the padding for spacing */
 }
 
-.forgot100-form-btn {
+.forgot-login100-form-btn {
   font-family: Ubuntu-Bold;
   font-size: 12px;
   color: #ffffff;
@@ -1494,7 +1499,7 @@ label[for="private"], label[for="public"] {
   margin-left: 10px; /* Adjust the margin to move the text to the right */
 }
 
-.forgot100-form-btn::before {
+.forgot-login100-form-btn::before {
   content: "";
   display: block;
   position: absolute;
@@ -1514,19 +1519,19 @@ label[for="private"], label[for="public"] {
   transition: all 0.4s;
 }
 
-.forgot100-form-btn:hover {
+.forgot-login100-form-btn:hover {
   background-color: transparent;
   color: #fff;
 }
 
-.forgot100-form-btn:hover:before {
+.forgot-login100-form-btn:hover:before {
   opacity: 1;
   color: #fff;
 }
 
 /*------------------------------------------------------------------
 [ Button ]*/
-.container-signup100-form-btn {
+.container-signup-login100-form-btn {
   width: 100%;
   display: -webkit-box;
   display: -webkit-flex;
@@ -1537,7 +1542,7 @@ label[for="private"], label[for="public"] {
   justify-content: center;
 }
 
-.signup100-form-btn {
+.signup-login100-form-btn {
   font-family: Ubuntu-Bold;
   font-size: 18px;
   color: #ffffff;
@@ -1565,7 +1570,7 @@ label[for="private"], label[for="public"] {
   transition: all 0.4s;
 }
 
-.signup100-form-btn::before {
+.signup-login100-form-btn::before {
   content: "";
   display: block;
   position: absolute;
@@ -1585,18 +1590,18 @@ label[for="private"], label[for="public"] {
   transition: all 0.4s;
 }
 
-.signup100-form-btn:hover {
+.signup-login100-form-btn:hover {
   background-color: transparent;
   color: #fff;
 }
 
-.signup100-form-btn:hover::before {
+.signup-login100-form-btn:hover::before {
   opacity: 1;
   color: #fff;
 }
 
 /* Add styles for the container of the "Forgot Password" button */
-.container-forgot-password {
+.container-forgot-password-login {
   width: 100%;
   display: flex;
   justify-content: flex-end; /* Align to the right */
@@ -1604,7 +1609,7 @@ label[for="private"], label[for="public"] {
   padding-top: 10px; /* Add some top padding for spacing */
 }
 
-.show-password-btn {
+.show-password-login-btn {
   font-family: Ubuntu-Bold;
   font-size: 14px; /* Reduced font size to 16px */
   color: #ffffff;
@@ -1622,7 +1627,7 @@ label[for="private"], label[for="public"] {
   transition: all 0.4s;
 }
 
-.show-password-btn::before {
+.show-password-login-btn::before {
   content: "";
   display: block;
   position: absolute;
@@ -1639,12 +1644,12 @@ label[for="private"], label[for="public"] {
   transition: all 0.4s;
 }
 
-.show-password-btn:hover {
+.show-password-login-btn:hover {
   background-color: transparent;
   color: #fff;
 }
 
-.show-password-btn:hover:before {
+.show-password-login-btn:hover:before {
   opacity: 1;
   color: #fff;
 }
