@@ -64,7 +64,7 @@ users.forEach(function(user) {
 });
 
 // Add event listener for file selection
-var fileInput = document.getElementById('fileInput');
+var fileInput = document.getElementById('fileUpload');
 fileInput.addEventListener('change', displayUploadedFile);
 
 // Function to display the uploaded file
@@ -156,6 +156,7 @@ async function getUsersListFromServer() {
 
 // Add event listener for form submission
 uploadForm.addEventListener('submit', async function(event) {
+
     event.preventDefault(); // Prevent default form submission
     
     // Validate inputs

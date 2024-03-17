@@ -17,14 +17,5 @@ export default class ForgotPasswordView extends AbstractView {
         }
     }
 
-    async loadScript() {
-        if (!this.scriptLoaded) {
-            try {
-                await import("../scripts/forgotPassword.js");
-                this.scriptLoaded = true;
-            } catch (error) {
-                console.error('Error loading script:', error);
-            }
-        }
-    }
+
 }

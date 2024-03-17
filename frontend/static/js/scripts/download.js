@@ -1,3 +1,4 @@
+const socket = window.client.socket;
 
 if (!window.client.logedIn) {
     window.client.navigateTo('/login'); // Redirect to login page if not logged in

@@ -1,129 +1,20 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
-  <style>
-    body {
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      color: white; /* Change text color to white */
-      font-family: Arial, sans-serif; /* Change font family */
-    }
 
-    h1 {
-      font-size: 36px; /* Adjust font size as needed */
-      margin-bottom: 30px; /* Add space below the title */
-      text-align: center; /* Center align the title */
-    }
+<div class="container-login100" style="background-image: url('static/css/images/bg-01.jpg');">
+  <h1 id="title">Welcome!</h1>
+  <div class="button-container">
+    <button id="download" class="button">
+      <img src="static/css/images/download.png" alt="Download Icon">
+      Download
+    </button>
 
-    .button-container {
-      display: flex;
-      justify-content: center; /* Center align the buttons horizontally */
-    }
-
-    .button {
-      width: 200px; /* Adjust the button size as needed */
-      height: 200px; /* Adjust the button size as needed */
-      background-color: rgba(255, 255, 255, 0.608);
-      border: none;
-      border-radius: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: #fff; /* White Text Color */
-      font-size: 24px; /* Adjust the font size as needed */
-      cursor: pointer;
-      margin: 20px; /* Adjust the margin as needed */
-    }
-
-    .button img {
-      width: 100px; /* Adjust the image size as needed */
-      height: 100px; /* Adjust the image size as needed */
-      margin-bottom: 15px; /* Adjust the margin as needed */
-    }
-
-    .container-login100 {
-      width: 100%;  
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column; /* Change to column layout */
-      justify-content: center;
-      align-items: center;
-      padding: 15px;
-
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: cover;
-      position: relative;
-      z-index: 1;  
-    }
-
-    .container-login100::before {
-      content: "";
-      display: block;
-      position: absolute;
-      z-index: -1;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      background-color: rgba(0,0,0,0.65);
-    }
-
-    .logout-button {
-      background-color: #FF5252; /* Red Color */
-      color: #fff; /* White Text Color */
-      border: none;
-      border-radius: 20px;
-      padding: 10px 20px;
-      font-size: 20px;
-      cursor: pointer;
-      margin-top: 20px; /* Adjust the top margin */
-      margin-bottom: 20px; /* Adds some space between the button and the bottom */
-    }
-
-    .loader {
-      border: 4px solid #f3f3f3; /* Light grey */
-      border-top: 4px solid #3498db; /* Blue */
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      animation: spin 2s linear infinite;
-      margin: auto;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
-</head> -->
-<!-- <body> -->
-  <div class="container-login100" style="background-image: url('static/css/images/bg-01.jpg');">
-    <h1 id="title">Welcome!</h1>
-    <div class="button-container">
-      <button id="download" class="button">
-        <img src="static/css/images/download.png" alt="Download Icon">
-        Download
-      </button>
-  
-      <button id="upload" class="button">
-        <img src="static/css/images/upload.png" alt="Upload Icon">
-        Upload
-      </button>
-    </div>
-    <div class="form-group" id="logoutLoader" style="display: none;">
-        <div class="loader"></div>
-    </div>
-    <button class="logout-button" id="logoutButton">Logout</button>
-
+    <button id="upload" class="button">
+      <img src="static/css/images/upload.png" alt="Upload Icon">
+      Upload
+    </button>
   </div>
-  <script src="menu.js"></script>
-<!-- </body> -->
-<!-- </html> -->
+  <div class="form-group" id="logoutLoader" style="display: none;">
+      <div class="loader"></div>
+  </div>
+  <button class="logout-button" id="logoutButton">Logout</button>
+</div>
+

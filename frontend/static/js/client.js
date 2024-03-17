@@ -23,20 +23,8 @@ export default class Client {
             await this.initSocket(); // Initialize socket
             await this.setupEventListeners(); // Set up event listeners
             await this.waitForInitialization(); // Wait for both socket and key exchange
-            this.startRouterLoop();
         } catch (error) {
             console.error(error);
-        }
-    }
-
-    async startRouterLoop() {
-        while (true) {
-            await new Promise(resolve => {
-                window.addEventListener("popstate", async () => {
-                    this.router();
-                    resolve(); // Resolve the promise once the router is called
-                });
-            });
         }
     }
     
@@ -200,19 +188,19 @@ export default class Client {
 
     async navigateTo(url) {
         history.pushState(null, null, url);
-        this.router();
+        await this.router();
     };
     
     async router() {
         const routes = [
-            { path: "/login", view: LoginView },
-            { path: "/signup", view: SignupView },
-            { path: "/forgotPassword", view: ForgotPasswordView },
-            { path: "/codeVerification", view: CodeVerificationView },
-            { path: "/resetPassword", view: ResetPasswordView },
-            { path: "/menu", view: MenuView },
-            { path: "/upload", view: UploadView },
-            { path: "/download", view: DownloadView }
+            { path: "/login", view: LoginView, script: "./scripts/login.js" },
+            { path: "/signup", view: SignupView, script: "./scripts/signup.js" },
+            { path: "/forgotPassword", view: ForgotPasswordView, script: "./scripts/forgotPassword.js" },
+            { path: "/codeVerification", view: CodeVerificationView, script: "./scripts/codeVerification.js" },
+            { path: "/resetPassword", view: ResetPasswordView, script: "./scripts/resetPassword.js" },
+            { path: "/menu", view: MenuView, script: "./scripts/menu.js" },
+            { path: "/upload", view: UploadView, script: "./scripts/upload.js" },
+            { path: "/download", view: DownloadView, script: "./scripts/download.js" }
         ];
     
         // Test each route for potential match
@@ -233,8 +221,11 @@ export default class Client {
         const view = new match.route.view();
     
         document.querySelector("#app").innerHTML = await view.getHtml();
-        await view.loadScript();
+
+        // Dynamically load script if available
+        if (match.route.script) {
+            await import(match.route.script);
+        }
     };
-    
 
 }

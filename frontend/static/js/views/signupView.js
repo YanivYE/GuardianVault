@@ -16,15 +16,4 @@ export default class SignupView extends AbstractView {
             return null; // or handle the error accordingly
         }
     }
-
-    async loadScript() {
-        if (!this.scriptLoaded) {
-            try {
-                await import("../scripts/signup.js");
-                this.scriptLoaded = true;
-            } catch (error) {
-                console.error('Error loading script:', error);
-            }
-        }
-    }
 }

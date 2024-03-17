@@ -9,6 +9,4 @@ export default class AbstractView {
     async getHtml() {
         return "";
     }
-
-    async loadScript() {}
 }

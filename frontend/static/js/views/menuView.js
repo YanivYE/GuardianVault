@@ -16,15 +16,4 @@ export default class MenuView extends AbstractView{
         return null; // or handle the error accordingly
     }
   }
-
-  async loadScript() {
-    if (!this.scriptLoaded) {
-        try {
-            await import("../scripts/menu.js");
-            this.scriptLoaded = true;
-        } catch (error) {
-            console.error('Error loading script:', error);
-        }
-    }
-  }
 }

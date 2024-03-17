@@ -1,6 +1,10 @@
+debugger;
+
 if (!window.client.logedIn) {
   window.client.navigateTo('/login'); // Redirect to login page if not logged in
 }
+
+console.log("hello");
 
 const username = window.client.username;
 document.getElementById("title").textContent=`Welcome ${username}!`;
