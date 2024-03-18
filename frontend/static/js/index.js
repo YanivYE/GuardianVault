@@ -4,6 +4,7 @@ window.client = new Client();
 await window.client.init();
 window.addEventListener("popstate", async () => {
   // unload script
+  window.client.unloadScript();
   await window.client.router();
 });
 

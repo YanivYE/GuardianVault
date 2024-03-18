@@ -1,114 +1,83 @@
-(function ($) {
-    "use strict";
 
-    /*==================================================================
-    [ Focus input ]*/
-    $('.input100').each(function(){
-        $(this).on('blur', function(){
-            if($(this).val().trim() != "") {
-                $(this).addClass('has-val');
-            }
-            else {
-                $(this).removeClass('has-val');
-            }
-        })    
-    })
-
-    /*==================================================================
-    [ Validate ]*/
-    var input = $('.validate-input .input100');
-
-    $('.validate-form').on('submit', async function(event){
-        event.preventDefault(); // Prevent default form submission
-
-        var check = true;
-
-        for(var i=0; i<input.length; i++) {
-            if(validate(input[i]) == false){
-                showValidate(input[i]);
-                check=false;
-            }
+console.log("hello");
+// Focus input
+const inputFields = document.querySelectorAll(".input-login100");
+inputFields.forEach(function (input) {
+    input.addEventListener("blur", function () {
+        if (input.value.trim() !== "") {
+            input.parentElement.classList.add("has-val");
+        } else {
+            input.parentElement.classList.remove("has-val");
         }
-        if(check)
-        {
-            await logging(); // Call the logging function if validation passes
+    });
+});
+
+// Validate form
+const loginForm = document.getElementById("loginForm");
+loginForm.addEventListener("submit", async function (event) {
+    event.preventDefault(); // Prevent default form submission
+
+    let check = true;
+
+    inputFields.forEach(function (input) {
+        if (!validate(input)) {
+            showValidate(input);
+            check = false;
         }
     });
 
-    $('.validate-form .input100').each(function(){
-        $(this).focus(function(){
-           hideValidate(this);
-        });
-    });
-
-    function validate(input) {
-        if($(input).val().trim() == ''){
-            return false;
-        }
-        return true; // Add more specific validation rules if needed
+    if (check) {
+        await logging(); // Call the logging function if validation passes
     }
+});
 
-    function showValidate(input) {
-        var thisAlert = $(input).parent();
-        $(thisAlert).addClass('alert-validate');
+// Show/Hide password
+const eyeIcon = document.getElementById("eye-login");
+const passwordInput = document.getElementById("password-login");
+eyeIcon.addEventListener("click", function () {
+    const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+    passwordInput.setAttribute("type", type);
+    eyeIcon.classList.toggle("fa-eye-slash", type === "password");
+});
+
+// Login function
+async function logging() {
+    const username = document.getElementsByName("username")[0].value;
+    const password = document.getElementsByName("password")[0].value;
+
+    window.client.username = username;
+
+    const loginRequest = "Login$" + username + "$" + password;
+    const loginResult = await window.client.transferToServer(loginRequest, "loginResult");
+
+    if (loginResult === "Success") {
+        window.client.navigateTo("/codeVerification");
+    } else {
+        const errorMessage = document.getElementById("errorMessage");
+        errorMessage.innerText = "Login failed. Username or password are incorrect";
+        errorMessage.style.display = "block";
     }
+}
 
-    function hideValidate(input) {
-        var thisAlert = $(input).parent();
-        $(thisAlert).removeClass('alert-validate');
+// Navigation
+document.getElementById("signupButton").addEventListener("click", function () {
+    window.client.navigateTo("/signup");
+});
+
+document.getElementById("forgotPass").addEventListener("click", function () {
+    window.client.navigateTo("/forgotPassword");
+});
+
+// Validation functions
+function validate(input) {
+    if (input.value.trim() === "") {
+        return false;
     }
+    return true; // Add more specific validation rules if needed
+}
 
-    /*==================================================================
-    [ Show pass ]*/
-    document.addEventListener('DOMContentLoaded', function () {
-        function togglePassword() {
-            const eye = document.querySelector("#eye-login");
-            const passwordInput = document.querySelector("#password-login");
+function showValidate(input) {
+    const thisAlert = input.parentElement;
+    thisAlert.classList.add("alert-validate");
+}
 
-            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-            passwordInput.setAttribute("type", type);
-
-            // Corrected the class name for the eye icon
-            eye.classList.toggle("fa-eye-slash", type === "password");
-        }
-
-        // Call the togglePassword function on document load
-        togglePassword();
-        togglePassword();
-
-        // Add an event listener for the Show Password button
-        document.querySelector('.btn-show-pass-login').addEventListener('click', function () {
-            togglePassword();
-        });
-    });
-
-    async function logging() {
-        const username = document.getElementsByName("username")[0].value;
-        const password = document.getElementsByName("password")[0].value;
-
-        window.client.username = username;
-        
-        const loginRequest = 'Login$' + username + '$' + password;
-        const loginResult = await window.client.transferToServer(loginRequest, 'loginResult');
-
-        if(loginResult === "Success")
-        {
-            window.client.navigateTo('/codeVerification');
-        }
-        else{
-            const errorMessage = document.getElementById('errorMessage');
-            errorMessage.innerText = "Login failed. Username or password are incorrect";
-            errorMessage.style.display = 'block';
-        }
-        
-    }
-
-    document.getElementById('signupButton').addEventListener('click', () => {
-        window.client.navigateTo('/signup');
-    });
-
-    document.getElementById('forgotPass').addEventListener('click', () => {
-        window.client.navigateTo('/forgotPassword');
-    });
-
-})(jQuery);

@@ -14,6 +14,7 @@ export default class Client {
         this.socket = null;
         this.logedIn = false;
         this.username = "";
+        this.previosScript = null;
         this.loadedScript = null;
         this.utils = new Utils();
     }
@@ -193,14 +194,14 @@ export default class Client {
     
     async router() {
         const routes = [
-            { path: "/login", view: LoginView, script: "./scripts/login.js" },
-            { path: "/signup", view: SignupView, script: "./scripts/signup.js" },
-            { path: "/forgotPassword", view: ForgotPasswordView, script: "./scripts/forgotPassword.js" },
-            { path: "/codeVerification", view: CodeVerificationView, script: "./scripts/codeVerification.js" },
-            { path: "/resetPassword", view: ResetPasswordView, script: "./scripts/resetPassword.js" },
-            { path: "/menu", view: MenuView, script: "./scripts/menu.js" },
-            { path: "/upload", view: UploadView, script: "./scripts/upload.js" },
-            { path: "/download", view: DownloadView, script: "./scripts/download.js" }
+            { path: "/login", view: LoginView, script: "static/js//scripts/login.js" },
+            { path: "/signup", view: SignupView, script: "static/js/scripts/signup.js" },
+            { path: "/forgotPassword", view: ForgotPasswordView, script: "static/js/scripts/forgotPassword.js" },
+            { path: "/codeVerification", view: CodeVerificationView, script: "static/js/scripts/codeVerification.js" },
+            { path: "/resetPassword", view: ResetPasswordView, script: "static/js/scripts/resetPassword.js" },
+            { path: "/menu", view: MenuView, script: "static/js/scripts/menu.js" },
+            { path: "/upload", view: UploadView, script: "static/js/scripts/upload.js" },
+            { path: "/download", view: DownloadView, script: "static/js/scripts/download.js" }
         ];
     
         // Test each route for potential match
@@ -217,25 +218,40 @@ export default class Client {
             // refresh page and return to index
             window.location.reload();
         }
-
-        // Unload previous script if available
-        if (this.loadedScript) {
-            // Execute the script's cleanup function if available
-            if (typeof this.loadedScript.cleanup === 'function') {
-                this.loadedScript.cleanup();
-            }
-        }
     
         const view = new match.route.view();
     
         document.querySelector("#app").innerHTML = await view.getHtml();
 
-        // Dynamically load script if available
         if (match.route.script) {
-            const module = await import(match.route.script);
-            // Check if the module has a cleanup function and store the script reference
-            this.loadedScript = module.default;
+            this.previosScript = this.loadedScript;
+            this.loadedScript = await this.loadScript(match.route.script);
         }
     };
+
+    async loadScript(scriptSrc) {
+        return new Promise((resolve, reject) => {
+    
+            const scriptElement = document.createElement('script');
+            scriptElement.src = scriptSrc;
+            scriptElement.onload = () => {
+                this.loadedScript = scriptElement;
+                resolve(scriptElement);
+            };
+            scriptElement.onerror = (error) => {
+                reject(error);
+            };
+    
+            document.head.appendChild(scriptElement);
+        });
+    }
+
+    unloadScript()
+    {
+        this.previosScript.onload = null; // Remove previous onload handler
+        this.previosScript.onerror = null; // Remove previous onerror handler
+        document.head.removeChild(this.previosScript); // Remove previous script element
+        this.previosScript.remove();
+    }
 
 }
