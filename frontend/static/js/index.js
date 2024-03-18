@@ -2,11 +2,7 @@ import Client from "./client.js"
 
 window.client = new Client();
 await window.client.init();
-window.addEventListener("popstate", async () => {
-  // unload script
-  window.client.unloadScript();
-  await window.client.router();
-});
+window.addEventListener("popstate",  window.client.router);
 
 // Add click event listener to the button
 document.getElementById('continueButton').addEventListener('click', function(event) {

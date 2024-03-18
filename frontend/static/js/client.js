@@ -194,14 +194,14 @@ export default class Client {
     
     async router() {
         const routes = [
-            { path: "/login", view: LoginView, script: "static/js//scripts/login.js" },
-            { path: "/signup", view: SignupView, script: "static/js/scripts/signup.js" },
-            { path: "/forgotPassword", view: ForgotPasswordView, script: "static/js/scripts/forgotPassword.js" },
-            { path: "/codeVerification", view: CodeVerificationView, script: "static/js/scripts/codeVerification.js" },
-            { path: "/resetPassword", view: ResetPasswordView, script: "static/js/scripts/resetPassword.js" },
-            { path: "/menu", view: MenuView, script: "static/js/scripts/menu.js" },
-            { path: "/upload", view: UploadView, script: "static/js/scripts/upload.js" },
-            { path: "/download", view: DownloadView, script: "static/js/scripts/download.js" }
+            { path: "/login", view: LoginView },
+            { path: "/signup", view: SignupView },
+            { path: "/forgotPassword", view: ForgotPasswordView },
+            { path: "/codeVerification", view: CodeVerificationView },
+            { path: "/resetPassword", view: ResetPasswordView },
+            { path: "/menu", view: MenuView },
+            { path: "/upload", view: UploadView },
+            { path: "/download", view: DownloadView }
         ];
     
         // Test each route for potential match
@@ -222,36 +222,6 @@ export default class Client {
         const view = new match.route.view();
     
         document.querySelector("#app").innerHTML = await view.getHtml();
-
-        if (match.route.script) {
-            this.previosScript = this.loadedScript;
-            this.loadedScript = await this.loadScript(match.route.script);
-        }
+        await view.executeViewScript();
     };
-
-    async loadScript(scriptSrc) {
-        return new Promise((resolve, reject) => {
-    
-            const scriptElement = document.createElement('script');
-            scriptElement.src = scriptSrc;
-            scriptElement.onload = () => {
-                this.loadedScript = scriptElement;
-                resolve(scriptElement);
-            };
-            scriptElement.onerror = (error) => {
-                reject(error);
-            };
-    
-            document.head.appendChild(scriptElement);
-        });
-    }
-
-    unloadScript()
-    {
-        this.previosScript.onload = null; // Remove previous onload handler
-        this.previosScript.onerror = null; // Remove previous onerror handler
-        document.head.removeChild(this.previosScript); // Remove previous script element
-        this.previosScript.remove();
-    }
-
 }
