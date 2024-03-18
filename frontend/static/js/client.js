@@ -14,7 +14,7 @@ export default class Client {
         this.socket = null;
         this.logedIn = false;
         this.username = "";
-        this.previousPage = null;
+        this.loadedScript = null;
         this.utils = new Utils();
     }
 
@@ -217,6 +217,14 @@ export default class Client {
             // refresh page and return to index
             window.location.reload();
         }
+
+        // Unload previous script if available
+        if (this.loadedScript) {
+            // Execute the script's cleanup function if available
+            if (typeof this.loadedScript.cleanup === 'function') {
+                this.loadedScript.cleanup();
+            }
+        }
     
         const view = new match.route.view();
     
@@ -224,7 +232,9 @@ export default class Client {
 
         // Dynamically load script if available
         if (match.route.script) {
-            await import(match.route.script);
+            const module = await import(match.route.script);
+            // Check if the module has a cleanup function and store the script reference
+            this.loadedScript = module.default;
         }
     };
 
