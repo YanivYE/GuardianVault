@@ -21,7 +21,7 @@ export default class ResetPasswordView extends AbstractView{
   {
     /*==================================================================
     [ Focus input ]*/
-    document.querySelectorAll('.input100').forEach(function(input) {
+    document.querySelectorAll('.input-reset100').forEach(function(input) {
       input.addEventListener('blur', function() {
           if (this.value.trim() !== "") {
               this.classList.add('has-val');
@@ -31,56 +31,54 @@ export default class ResetPasswordView extends AbstractView{
       });
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
+    function togglePassword() {
+        const eye = document.querySelector("#eye");
+        const passwordInput = document.querySelector("#password");
 
-      function togglePassword() {
-          const eye = document.querySelector("#eye");
-          const passwordInput = document.querySelector("#password");
+        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+        passwordInput.setAttribute("type", type);
 
-          const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-          passwordInput.setAttribute("type", type);
+        // Corrected the class name for the eye icon
+        eye.classList.toggle("fa-eye-slash", type === "password");
+    }
 
-          // Corrected the class name for the eye icon
-          eye.classList.toggle("fa-eye-slash", type === "password");
-      }
+    // Call the togglePassword function on document load
+    togglePassword();
 
-      // Call the togglePassword function on document load
-      togglePassword();
-
-      // Add an event listener for the Show Password button
-      document.querySelector('.btn-show-pass').addEventListener('click', function () {
-          togglePassword();
-      });
-
-      document.getElementById("resetPasswordForm").addEventListener('submit', async function (event) {
-          event.preventDefault();
-          
-          const message = document.getElementById("message");
-          const password = document.getElementsByName("password")[0].value;
-      
-          message.style.display = "none"; 
-      
-          const strength = getPasswordStrength(password);
-
-          if (strength > 0.6) { 
-              message.style.display = "block";
-              message.style.color = "green"
-              message.innerText = "Password reset successfully!";
-              const resetPasswordRequest = 'ResetPassword$' + password;
-              const resetPasswordResult = await window.client.transferToServer(resetPasswordRequest, 'resetPasswordResult');
-
-              if(resetPasswordResult === 'Success')
-              {
-                  window.client.logedIn = true;
-                  window.client.loadNextPage('/menu');
-              }
-          } else {
-              message.style.display = "block";
-              message.style.color = "red"
-              message.innerText = "Password strength must be at least strong!";
-          }
-      });
+    // Add an event listener for the Show Password button
+    document.querySelector('.btn-show-pass').addEventListener('click', function () {
+        togglePassword();
     });
+
+    document.getElementById("resetPasswordForm").addEventListener('submit', async function (event) {
+        event.preventDefault();
+        
+        const message = document.getElementById("message");
+        const password = document.getElementsByName("password")[0].value;
+    
+        message.style.display = "none"; 
+    
+        const strength = getPasswordStrength(password);
+
+        if (strength > 0.6) { 
+            message.style.display = "block";
+            message.style.color = "green"
+            message.innerText = "Password reset successfully!";
+            const resetPasswordRequest = 'ResetPassword$' + password;
+            const resetPasswordResult = await window.client.transferToServer(resetPasswordRequest, 'resetPasswordResult');
+
+            if(resetPasswordResult === 'Success')
+            {
+                window.client.logedIn = true;
+                window.client.navigateTo('/menu');
+            }
+        } else {
+            message.style.display = "block";
+            message.style.color = "red"
+            message.innerText = "Password strength must be at least strong!";
+        }
+    });
+    
 
     function getPasswordStrength(password) {
       const regexLength = /(?=.{8,})/;

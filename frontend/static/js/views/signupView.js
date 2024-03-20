@@ -94,29 +94,28 @@ export default class SignupView extends AbstractView {
 
         /*==================================================================
         [ Show pass ]*/
-        document.addEventListener('DOMContentLoaded', function() {
 
-            function togglePassword() {
-                const eye = document.querySelector("#eye-signup");
-                const passwordInput = document.querySelector("#password-signup");
+        function togglePassword() {
+            const eye = document.querySelector("#eye-signup");
+            const passwordInput = document.querySelector("#password-signup");
 
-                const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-                passwordInput.setAttribute("type", type);
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
 
-                // Corrected the class name for the eye icon
-                eye.classList.toggle("fa-eye-slash", type === "password");
-            }
+            // Corrected the class name for the eye icon
+            eye.classList.toggle("fa-eye-slash", type === "password");
+        }
 
-            // Call the togglePassword function on document load
+        // Call the togglePassword function on document load
+        togglePassword();
+        togglePassword();
+
+        // Add an event listener for the Show Password button
+        document.querySelector('.btn-show-pass-signup').addEventListener('click', function() {
             togglePassword();
-            togglePassword();
-
-            // Add an event listener for the Show Password button
-            document.querySelector('.btn-show-pass-signup').addEventListener('click', function() {
-                togglePassword();
-            });
-
         });
+
+        
 
         document.getElementById('password-signup').addEventListener('input', function() {
             const password = this.value;
