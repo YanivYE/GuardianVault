@@ -119,7 +119,7 @@ export default class ResetPasswordView extends AbstractView{
       const strength = (regexLength.test(password) + regexLower.test(password) +
                           regexUpper.test(password) + regexSpecial.test(password)) / 4;
 
-      const strengthBar = document.getElementById('strength-bar');
+      const strengthBar = document.getElementById('strength-bar-reset');
       strengthBar.style.width = (strength * 100) + '%';
       strengthBar.style.backgroundColor = getStrengthColor(strength);
 

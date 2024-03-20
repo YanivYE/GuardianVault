@@ -280,6 +280,23 @@ p
   background-color: rgba(255, 255, 255, 0.608);
 }
 
+.input-code100 {
+  font-family: Ubuntu-Regular;
+  font-size: 20px;
+  color: #ffffff;
+  line-height: 1.2;
+
+  display: block;
+  width: calc(100% - 40px);
+  height: 50px;
+  background: transparent;
+  padding: 0 10px 0 80px;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
 
 .container-code100 {
   width: 100%;  
@@ -1443,6 +1460,24 @@ label[for="private"], label[for="public"] {
   padding-left: 60px;
 }
 
+.input-login100 {
+  font-family: Ubuntu-Regular;
+  font-size: 20px;
+  color: #ffffff;
+  line-height: 1.2;
+
+  display: block;
+  width: calc(100% - 40px);
+  height: 50px;
+  background: transparent;
+  padding: 0 10px 0 80px;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
+
 .input-login100:focus + .focus-input-login100::after {
   left: 23px;
   color: #ffffff;
@@ -1660,6 +1695,23 @@ label[for="private"], label[for="public"] {
   transition: all 0.4s;
 }
 
+.input-signup100 {
+  font-family: Ubuntu-Regular;
+  font-size: 20px;
+  color: #ffffff;
+  line-height: 1.2;
+
+  display: block;
+  width: calc(100% - 40px);
+  height: 50px;
+  background: transparent;
+  padding: 0 10px 0 80px;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
 .signup-login100-form-btn::before {
   content: "";
   display: block;
@@ -1750,6 +1802,56 @@ label[for="private"], label[for="public"] {
 
 /*------------------------------------------------------------------
 [ Reset ]*/
+
+
+.container-reset100 {
+  width: 100%;  
+  min-height: 100vh;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: relative;
+  z-index: 1;  
+}
+
+.input-reset100 {
+  font-family: Ubuntu-Regular;
+  font-size: 20px;
+  color: #ffffff;
+  line-height: 1.2;
+
+  display: block;
+  width: calc(100% - 40px);
+  height: 50px;
+  background: transparent;
+  padding: 0 10px 0 80px;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
+.container-reset100::before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(0,0,0,0.65);
+}
 
 .reset100-form {
   width: 100%;
@@ -2026,7 +2128,7 @@ label[for="private"], label[for="public"] {
   margin-bottom: 5px;
 }
 
-.strength-bar {
+.strength-bar-reset {
   height: 100%;
   border-radius: 5px;
   transition: width 0.3s ease-in-out;
@@ -2453,7 +2555,7 @@ label[for="private"], label[for="public"] {
   margin-bottom: 5px;
 }
 
-.strength-bar {
+.strength-bar-signup {
   height: 100%;
   border-radius: 5px;
   transition: width 0.3s ease-in-out;
@@ -2726,6 +2828,23 @@ label[for="private"], label[for="public"] {
   width: 100%;
   padding: 12px 36px 12px 12px;
   box-sizing: border-box;
+}
+
+.input-forgot100 {
+  font-family: Ubuntu-Regular;
+  font-size: 20px;
+  color: #ffffff;
+  line-height: 1.2;
+
+  display: block;
+  width: calc(100% - 40px);
+  height: 50px;
+  background: transparent;
+  padding: 0 10px 0 80px;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
 }
 
 /*------------------------------------------------------------------
