@@ -1687,6 +1687,13 @@ label[for="private"], label[for="public"] {
   justify-content: center;
 }
 
+.wrap-input-signup100 {
+  width: 100%;
+  position: relative;
+  border-bottom: 1px solid #ffffff;
+  padding: 29px 0;
+}
+
 .signup-login100-form-btn {
   font-family: Ubuntu-Bold;
   font-size: 18px;
