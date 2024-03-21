@@ -25,6 +25,7 @@ class FileHandler
 
     setUploadDetails(fileName, username, password)
     {
+        this.fileContent = "";  // initialize file content to be empty
         this.fileName = fileName;
         this.username = username;
         this.encryptionPassword = password;
