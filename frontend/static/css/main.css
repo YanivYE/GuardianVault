@@ -279,6 +279,13 @@ p
   border-radius: 10px;
   background-color: rgba(255, 255, 255, 0.608);
 }
+.wrap-input-code100 {
+  width: 100%;
+  position: relative;
+  border-bottom: 1px solid #ffffff;
+  padding: 29px 0;
+}
+
 
 .input-code100 {
   font-family: Ubuntu-Regular;
@@ -1477,6 +1484,12 @@ label[for="private"], label[for="public"] {
   transition: all 0.4s;
 }
 
+.wrap-input-login100 {
+  width: 100%;
+  position: relative;
+  border-bottom: 1px solid #ffffff;
+  padding: 29px 0;
+}
 
 .input-login100:focus + .focus-input-login100::after {
   left: 23px;
@@ -1590,6 +1603,13 @@ label[for="private"], label[for="public"] {
   right: 12px; /* Adjusted right position to bring closer to the input */
   cursor: pointer;
   color: lightgray;
+}
+
+.wrap-input-forgot100 {
+  width: 100%;
+  position: relative;
+  border-bottom: 1px solid #ffffff;
+  padding: 29px 0;
 }
 
 /*------------------------------------------------------------------
@@ -1822,6 +1842,13 @@ label[for="private"], label[for="public"] {
   background-size: cover;
   position: relative;
   z-index: 1;  
+}
+
+.wrap-input-reset100 {
+  width: 100%;
+  position: relative;
+  border-bottom: 1px solid #ffffff;
+  padding: 29px 0;
 }
 
 .input-reset100 {
