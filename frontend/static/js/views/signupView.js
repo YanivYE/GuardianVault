@@ -151,7 +151,7 @@ export default class SignupView extends AbstractView {
 
         // Add a function to update the password strength text
         function updatePasswordStrengthText(strength) {
-            const passwordStrengthText = document.getElementById('password-strength-text');
+            const passwordStrengthText = document.getElementById('password-strength-signup-text');
             passwordStrengthText.textContent = getStrengthText(strength);
         }
 
