@@ -1477,6 +1477,12 @@ label[for="private"], label[for="public"] {
   transition: all 0.4s;
 }
 
+.wrap-input-login100 {
+  width: 100%;
+  position: relative;
+  border-bottom: 1px solid #ffffff;
+  padding: 29px 0;
+}
 
 .input-login100:focus + .focus-input-login100::after {
   left: 23px;
