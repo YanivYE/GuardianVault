@@ -43,7 +43,6 @@ export default class MenuView extends AbstractView{
     logoutButton.addEventListener('click', function() {
         userLogout();
         logoutButton.disabled = true;
-    
     });
     
     document.getElementById('download').addEventListener('click', function() {

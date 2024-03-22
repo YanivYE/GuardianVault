@@ -14,8 +14,6 @@ export default class Client {
         this.socket = null;
         this.logedIn = false;
         this.username = "";
-        this.previosScript = null;
-        this.loadedScript = null;
         this.utils = new Utils();
     }
 
