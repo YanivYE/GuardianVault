@@ -7,14 +7,52 @@ export default class ResetPasswordView extends AbstractView{
   }
 
   async getHtml() {
-    try {
-        const response = await fetch('/resetPassword');
-        const html = await response.text();
-        return html;
-    } catch (error) {
-        console.error('Error fetching HTML:', error);
-        return null; // or handle the error accordingly
-    }
+    return `<div class="limiter">
+          <div class="container-reset100" style="background-image: url('static/css/images/bg-01.jpg');">
+            <div class="wrap-reset100 p-t-30 p-b-50">
+              <span class="reset100-form-title p-b-41">
+                Reset Your Password
+              </span>
+              <form id="resetPasswordForm" class="reset100-form validate-form p-b-33 p-t-5">
+                          <div class="wrap-input-reset100 validate-input" data-validate="Enter password">
+                              <input class="input-reset100" type="password" name="password" id="password" placeholder="Password">
+                              <span class="focus-input-reset100" data-placeholder="&#xe80f;"></span>
+                              <span class="btn-show-pass">
+                                  <i class="fa-solid fa-eye-reset" id="eye"></i>
+                              </span>
+                              <div id="password-strength" class="password-strength">
+                                  <div class="strength-text">Password Requirements:</div>
+                                  <div class="requirements">
+                                      <div class="requirement" id="length-req">
+                                          <input type="checkbox" id="length-check" disabled> Minimum 8 characters
+                                      </div>
+                                      <div class="requirement" id="lower-req">
+                                          <input type="checkbox" id="lower-check" disabled> At least 1 lowercase letter
+                                      </div>
+                                      <div class="requirement" id="upper-req">
+                                          <input type="checkbox" id="upper-check" disabled> At least 1 uppercase letter
+                                      </div>
+                                      <div class="requirement" id="special-req">
+                                          <input type="checkbox" id="special-check" disabled> At least 1 special character (!@#$%^&*-)
+                                      </div>
+                                  </div>
+                                  <div class="strength-meter">
+                                      <div class="strength-bar-reset" id="strength-bar-reset"></div>
+                                  </div>
+                                  <div class="password-strength-text" id="password-strength-text"></div>
+                              </div>
+                          </div>      
+                <div class="container-reset100-form-btn m-t-32">
+                  <button id="resetPasswordButton" type="submit" class="reset100-form-btn">
+                                  Reset
+                              </button>
+                </div>
+                <div id="message" style="color: red; display: none;"></div> 
+              </form>
+            </div>
+          </div>
+      </div>
+      `;
   }
 
   async executeViewScript()

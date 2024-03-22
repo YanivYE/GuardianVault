@@ -7,14 +7,59 @@ export default class SignupView extends AbstractView {
     }
 
     async getHtml() {
-        try {
-            const response = await fetch('/signup');
-            const html = await response.text();
-            return html;
-        } catch (error) {
-            console.error('Error fetching HTML:', error);
-            return null; // or handle the error accordingly
-        }
+        return `<div class="limiter">
+                <div class="container-signup100" style="background-image: url('static/css/images/bg-01.jpg');">
+                    <div class="wrap-signup100 p-t-30 p-b-50">
+                        <span class="signup100-form-title p-b-41">
+                            Sign Up
+                        </span>
+                        <form class="signup100-form validate-form p-b-33 p-t-5">
+                            <div class="wrap-input-signup100 validate-input" data-validate="Enter username">
+                                <input class="input-signup100" type="text" name="username" placeholder="Username">
+                                <span class="focus-input-signup100" data-placeholder="&#xe82a;"></span>
+                            </div>
+                            <div class="wrap-input-signup100 validate-input" data-validate="Enter email">
+                                <input class="input-signup100" type="text" name="email" placeholder="Email">
+                                <span class="focus-input-signup100" data-placeholder="✉"></span>
+                            </div>
+                            <div class="wrap-input-signup100 validate-input" data-validate="Enter password">
+                                <input class="input-signup100" type="password" name="password" id="password-signup" placeholder="Password">
+                                <span class="focus-input-signup100" data-placeholder="&#xe80f;"></span>
+                                <span class="btn-show-pass-signup">
+                                    <i class="fa-solid fa-eye" id="eye-signup"></i>
+                                </span>
+                                <div id="password-strength-signup" class="password-strength-signup">
+                                    <div class="strength-text">Password Requirements:</div>
+                                    <div class="requirements-signup">
+                                        <div class="requirement-signup" id="length-req-signup">
+                                            <input type="checkbox" id="length-check-signup" disabled> Minimum 8 characters
+                                        </div>
+                                        <div class="requirement-signup" id="lower-req-signup">
+                                            <input type="checkbox" id="lower-check-signup" disabled> At least 1 lowercase letter
+                                        </div>
+                                        <div class="requirement-signup" id="upper-req-signup">
+                                            <input type="checkbox" id="upper-check-signup" disabled> At least 1 uppercase letter
+                                        </div>
+                                        <div class="requirement-signup" id="special-req-signup">
+                                            <input type="checkbox" id="special-check-signup" disabled> At least 1 special character (!@#$%^&*-)
+                                        </div>
+                                    </div>
+                                    <div class="strength-meter">
+                                        <div class="strength-bar-signup" id="strength-bar-signup"></div>
+                                    </div>
+                                    <div class="password-strength-signup-text" id="password-strength-signup-text"></div>
+                                </div>
+                            </div>      
+                            <div class="container-signup100-form-btn m-t-32">
+                                <button id="signupButton" type="submit" class="signup100-form-btn">
+                                    Sign Up
+                                </button>
+                            </div>
+                            <div id="errorMessage" style="color: red; display: none;"></div>
+                        </form>
+                    </div>
+                </div>
+        </div>`;
     }
 
     async executeViewScript()

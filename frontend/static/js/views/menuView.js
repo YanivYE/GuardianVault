@@ -7,14 +7,26 @@ export default class MenuView extends AbstractView{
   }
 
   async getHtml() {
-    try {
-        const response = await fetch('/menu');
-        const html = await response.text();
-        return html;
-    } catch (error) {
-        console.error('Error fetching HTML:', error);
-        return null; // or handle the error accordingly
-    }
+    return `<div class="container-menu100" style="background-image: url('static/css/images/bg-01.jpg');">
+        <h1 id="title">Welcome!</h1>
+        <div class="button-container">
+          <button id="download" class="button">
+            <img src="static/css/images/download.png" alt="Download Icon">
+            Download
+          </button>
+      
+          <button id="upload" class="button">
+            <img src="static/css/images/upload.png" alt="Upload Icon">
+            Upload
+          </button>
+        </div>
+        <div class="form-group-menu" id="logoutLoader" style="display: none;">
+            <div class="loader"></div>
+        </div>
+        <button class="logout-button-menu" id="logoutButton">Logout</button>
+
+    </div>
+    `;
   }
 
   async executeViewScript()

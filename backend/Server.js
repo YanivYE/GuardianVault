@@ -14,33 +14,11 @@ const io = socketIO(server);
 // Serve static files
 app.use("/static", express.static(path.resolve(__dirname, "../frontend", "static")));
 
-const clientPages = [
-    { route: '/', file: 'index.html' },
-    { route: '/login', file: 'login.html' },
-    { route: '/signup', file: 'signup.html' },
-    { route: '/upload', file: 'upload.html' },
-    { route: '/download', file: 'download.html' },
-    { route: '/menu', file: 'menu.html' },
-    { route: '/forgotPassword', file: 'forgotPassword.html' },
-    { route: '/codeVerification', file: 'codeVerification.html' },
-    { route: '/resetPassword', file: 'resetPassword.html' }
-];
-
-// Serve client page - SPA
-clientPages.forEach(({ route, file }) => {
-app.get(route, (req, res) => {
-        if(route === '/')
-        {
-            const filePath = path.resolve(__dirname, `../frontend`, file);
-            res.setHeader('Content-Type', 'text/html');
-            res.sendFile(filePath);
-        }
-        else{
-            const filePath = path.join(__dirname, `clientPages/${file}`);
-            res.setHeader('Content-Type', 'text/html');
-            res.sendFile(filePath);
-        }
-    }); 
+// Server index page
+app.get('/', (req, res) => {
+    const filePath = path.resolve(__dirname, `../frontend`, 'index.html');
+    res.setHeader('Content-Type', 'text/html');
+    res.sendFile(filePath);
 });
 
 // Start server

@@ -7,14 +7,51 @@ export default class DownloadView extends AbstractView{
   }
 
   async getHtml() {
-    try {
-        const response = await fetch('/download');
-        const html = await response.text();
-        return html;
-    } catch (error) {
-        console.error('Error fetching HTML:', error);
-        return null; // or handle the error accordingly
-    }
+    return `<div class="container-download100" style="background-image: url('static/css/images/bg-01.jpg');">
+            <div class="wrap-download100 p-t-30 p-b-50 download-form">
+                <span class="download100-form-title p-b-41"> <!-- New div wrapper -->
+                    Download File
+                </span>
+                <div  id="downloadContainer">
+                    <div class="download-container">
+                        <h2>Search Files</h2>
+                        <div class="search-container">
+                            <input type="search" id="searchBar" placeholder="Search files...">
+                            <button id="searchButton">Search</button>
+                        </div>
+                        <h2>Your Files</h2>
+                        <div id="fileList">
+                            <ul id="fileListItems">
+                            </ul>
+                        </div>
+                        <h2>Files Shared with You</h2>
+                        <div id="fileList">
+                            <ul id="sharedFilesList">
+                            </ul>
+                        </div>
+                        <h2>‎ </h2>
+                        
+                        <button id="deleteFileButton">Delete File</button>
+
+                        <div class="spacer"></div>
+
+                        <form id="downloadForm">
+                            <button type="submit" id="downloadButton">Download</button>
+                        </form>
+
+                        <div class="spacer"></div>
+
+                        <div class="form-group" id="downloadLoader" style="display: none;">
+                            <div class="loader"></div>
+                        </div>
+
+                        <div class="spacer"></div>
+
+                        <div id="message" style="color: red; display: none;"></div>
+                    </div>
+                </div> 
+            </div>
+        </div>`;
   }
 
   async executeViewScript()

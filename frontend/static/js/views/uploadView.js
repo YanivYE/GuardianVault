@@ -7,14 +7,57 @@ export default class UploadView extends AbstractView{
   }
 
   async getHtml() {
-    try {
-        const response = await fetch('/upload');
-        const html = await response.text();
-        return html;
-    } catch (error) {
-        console.error('Error fetching HTML:', error);
-        return null; // or handle the error accordingly
-    }
+    return `<div class="container-upload100" style="background-image: url('static/css/images/bg-01.jpg');">
+            <div class="wrap-upload100 p-t-30 p-b-50">
+                <span class="upload100-form-title p-b-41">
+                    Upload File
+                </span>
+                <div class="upload-container">
+                    
+                    <form id="uploadForm" class="upload-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="fileName">File Name(without extension):</label>
+                            <input type="text" id="fileName" name="fileName" placeholder="Enter file name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fileStatus">File Status:</label>
+                        </div>
+
+                        <div class="file-status-buttons">
+                            <button type="button" id="publicButton" class="file-status-button">Public</button>
+                            <button type="button" id="privateButton" class="file-status-button">Private</button>
+                        </div>
+
+                        <div class="form-group" id="userSelectGroup" style="display: none; margin-top: 10px;">
+                            <label for="userSelect">Select Users:</label>
+                            <div id="userCheckboxContainer">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="selectAllUsers" name="selectAllUsers">
+                                    <label for="selectAllUsers">Select All</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="file-upload" id="fileUpload">
+                            <input type="file" id="fileInput-upload" class="file-input-upload" multiple>
+                            <div class="file-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                            <span class="file-upload-text">Drag or select files</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button id="uploadButton" type="submit" class="upload-btn">Upload</button>
+                        </div>
+
+                        <div class="form-group" id="uploadLoader" style="display: none;">
+                            <div class="loader"></div>
+                        </div>
+
+                        <div id="message" style="color: red; display: none;"></div> 
+                    </form>
+                </div>
+            </div>
+        </div>`;
   }
 
   async executeViewScript()

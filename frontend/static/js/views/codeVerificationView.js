@@ -7,14 +7,33 @@ export default class CodeVerificationView extends AbstractView{
     }
 
     async getHtml() {
-        try {
-            const response = await fetch('/codeVerification');
-            const html = await response.text();
-            return html;
-        } catch (error) {
-            console.error('Error fetching HTML:', error);
-            return null; // or handle the error accordingly
-        }
+        return `<div class="limiter">
+            <div class="container-code100" style="background-image: url('static/css/images/bg-01.jpg');">
+                <div class="wrap-code100 p-t-30 p-b-50">
+                    <span class="code100-form-title p-b-41">
+                        Check Email For Verification Code
+                    </span>
+                    <form id="verifyCodeForm" class="code100-form validate-form p-b-33 p-t-5">
+                        <div class="wrap-input-code100 validate-input" data-validate="Enter code">
+                            <input class="input-code100" type="text" name="code" placeholder="Code">
+                            <span class="focus-input-code100" data-placeholder="✔"></span>
+                        </div>
+        
+                        <div class="container-code100-form-btn m-t-32">
+                            <button id="verifyCodeButton" type="submit" class="code100-form-btn">
+                                Verify
+                            </button>
+                        </div>
+        
+                        <h2>‎ </h2>
+                        <div id="message" style="color: red; display: none;"></div> 
+        
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        `;
     }
 
     async executeViewScript()
