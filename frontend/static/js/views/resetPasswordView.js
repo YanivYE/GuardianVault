@@ -15,7 +15,7 @@ export default class ResetPasswordView extends AbstractView{
               </span>
               <form id="resetPasswordForm" class="reset100-form validate-form p-b-33 p-t-5">
                           <div class="wrap-input-reset100 validate-input" data-validate="Enter password">
-                              <input class="input-reset100" type="password" name="password" id="password" placeholder="Password">
+                              <input class="input-reset100" type="text" name="password" id="password-reset" placeholder="Password">
                               <span class="focus-input-reset100" data-placeholder="&#xe80f;"></span>
                               <span class="btn-show-pass">
                                   <i class="fa-solid fa-eye" id="eye-reset"></i>
@@ -57,82 +57,63 @@ export default class ResetPasswordView extends AbstractView{
 
   async executeViewScript()
   {
-    /*==================================================================
-    [ Focus input ]*/
-    document.querySelectorAll('.input-reset100').forEach(function(input) {
-      input.addEventListener('blur', function() {
-          if (this.value.trim() !== "") {
-              this.classList.add('has-val');
-          } else {
-              this.classList.remove('has-val');
-          }
-      });
-    });
+    const validator = this.inputValidator;
 
-    function togglePassword() {
-        const eye = document.querySelector("#eye-reset");
-        const passwordInput = document.querySelector("#password");
+    const messageBox = document.getElementById("message");
 
+    validator.setMessageBox(messageBox);
+
+    const inputFields = document.querySelectorAll('.input-reset100'); // Corrected selector
+
+    // Focus input
+    inputFields.forEach(addInputBlurEventListener);
+    
+    // Validate form6
+    const resetPasswordForm = document.getElementById("resetPasswordForm");
+    resetPasswordForm.addEventListener("submit", handleFormSubmission);
+ 
+    // Show/Hide password
+    const eyeIcon = document.getElementById("eye-reset");
+    const passwordInput = document.getElementById("password-reset");
+    eyeIcon.addEventListener("click", togglePasswordVisibility);
+
+    // Set initial password visibility
+    setPasswordVisibility(passwordInput, eyeIcon);
+
+    function addInputBlurEventListener(input) { 
+        input.addEventListener("blur", function () {
+            toggleInputClass(input);
+        });
+    }
+
+    // Show/Hide password event handler
+    function togglePasswordVisibility() {
+        const eyeIcon = document.getElementById("eye-reset");
+        const passwordInput = document.getElementById("password-reset");
         const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
         passwordInput.setAttribute("type", type);
-
-        // Corrected the class name for the eye icon
-        eye.classList.toggle("fa-eye-slash", type === "password");
+        eyeIcon.classList.toggle("fa-eye-slash", type === "password");
     }
 
-    // Call the togglePassword function on document load
-    togglePassword();
+    // Set initial password visibility
+    function setPasswordVisibility(passwordInput, eyeIcon) {
+        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+        passwordInput.setAttribute("type", type);
+        eyeIcon.classList.toggle("fa-eye-slash", type === "password");
+    }
 
-    // Add an event listener for the Show Password button
-    document.querySelector('.btn-show-pass').addEventListener('click', function () {
-        togglePassword();
-    });
-
-    document.getElementById("resetPasswordForm").addEventListener('submit', async function (event) {
-        event.preventDefault();
-        
-        const message = document.getElementById("message");
-        const password = document.getElementsByName("password")[0].value;
-    
-        message.style.display = "none"; 
-    
-        const strength = getPasswordStrength(password);
-
-        if (strength > 0.6) { 
-            message.style.display = "block";
-            message.style.color = "green"
-            message.innerText = "Password reset successfully!";
-            const resetPasswordRequest = 'ResetPassword$' + password;
-            const resetPasswordResult = await window.client.transferToServer(resetPasswordRequest, 'resetPasswordResult');
-
-            if(resetPasswordResult === 'Success')
-            {
-                window.client.logedIn = true;
-                window.client.navigateTo('/menu');
-            }
+    // Toggle input class
+    function toggleInputClass(input) {
+        if (input.value.trim() !== "") {
+            input.parentElement.classList.add("has-val");
         } else {
-            message.style.display = "block";
-            message.style.color = "red"
-            message.innerText = "Password strength must be at least strong!";
+            input.parentElement.classList.remove("has-val");
         }
-    });
-    
-
-    function getPasswordStrength(password) {
-      const regexLength = /(?=.{8,})/;
-      const regexLower = /(?=.*[a-z])/;
-      const regexUpper = /(?=.*[A-Z])/;
-      const regexSpecial = /(?=.*[!@#$%^&*-])/;
-
-      const strength = (regexLength.test(password) + regexLower.test(password) +
-                          regexUpper.test(password) + regexSpecial.test(password)) / 4;
-
-      return strength;
     }
 
-    document.getElementById('password').addEventListener('input', function() {
-      const password = this.value;
-      checkPasswordStrength(password);
+    document.getElementById('password-reset').addEventListener('input', function() {
+        const password = this.value;
+        checkPasswordStrength(password);
     });
 
     // Update the checkPasswordStrength function
@@ -191,6 +172,36 @@ export default class ResetPasswordView extends AbstractView{
           return "Strong";
       } else {
           return "Excellent!";
+      }
+    }
+
+    function validate(password)
+    {
+        const strengthText = document.getElementById('password-strength-text').textContent;
+        return validator.generalInputValidation(password) && 
+            validator.validatePasswordStrength(strengthText);
+    }
+
+    async function handleFormSubmission(event) {
+      event.preventDefault(); 
+      
+      const password = document.getElementsByName("password")[0].value;
+  
+      messageBox.style.display = "none"; 
+
+      if(validate(password))
+      {
+          messageBox.style.display = "block";
+          messageBox.style.color = "green"
+          messageBox.innerText = "Password reset successfully!";
+          const resetPasswordRequest = 'ResetPassword$' + password;
+          const resetPasswordResult = await window.client.transferToServer(resetPasswordRequest, 'resetPasswordResult');
+
+          if(resetPasswordResult === 'Success')
+          {
+              window.client.logedIn = true;
+              window.client.navigateTo('/menu');
+          }
       }
     }
   }

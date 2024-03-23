@@ -17,6 +17,10 @@ export default class InputValidation
     }
 
     generalInputValidation(input) {
+        if (this.validateEmptyInput(input)) {
+            this.errorAlert("Fill out all input fields.");
+            return false;
+        }
         if (this.validateInputLength(input)) {
             this.errorAlert("Input must not be longer than 30 characters.");
             return false;
@@ -31,6 +35,11 @@ export default class InputValidation
         }
         return true;    
     }           
+
+    validateEmptyInput(input)
+    {
+        return input.trim() === '';
+    }
 
     validateInputLength(input) {
         return input.length > 30;
@@ -49,18 +58,23 @@ export default class InputValidation
         return regex.test(input);
     }
 
-    validateUsername(username)
-    {
-        return this.generalInputValidation(username);
+    validateEmail(email) {
+        const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if(!regex.test(email))
+        {
+            this.errorAlert("Invalid Email address.");
+            return false;
+        }
+        return true;
     }
 
-    validatePassword(password)
+    validatePasswordStrength(strengthText)
     {
-        return this.generalInputValidation(password) && this.validatePasswordStrength(password);
-    }
-
-    validatePasswordStrength(password)
-    {
+        if(strengthText !== 'Strong' && strengthText !== 'Excellent!')
+        {
+            this.errorAlert("Password strength must be at least Strong.");
+            return false;
+        }
         return true;
     }
 }

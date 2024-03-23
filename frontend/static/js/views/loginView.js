@@ -54,9 +54,12 @@ export default class LoginView extends AbstractView {
 
     async executeViewScript()
     {
-        this.inputValidator.setMessageBox(document.getElementById("message"));
-
         const validator = this.inputValidator;
+
+        const messageBox = document.getElementById("message");
+
+        validator.setMessageBox(messageBox);
+
         const inputFields = document.querySelectorAll(".input-login100");
 
         // Focus input
@@ -85,25 +88,6 @@ export default class LoginView extends AbstractView {
             });
         }
 
-        // Validate form event handler
-        async function handleFormSubmission(event) {
-            event.preventDefault(); // Prevent default form submission
-
-            const inputFields = document.querySelectorAll(".input-login100");
-            let check = true;
-
-            inputFields.forEach(function (input) {
-                if (!validate(input)) {
-                    showValidate(input);
-                    check = false;
-                }
-            });
-
-            if (check) {
-                await logging(); // Call the logging function if validation passes
-            }
-        }
-
         // Show/Hide password event handler
         function togglePasswordVisibility() {
             const eyeIcon = document.getElementById("eye-login");
@@ -129,12 +113,18 @@ export default class LoginView extends AbstractView {
             }
         }
 
+        function validate(username, password)
+        {
+            return validator.generalInputValidation(username) && validator.generalInputValidation(password);
+        }
+
         // Login function
-        async function logging() {
+        async function handleFormSubmission(event) {
+            event.preventDefault(); // Prevent default form submission
             const username = document.getElementsByName("username")[0].value;
             const password = document.getElementsByName("password")[0].value;
             
-            if(validateUserInput(username, password))
+            if(validate(username, password))
             {
                 window.client.username = username;
 
@@ -144,9 +134,8 @@ export default class LoginView extends AbstractView {
                 if (loginResult === "Success") {
                     window.client.navigateTo("/codeVerification");
                 } else {
-                    const message = document.getElementById("message");
-                    message.innerText = "Login failed. Username or password are incorrect";
-                    message.style.display = "block";
+                    messageBox.innerText = "Login failed. Username or password are incorrect";
+                    messageBox.style.display = "block";
                 }
             }
         }
@@ -158,21 +147,6 @@ export default class LoginView extends AbstractView {
 
         function navigateToForgotPassword() {
             window.client.navigateTo("/forgotPassword");
-        }
-
-        // Validation functions
-        function validate(input) {
-            return input.value.trim() !== "";
-        }
-
-        function showValidate(input) {
-            const thisAlert = input.parentElement;
-            thisAlert.classList.add("alert-validate");
-        }
-
-        function validateUserInput(username, password)
-        {
-            return validator.validateUsername(username) && validator.validatePassword(password);
         }
     }
 }

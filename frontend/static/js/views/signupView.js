@@ -13,7 +13,7 @@ export default class SignupView extends AbstractView {
                         <span class="signup100-form-title p-b-41">
                             Sign Up
                         </span>
-                        <form class="signup100-form validate-form p-b-33 p-t-5">
+                        <form id="signupForm" class="signup100-form validate-form p-b-33 p-t-5">
                             <div class="wrap-input-signup100 validate-input" data-validate="Enter username">
                                 <input class="input-signup100" type="text" name="username" placeholder="Username">
                                 <span class="focus-input-signup100" data-placeholder="&#xe82a;"></span>
@@ -23,7 +23,7 @@ export default class SignupView extends AbstractView {
                                 <span class="focus-input-signup100" data-placeholder="✉"></span>
                             </div>
                             <div class="wrap-input-signup100 validate-input" data-validate="Enter password">
-                                <input class="input-signup100" type="password" name="password" id="password-signup" placeholder="Password">
+                                <input class="input-signup100" type="text" name="password" id="password-signup" placeholder="Password">
                                 <span class="focus-input-signup100" data-placeholder="&#xe80f;"></span>
                                 <span class="btn-show-pass-signup">
                                     <i class="fa-solid fa-eye" id="eye-signup"></i>
@@ -55,7 +55,7 @@ export default class SignupView extends AbstractView {
                                     Sign Up
                                 </button>
                             </div>
-                            <div id="errorMessage" style="color: red; display: none;"></div>
+                            <div id="message" style="color: red; display: none;"></div>
                         </form>
                     </div>
                 </div>
@@ -63,100 +63,60 @@ export default class SignupView extends AbstractView {
     }
 
     async executeViewScript() {
-        const errorMessage = document.getElementById('errorMessage');
-        const inputs = document.querySelectorAll('.validate-input .input-signup100'); // Corrected selector
 
-        /*==================================================================
-        [ Focus input ]*/
-        inputs.forEach(function(input) { // Changed to use 'inputs' variable
-            input.addEventListener('blur', function() {
-                if (this.value.trim() !== "") {
-                    this.classList.add('has-val');
-                } else {
-                    this.classList.remove('has-val');
-                }
+        const validator = this.inputValidator;
+
+        const messageBox = document.getElementById("message");
+
+        validator.setMessageBox(messageBox);
+
+        const inputFields = document.querySelectorAll('.validate-input .input-signup100'); // Corrected selector
+
+        // Focus input
+        inputFields.forEach(addInputBlurEventListener);
+        
+        // Validate form
+        const signupForm = document.getElementById("signupForm");
+        signupForm.addEventListener("submit", handleFormSubmission);
+
+        // Show/Hide password
+        const eyeIcon = document.getElementById("eye-signup");
+        const passwordInput = document.getElementById("password-signup");
+        eyeIcon.addEventListener("click", togglePasswordVisibility);
+
+        // Set initial password visibility
+        setPasswordVisibility(passwordInput, eyeIcon);
+
+        function addInputBlurEventListener(input) { 
+            input.addEventListener("blur", function () {
+                toggleInputClass(input);
             });
-        });
-
-        /*==================================================================
-        [ Validate ]*/
-
-        document.querySelector('.validate-form').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
-
-            let check = true;
-
-            inputs.forEach(function(input) {
-                if (!validate(input)) {
-                    showValidate(input);
-                    check = false;
-                }
-            });
-
-            if (check) {
-                signingUp();
-            }
-        });
-
-        inputs.forEach(function(input) { // Changed to use 'inputs' variable
-            input.addEventListener('focus', function() {
-                hideValidate(this);
-            });
-        });
-
-        function validate(input) {
-            if (input.getAttribute('type') === 'email' || input.getAttribute('name') === 'email') {
-                if (!input.value.trim().match(/^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/)) {
-                    return false;
-                }
-            } else {
-                if (input.value.trim() === '') {
-                    return false;
-                }
-            }
-            if (input.getAttribute('type') === 'password') {
-                const password = input.value.trim();
-                const strengthText = document.getElementById('password-strength-signup-text').textContent;
-
-                // Check if the password strength is "Strong" or "Excellent!"
-                if (strengthText !== 'Strong' && strengthText !== 'Excellent!') {
-                    return false;
-                }
-            }
-            return true;
         }
 
-        function showValidate(input) {
-            const thisAlert = input.parentNode;
-            thisAlert.classList.add('alert-validate');
-        }
-
-        function hideValidate(input) {
-            const thisAlert = input.parentNode;
-            thisAlert.classList.remove('alert-validate');
-        }
-
-        /*==================================================================
-        [ Show pass ]*/
-
-        function togglePassword() {
-            const eye = document.querySelector("#eye-signup");
-            const passwordInput = document.querySelector("#password-signup");
-
+        // Show/Hide password event handler
+        function togglePasswordVisibility() {
+            const eyeIcon = document.getElementById("eye-signup");
+            const passwordInput = document.getElementById("password-signup");
             const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
             passwordInput.setAttribute("type", type);
-
-            // Corrected the class name for the eye icon
-            eye.classList.toggle("fa-eye-slash", type === "password");
+            eyeIcon.classList.toggle("fa-eye-slash", type === "password");
         }
 
-        // Call the togglePassword function on document load
-        togglePassword();
+        // Set initial password visibility
+        function setPasswordVisibility(passwordInput, eyeIcon) {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            eyeIcon.classList.toggle("fa-eye-slash", type === "password");
+        }
 
-        // Add an event listener for the Show Password button
-        document.querySelector('.btn-show-pass-signup').addEventListener('click', function() {
-            togglePassword();
-        });
+        // Toggle input class
+        function toggleInputClass(input) {
+            if (input.value.trim() !== "") {
+                input.parentElement.classList.add("has-val");
+            } else {
+                input.parentElement.classList.remove("has-val");
+            }
+        }
 
         document.getElementById('password-signup').addEventListener('input', function() {
             const password = this.value;
@@ -222,25 +182,39 @@ export default class SignupView extends AbstractView {
             }
         }
 
-        async function signingUp() {
+        function validate(username, email, password)
+        {
+            const strengthText = document.getElementById('password-strength-signup-text').textContent;
+            return validator.generalInputValidation(username) && 
+                validator.generalInputValidation(email) &&
+                validator.validateEmail(email) && 
+                validator.generalInputValidation(password) && 
+                validator.validatePasswordStrength(strengthText);
+        }
+
+        async function handleFormSubmission(event) {
+            event.preventDefault(); 
             const username = document.getElementsByName("username")[0].value;
             const email = document.getElementsByName("email")[0].value;
             const password = document.getElementsByName("password")[0].value;
 
-            window.client.username = username;
+            if(validate(username, email, password))
+            {
+                window.client.username = username;
 
-            const signupRequest = 'SignUp$' + username + '$' + email + '$' + password;
-            const signupResult = await window.client.transferToServer(signupRequest, 'signupResult');
+                const signupRequest = 'SignUp$' + username + '$' + email + '$' + password;
+                const signupResult = await window.client.transferToServer(signupRequest, 'signupResult');
 
-            if (signupResult === "UsernameFail") {
-                errorMessage.textContent = "SignUp failed. Username already exists";
-                errorMessage.style.display = 'block';
-            } else if (signupResult === "EmailFail") {
-                errorMessage.textContent = "SignUp failed. Email already exists";
-                errorMessage.style.display = 'block';
-            } else {
-                window.client.logedIn = true;
-                window.client.navigateTo('/menu');
+                if (signupResult === "UsernameFail") {
+                    messageBox.textContent = "SignUp failed. Username already exists";
+                    messageBox.style.display = 'block';
+                } else if (signupResult === "EmailFail") {
+                    messageBox.textContent = "SignUp failed. Email already exists";
+                    messageBox.style.display = 'block';
+                } else {
+                    window.client.logedIn = true;
+                    window.client.navigateTo('/menu');
+                }
             }
         }
     }
