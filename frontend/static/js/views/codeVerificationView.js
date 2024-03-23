@@ -4,6 +4,7 @@ export default class CodeVerificationView extends AbstractView{
     constructor() {
         super();
         this.setTitle("Code Verification");
+        this.setMessageBox(document.getElementById("message"));
     }
 
     async getHtml() {

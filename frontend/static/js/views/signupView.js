@@ -62,13 +62,13 @@ export default class SignupView extends AbstractView {
         </div>`;
     }
 
-    async executeViewScript()
-    {
+    async executeViewScript() {
         const errorMessage = document.getElementById('errorMessage');
+        const inputs = document.querySelectorAll('.validate-input .input-signup100'); // Corrected selector
 
         /*==================================================================
         [ Focus input ]*/
-        document.querySelectorAll('.input-signup100').forEach(function(input) {
+        inputs.forEach(function(input) { // Changed to use 'inputs' variable
             input.addEventListener('blur', function() {
                 if (this.value.trim() !== "") {
                     this.classList.add('has-val');
@@ -80,7 +80,6 @@ export default class SignupView extends AbstractView {
 
         /*==================================================================
         [ Validate ]*/
-        const inputs = document.querySelectorAll('.validate-input-signup .input-signup100');
 
         document.querySelector('.validate-form').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent default form submission
@@ -99,7 +98,7 @@ export default class SignupView extends AbstractView {
             }
         });
 
-        document.querySelectorAll('.validate-form .input-signup100').forEach(function(input) {
+        inputs.forEach(function(input) { // Changed to use 'inputs' variable
             input.addEventListener('focus', function() {
                 hideValidate(this);
             });
@@ -153,14 +152,11 @@ export default class SignupView extends AbstractView {
 
         // Call the togglePassword function on document load
         togglePassword();
-        togglePassword();
 
         // Add an event listener for the Show Password button
         document.querySelector('.btn-show-pass-signup').addEventListener('click', function() {
             togglePassword();
         });
-
-        
 
         document.getElementById('password-signup').addEventListener('input', function() {
             const password = this.value;
@@ -185,7 +181,7 @@ export default class SignupView extends AbstractView {
             specialCheck.checked = regexSpecial.test(password);
 
             const strength = (regexLength.test(password) + regexLower.test(password) +
-                                regexUpper.test(password) + regexSpecial.test(password)) / 4;
+                regexUpper.test(password) + regexSpecial.test(password)) / 4;
 
             const strengthBar = document.getElementById('strength-bar-signup');
             strengthBar.style.width = (strength * 100) + '%';
@@ -249,3 +245,4 @@ export default class SignupView extends AbstractView {
         }
     }
 }
+

@@ -4,6 +4,7 @@ export default class LoginView extends AbstractView {
     constructor() {
         super();
         this.setTitle("Login");
+        this.setMessageBox(document.getElementById("message"));
     }
 
     async getHtml() {
@@ -21,7 +22,7 @@ export default class LoginView extends AbstractView {
                         </div>
         
                         <div class="wrap-input-login100 validate-input" data-validate="Enter password">
-                            <input class="input-login100" type="password" name="password" id="password-login" placeholder="Password">
+                            <input class="input-login100" type="text" name="password" id="password-login" placeholder="Password">
                             <span class="focus-input-login100" data-placeholder="&#xe80f;"></span>
                             <span class="btn-show-pass-login">
                                 <i class="fa-solid fa-eye" id="eye-login"></i>
@@ -39,7 +40,7 @@ export default class LoginView extends AbstractView {
                                 Login
                             </button>
                         </div>
-                        <div id="errorMessage" style="color: red; display: none;"></div>
+                        <div id="message" style="color: red; display: none;"></div>
         
                         <div class="container-signup-login100-form-btn m-t-32">
                             <button id="signupButton" class="signup-login100-form-btn">
@@ -54,25 +55,40 @@ export default class LoginView extends AbstractView {
 
     async executeViewScript()
     {
-        
+        const validator = this.inputValidator;
+        const inputFields = document.querySelectorAll(".input-login100");
 
         // Focus input
-        const inputFields = document.querySelectorAll(".input-login100");
-        inputFields.forEach(function (input) {
-            input.addEventListener("blur", function () {
-                if (input.value.trim() !== "") {
-                    input.parentElement.classList.add("has-val");
-                } else {
-                    input.parentElement.classList.remove("has-val");
-                }
-            });
-        });
+        inputFields.forEach(addInputBlurEventListener);
 
         // Validate form
         const loginForm = document.getElementById("loginForm");
-        loginForm.addEventListener("submit", async function (event) {
+        loginForm.addEventListener("submit", handleFormSubmission);
+
+        // Show/Hide password
+        const eyeIcon = document.getElementById("eye-login");
+        const passwordInput = document.getElementById("password-login");
+        eyeIcon.addEventListener("click", togglePasswordVisibility);
+
+        // Set initial password visibility
+        setPasswordVisibility(passwordInput, eyeIcon);
+
+        // Navigation event handlers
+        document.getElementById("signupButton").addEventListener("click", navigateToSignup);
+        document.getElementById("forgotPass").addEventListener("click", navigateToForgotPassword);
+    
+        // Focus input event handler
+        function addInputBlurEventListener(input) {
+            input.addEventListener("blur", function () {
+                toggleInputClass(input);
+            });
+        }
+
+        // Validate form event handler
+        async function handleFormSubmission(event) {
             event.preventDefault(); // Prevent default form submission
 
+            const inputFields = document.querySelectorAll(".input-login100");
             let check = true;
 
             inputFields.forEach(function (input) {
@@ -85,62 +101,77 @@ export default class LoginView extends AbstractView {
             if (check) {
                 await logging(); // Call the logging function if validation passes
             }
-        });
+        }
 
-        // Show/Hide password
-        const eyeIcon = document.getElementById("eye-login");
-        const passwordInput = document.getElementById("password-login");
-        eyeIcon.addEventListener("click", function () {
+        // Show/Hide password event handler
+        function togglePasswordVisibility() {
+            const eyeIcon = document.getElementById("eye-login");
+            const passwordInput = document.getElementById("password-login");
             const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
             passwordInput.setAttribute("type", type);
             eyeIcon.classList.toggle("fa-eye-slash", type === "password");
-        });
+        }
 
-        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-        passwordInput.setAttribute("type", type);
-        eyeIcon.classList.toggle("fa-eye-slash", type === "password");
-        passwordInput.setAttribute("type", "password");
-        eyeIcon.classList.toggle("fa-eye-slash", type === "text");
+        // Set initial password visibility
+        function setPasswordVisibility(passwordInput, eyeIcon) {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            eyeIcon.classList.toggle("fa-eye-slash", type === "password");
+        }
+
+        // Toggle input class
+        function toggleInputClass(input) {
+            if (input.value.trim() !== "") {
+                input.parentElement.classList.add("has-val");
+            } else {
+                input.parentElement.classList.remove("has-val");
+            }
+        }
 
         // Login function
         async function logging() {
             const username = document.getElementsByName("username")[0].value;
             const password = document.getElementsByName("password")[0].value;
+            
+            if(validateUserInput(username, password))
+            {
+                window.client.username = username;
 
-            window.client.username = username;
-
-            const loginRequest = "Login$" + username + "$" + password;
-            const loginResult = await window.client.transferToServer(loginRequest, "loginResult");
-
-            if (loginResult === "Success") {
-                window.client.navigateTo("/codeVerification");
-            } else {
-                const errorMessage = document.getElementById("errorMessage");
-                errorMessage.innerText = "Login failed. Username or password are incorrect";
-                errorMessage.style.display = "block";
+                const loginRequest = "Login$" + username + "$" + password;
+                const loginResult = await window.client.transferToServer(loginRequest, "loginResult");
+    
+                if (loginResult === "Success") {
+                    window.client.navigateTo("/codeVerification");
+                } else {
+                    const message = document.getElementById("message");
+                    message.innerText = "Login failed. Username or password are incorrect";
+                    message.style.display = "block";
+                }
             }
         }
 
-        // Navigation
-        document.getElementById("signupButton").addEventListener("click", function () {
+        // Navigation functions
+        function navigateToSignup() {
             window.client.navigateTo("/signup");
-        });
+        }
 
-        document.getElementById("forgotPass").addEventListener("click", function () {
+        function navigateToForgotPassword() {
             window.client.navigateTo("/forgotPassword");
-        });
+        }
 
         // Validation functions
         function validate(input) {
-            if (input.value.trim() === "") {
-                return false;
-            }
-            return true; // Add more specific validation rules if needed
+            return input.value.trim() !== "";
         }
 
         function showValidate(input) {
             const thisAlert = input.parentElement;
             thisAlert.classList.add("alert-validate");
+        }
+
+        function validateUserInput(username, password)
+        {
+            return validator.validateUsername(username) && validator.validatePassword(password);
         }
     }
 }

@@ -193,6 +193,8 @@ class Parser{
     {
         const username = forgotPasswordRequest.split('$');
 
+        this.password = "";
+
         let userEmailResult = await this.DBHandler.getUserEmail(username);
 
         if(userEmailResult !== "Fail")
