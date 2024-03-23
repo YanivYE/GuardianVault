@@ -39,27 +39,30 @@ export default class ForgotPasswordView extends AbstractView {
     {
         document.getElementById("forgotPasswordForm").addEventListener('submit', async function (event) {
             event.preventDefault();
-            
+        
             const message = document.getElementById("message");
-            const username = document.getElementsByName("username")[0].value;
+            const username = document.getElementsByName("username")[0].value.trim(); // Trim to remove leading/trailing whitespaces
+        
+            if (!username) {
+                // Display error message if username is empty
+                message.style.display = "block";
+                message.innerText = "Please enter your username";
+                return; // Exit the function, preventing form submission
+            }
         
             window.client.username = username;
         
-            message.style.display = "none"; 
+            message.style.display = "none";
         
             const forgotPasswordRequest = 'ForgotPassword$' + username;
             const forgotPasswordResult = await window.client.transferToServer(forgotPasswordRequest, 'forgotPasswordResult');
         
-            if(forgotPasswordResult === "Fail")
-            {
+            if (forgotPasswordResult === "Fail") {
                 message.style.display = "block";
                 message.innerText = "Username doesn't exist";
-            }
-            else
-            {
+            } else {
                 window.client.navigateTo('/codeVerification');
             }
-        
         });
     }
 
