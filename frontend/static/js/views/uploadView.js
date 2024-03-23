@@ -17,7 +17,7 @@ export default class UploadView extends AbstractView{
                     <form id="uploadForm" class="upload-form" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="fileName">File Name(without extension):</label>
-                            <input type="text" id="fileName" name="fileName" placeholder="Enter file name">
+                            <input type="text" class="input-text-upload" id="fileName" name="fileName" placeholder="Enter file name">
                         </div>
 
                         <div class="form-group">
