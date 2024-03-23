@@ -128,16 +128,18 @@ export default class DownloadView extends AbstractView{
         fileListItems.innerHTML = "";
         filteredFiles.forEach(file => {
             const listItem = document.createElement("li");
-            const fileButton = createFileButton(file);
+            const fileButton = createFileButton(file, null);
             listItem.appendChild(fileButton);
             fileListItems.appendChild(listItem);
         });
     }
 
     // Create file button element
-    function createFileButton(file) {
+    function createFileButton(file, user) {
         const fileButton = document.createElement("button");
         fileButton.textContent = file;
+        const username = user === null ? null : user.user;
+        fileButton.setAttribute('owner', username);
         fileButton.classList.add('file-button');
         fileButton.addEventListener('click', function () {
             toggleFile(this);
@@ -159,30 +161,30 @@ export default class DownloadView extends AbstractView{
     function createUserSection(user) {
         const userSection = document.createElement('div');
         userSection.classList.add('shared-user-section');
-
-        const userHeader = createUserHeader(user);
+    
         const userFilesList = createUserFilesList(user);
-
+        const userHeader = createUserHeader(user, userFilesList);
+    
         userSection.appendChild(userHeader);
         userSection.appendChild(userFilesList);
-
+    
         return userSection;
     }
 
     // Create user header element
-    function createUserHeader(user) {
+    function createUserHeader(user, userFilesList) {
         const userHeader = document.createElement('h3');
         const filesAmount = user.files.length;
         const sharedUserName = `${user.user} (${filesAmount} ${filesAmount === 1 ? 'file' : 'files'})`;
         const arrowIcon = createArrowIcon();
-
+    
         userHeader.appendChild(arrowIcon);
         userHeader.textContent += sharedUserName;
         userHeader.classList.add('shared-user-header');
         userHeader.addEventListener('click', function () {
             toggleSharedFiles(userFilesList, arrowIcon, userHeader, sharedUserName);
         });
-
+    
         return userHeader;
     }
 
@@ -201,7 +203,7 @@ export default class DownloadView extends AbstractView{
         userFilesList.classList.add('shared-user-files');
         userFilesList.style.display = 'none';
         user.files.forEach(file => {
-            const fileButton = createFileButton(file);
+            const fileButton = createFileButton(file, user);
             const fileItem = document.createElement('li');
             fileItem.appendChild(fileButton);
             userFilesList.appendChild(fileItem);

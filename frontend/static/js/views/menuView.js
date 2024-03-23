@@ -64,7 +64,7 @@ export default class MenuView extends AbstractView{
         {
           window.client.logedIn = false;
           document.getElementById('logoutLoader').style.display = 'none';
-          window.client.navigateTo('/login');
+          window.client.navigateTo('/');
     
           window.client = null; // or window.client = undefined;
         }
