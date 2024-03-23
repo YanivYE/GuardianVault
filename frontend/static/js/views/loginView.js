@@ -4,7 +4,6 @@ export default class LoginView extends AbstractView {
     constructor() {
         super();
         this.setTitle("Login");
-        this.setMessageBox(document.getElementById("message"));
     }
 
     async getHtml() {
@@ -55,6 +54,8 @@ export default class LoginView extends AbstractView {
 
     async executeViewScript()
     {
+        this.inputValidator.setMessageBox(document.getElementById("message"));
+
         const validator = this.inputValidator;
         const inputFields = document.querySelectorAll(".input-login100");
 
