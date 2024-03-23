@@ -20,7 +20,7 @@ export default class ResetPasswordView extends AbstractView{
                               <span class="btn-show-pass">
                                   <i class="fa-solid fa-eye" id="eye-reset"></i>
                               </span>
-                              <div id="password-strength" class="password-strength">
+                              <div id="password-strength-reset" class="password-strength-reset">
                                   <div class="strength-text">Password Requirements:</div>
                                   <div class="requirements">
                                       <div class="requirement" id="length-req">
