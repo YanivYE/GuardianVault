@@ -24,7 +24,6 @@ export default class MenuView extends AbstractView{
             <div class="loader"></div>
         </div>
         <button class="logout-button-menu" id="logoutButton">Logout</button>
-
     </div>
     `;
   }
