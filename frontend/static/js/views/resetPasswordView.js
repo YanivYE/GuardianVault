@@ -18,7 +18,7 @@ export default class ResetPasswordView extends AbstractView{
                               <input class="input-reset100" type="password" name="password" id="password" placeholder="Password">
                               <span class="focus-input-reset100" data-placeholder="&#xe80f;"></span>
                               <span class="btn-show-pass">
-                                  <i class="fa-solid fa-eye-reset" id="eye"></i>
+                                  <i class="fa-solid fa-eye" id="eye-reset"></i>
                               </span>
                               <div id="password-strength" class="password-strength">
                                   <div class="strength-text">Password Requirements:</div>
@@ -70,7 +70,7 @@ export default class ResetPasswordView extends AbstractView{
     });
 
     function togglePassword() {
-        const eye = document.querySelector("#eye");
+        const eye = document.querySelector("#eye-reset");
         const passwordInput = document.querySelector("#password");
 
         const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";

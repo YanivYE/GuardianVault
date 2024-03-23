@@ -9,8 +9,8 @@ const config = require('./config');
 class DriveHandler {
     constructor() {
         this.drive = this.connectToDrive();
-        this.atRestCrypto = new EncryptionAtRest();
-        this.compressor = new Compressor();
+        this.atRestCrypto = new EncryptionAtRest.EncryptionAtRest();
+        this.compressor = new Compressor.Compressor();
     }
 
     connectToDrive() {

@@ -54,6 +54,8 @@ export default class LoginView extends AbstractView {
 
     async executeViewScript()
     {
+        
+
         // Focus input
         const inputFields = document.querySelectorAll(".input-login100");
         inputFields.forEach(function (input) {
@@ -93,6 +95,12 @@ export default class LoginView extends AbstractView {
             passwordInput.setAttribute("type", type);
             eyeIcon.classList.toggle("fa-eye-slash", type === "password");
         });
+
+        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+        passwordInput.setAttribute("type", type);
+        eyeIcon.classList.toggle("fa-eye-slash", type === "password");
+        passwordInput.setAttribute("type", "password");
+        eyeIcon.classList.toggle("fa-eye-slash", type === "text");
 
         // Login function
         async function logging() {

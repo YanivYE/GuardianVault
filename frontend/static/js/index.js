@@ -16,13 +16,13 @@ continueButton.addEventListener('click', function(event) {
   }
 });
 
-// Enable the button after 3 seconds
+// Enable the button after 1 seconds
 setTimeout(function() {
   continueButton.removeAttribute('disabled');
   document.getElementById('connectionStatus').textContent = 'Established';
   // Remove animation class
   document.getElementById('connectionStatus').classList.remove('animating');
-}, 3000);
+}, 1000);
 
 // Add animation class while establishing connection
 setTimeout(function() {

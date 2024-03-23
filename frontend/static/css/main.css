@@ -8,7 +8,7 @@
   height: 100%;
 }
 
-/* @font-face {
+/*@font-face {
   font-family: Ubuntu-Regular;
   src: url('../fonts/ubuntu/Ubuntu-Regular.ttf'); 
 } */
@@ -58,6 +58,13 @@ a:hover {
 /*---------------------------------------------*/
 h1,h2,h3,h4,h5,h6 {
 	margin: 0px;
+  display: block;
+  font-size: 1.5em;
+  margin-block-start: 0.83em;
+  margin-block-end: 0.83em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
 }
 
 p {
@@ -583,29 +590,100 @@ p
   margin: 0 auto;
 }
 
-.download100-form-title {
-  font-family: Ubuntu-Bold;
-  font-size: 28px;
-  color: #fff;
+.wrap-input-download100 {
+  width: 100%;
+  position: relative;
+  border-bottom: 1px solid #ffffff;
+  padding: 29px 0;
+}
+
+.input-download100 {
+  font-family: Ubuntu-Regular;
+  font-size: 20px;
+  color: #ffffff;
   line-height: 1.2;
-  text-align: center;
-  text-transform: uppercase;
 
   display: block;
+  width: calc(100% - 40px);
+  height: 50px;
+  background: transparent;
+  padding: 0 10px 0 80px;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
+
+.focus-input-download100 {
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+
+.focus-input-download100::before {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 1px;
+
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
+
+  background: #003366;
+  background: -webkit-linear-gradient(left, #001f3f, #003366, #005b96);
+  background: -o-linear-gradient(left, #001f3f, #003366, #005b96);
+  background: -moz-linear-gradient(left, #001f3f, #003366, #005b96);
+  background: linear-gradient(left, #001f3f, #003366, #005b96);
+}
+
+.focus-input-download100::after {
+  font-family: Linearicons-Free;
+  font-size: 18px;
+  color: #ffffff;
+
+  content: attr(data-placeholder);
+  display: block;
+  width: 100%;
+  position: absolute;
+  top: 40px;
+  left: 35px;
+ 
+
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
 }
 
 .container-download100 {
   width: 100%;  
   min-height: 100vh;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   padding: 15px;
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
   position: relative;
-  z-index: 1;
-  background-image: url('static/css/images/bg-01.jpg');
-  background-repeat: no-repeat; /* Prevent the background image from repeating */
-  background-size: cover; /* Stretch the background image to cover the entire container */
+  z-index: 1;  
 }
 
 .container-download100::before {
@@ -617,9 +695,34 @@ p
   height: 100%;
   top: 0;
   left: 0;
-  background-color: rgba(0,0,0,0.65); /* Keep the background color */
+  background-color: rgba(0,0,0,0.65);
 }
 
+.input-download100:focus {
+  padding-left: 60px;
+}
+
+.input-download100:focus + .focus-input-download100::after {
+  left: 23px;
+  color: #ffffff;
+}
+
+.input-download100:focus + .focus-input-download100::before {
+  width: 100%;
+}
+
+.has-val.input-download100 + .focus-input-download100::after {
+  left: 23px;
+  color: #ffffff;
+}
+
+.has-val.input-download100 + .focus-input-download100::before {
+  width: 100%;
+}
+
+.has-val.input-download100 {
+  padding-left: 60px;
+}
 
 /*------------------------------------------------------------------
 [ Button ]*/
@@ -713,7 +816,7 @@ label {
   margin-bottom: 5px;
 }
 
-input[type="text"],
+/*input[type="text"],
 input[type="file"],
 select {
   width: 100%;
@@ -725,7 +828,7 @@ select {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-
+*/
 
 .download100-form-title
 {
@@ -739,6 +842,7 @@ select {
   
   display: block;
 }
+
 /* Adjust the layout of radio buttons */
 input[type="radio"] {
   display: inline-block;
@@ -1124,53 +1228,10 @@ label[for="private"], label[for="public"] {
   background: linear-gradient(left, #001f3f, #003366, #005b96);
 }
 
-.focus-input-forgot100::after {
-  font-family: Linearicons-Free;
-  font-size: 40px; /* Adjust the font size to make the icon larger */
-  color: #ffffff;
-
-  content: attr(data-placeholder);
-  display: block;
-  width: 100%;
-  position: absolute;
-  top: 27.5px;
-  left: 35px;
-
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  transition: all 0.4s;
-}
-
-.input-forgot100:focus {
-  padding-left: 60px;
-}
-
-.input-forgot100:focus + .focus-input-forgot100::after {
-  left: 23px;
-  color: #ffffff;
-}
-
-.input-forgot100:focus + .focus-input-forgot100::before {
-  width: 100%;
-}
-
-.has-val.input-forgot100 + .focus-input-forgot100::after {
-  left: 23px;
-  color: #ffffff;
-}
-
-.has-val.input-forgot100 + .focus-input-forgot100::before {
-  width: 100%;
-}
-
-.has-val.input-forgot100 {
-  padding-left: 60px;
-}
-
 
 /*------------------------------------------------------------------
 [ Button ]*/
+/* Add styles for the container of the "Forgot Password" button */
 .container-forgot100-form-btn {
   width: 100%;
   display: -webkit-box;
@@ -1226,6 +1287,7 @@ label[for="private"], label[for="public"] {
   background-color: #555555;
   top: 0;
   left: 0;
+  color: #fff;
   opacity: 0;
 
   -webkit-transition: all 0.4s;
@@ -1236,10 +1298,55 @@ label[for="private"], label[for="public"] {
 
 .forgot100-form-btn:hover {
   background-color: transparent;
+  color: #fff;
 }
 
 .forgot100-form-btn:hover:before {
   opacity: 1;
+  color: #fff;
+}
+.focus-input-forgot100::after {
+  font-family: Linearicons-Free;
+  font-size: 40px; /* Adjust the font size to make the icon larger */
+  color: #ffffff;
+
+  content: attr(data-placeholder);
+  display: block;
+  width: 100%;
+  position: absolute;
+  top: 27.5px;
+  left: 35px;
+
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
+.input-forgot100:focus {
+  padding-left: 60px;
+}
+
+.input-forgot100:focus + .focus-input-forgot100::after {
+  left: 23px;
+  color: #ffffff;
+}
+
+.input-forgot100:focus + .focus-input-forgot100::before {
+  width: 100%;
+}
+
+.has-val.input-forgot100 + .focus-input-forgot100::after {
+  left: 23px;
+  color: #ffffff;
+}
+
+.has-val.input-forgot100 + .focus-input-forgot100::before {
+  width: 100%;
+}
+
+.has-val.input-forgot100 {
+  padding-left: 60px;
 }
 
 .forgot100-container{
@@ -1251,68 +1358,6 @@ label[for="private"], label[for="public"] {
   width: 100%;
   padding: 12px 36px 12px 12px;
   box-sizing: border-box;
-}
-
-/*------------------------------------------------------------------
-[ Button ]*/
-/* Add styles for the container of the "Forgot Password" button */
-.container-forgot100-form-btn {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end; /* Align to the right */
-  align-items: center; /* Center vertically */
-  padding-top: 0px; /* Adjust the padding for spacing */
-}
-
-.forgot100-form-btn {
-  font-family: Ubuntu-Bold;
-  font-size: 19px;
-  color: #ffffff;
-  line-height: 1.2;
-  text-transform: uppercase;
-
-  padding: 20px 15px; /* Add padding for spacing */
-  border-radius: 5px;
-
-  position: relative;
-  z-index: 1;
-
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  transition: all 0.4s;
-
-  margin-left: 10px; /* Adjust the margin to move the text to the right */
-}
-
-.forgot100-form-btn::before {
-  content: "";
-  display: block;
-  position: absolute;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  border-radius: 21px;
-  background-color: #555555;
-  top: 0;
-  left: 0;
-  color: #fff;
-  opacity: 0;
-
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  transition: all 0.4s;
-}
-
-.forgot100-form-btn:hover {
-  background-color: transparent;
-  color: #fff;
-}
-
-.forgot100-form-btn:hover:before {
-  opacity: 1;
-  color: #fff;
 }
 
 /* Add styles for the container of the "Forgot Password" button */
@@ -1376,6 +1421,51 @@ label[for="private"], label[for="public"] {
 
 /*------------------------------------------------------------------
 [ Login ]*/
+
+.validate-input {
+  position: relative;
+}
+
+.container-login100 {
+  width: 100%;  
+  min-height: 100vh;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: relative;
+  z-index: 1;  
+}
+
+.container-login100::before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(0,0,0,0.65);
+}
+
+.wrap-login100 {
+  width: 390px;
+  border-radius: 10px;
+  overflow: hidden;
+
+  background: transparent;
+}
+
 
 .login100-form {
   width: 100%;
@@ -1597,7 +1687,7 @@ label[for="private"], label[for="public"] {
   box-sizing: border-box;
 }
 
-.fa-eye-login {
+#eye-login {
   position: absolute;
   top: 50%; /* Adjusted top position to vertically center */
   right: 12px; /* Adjusted right position to bring closer to the input */
@@ -2082,7 +2172,8 @@ label[for="private"], label[for="public"] {
   padding: 12px 36px 12px 12px;
   box-sizing: border-box;
 }
-.fa-eye-reset {
+
+#eye-reset {
   position: absolute;
   top: 50px; /* Adjust the top value to align with the password textbox */
   right: 8%;
@@ -2436,7 +2527,8 @@ label[for="private"], label[for="public"] {
   padding: 12px 36px 12px 12px;
   box-sizing: border-box;
 }
-.fa-eye-signup {
+
+#eye-signup {
   position: absolute;
   top: 50px; /* Adjust the top value to align with the password textbox */
   right: 8%;
@@ -2572,6 +2664,7 @@ label[for="private"], label[for="public"] {
 
 /*------------------------------------------------------------------
 [ Alert validate ]*/
+
 
 
 .password-strength-signup {
@@ -2883,68 +2976,6 @@ label[for="private"], label[for="public"] {
 
 /*------------------------------------------------------------------
 [ Button ]*/
-/* Add styles for the container of the "Forgot Password" button */
-.container-forgot100-form-btn {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end; /* Align to the right */
-  align-items: center; /* Center vertically */
-  padding-top: 0px; /* Adjust the padding for spacing */
-}
-
-.forgot100-form-btn {
-  font-family: Ubuntu-Bold;
-  font-size: 12px;
-  color: #ffffff;
-  line-height: 1.2;
-  text-transform: uppercase;
-
-  padding: 5px 15px; /* Add padding for spacing */
-  border-radius: 5px;
-
-  position: relative;
-  z-index: 1;
-
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  transition: all 0.4s;
-
-  margin-left: 10px; /* Adjust the margin to move the text to the right */
-}
-
-.forgot100-form-btn::before {
-  content: "";
-  display: block;
-  position: absolute;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  border-radius: 21px;
-  background-color: #555555;
-  top: 0;
-  left: 0;
-  color: #fff;
-  opacity: 0;
-
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  transition: all 0.4s;
-}
-
-.forgot100-form-btn:hover {
-  background-color: transparent;
-  color: #fff;
-}
-
-.forgot100-form-btn:hover:before {
-  opacity: 1;
-  color: #fff;
-}
-
-/*------------------------------------------------------------------
-[ Button ]*/
 .container-signup100-form-btn {
   width: 100%;
   display: -webkit-box;
@@ -3097,7 +3128,7 @@ label {
   margin-bottom: 5px;
 }
 
-input[type="text"],
+/*input[type="text"],
 input[type="file"],
 select {
   width: 100%;
@@ -3109,7 +3140,7 @@ select {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-
+*/
 .upload-btn {
   width: 100%; /* Set the width to 100% to take up the full width of its container */
   padding: 10px;
@@ -3178,17 +3209,6 @@ select {
   transition: all 0.4s;
 }
 
-.upload100-form-title
-{
-  font-family: Ubuntu-Bold;
-  font-size: 28px;
-  color: #fff;
-  line-height: 1.2;
-  text-align: center;
-  text-transform: uppercase;
-  
-  display: block;
-}
 /* Adjust the layout of radio buttons */
 input[type="radio"] {
   display: inline-block;
@@ -3327,7 +3347,6 @@ body {
   height: 100vh;
   margin: 0;
   color: white; /* Change text color to white */
-  font-family: Arial, sans-serif; /* Change font family */
 }
 
 h1 {
