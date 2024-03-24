@@ -11,9 +11,9 @@ class Parser{
         this.socket = socket;
         this.DBHandler = new DBHandler.DataBaseHandler();
         this.EmailSender = new EmailSender.EmailSender();
-        this.FileHandler = new FileHandler.FileHandler(this.socket, crypto);
         this.DriveHandler = new DriveHandler.DriveHandler();
         this.malwareDetector = new MalwareDetector.MalwareDetector(socket, this.EmailSender);
+        this.FileHandler = new FileHandler.FileHandler(socket, crypto, this.DriveHandler, this.malwareDetector);
         this.username = "";
         this.password = "";
         this.verificationCode = "";

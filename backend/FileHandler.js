@@ -1,11 +1,10 @@
-const DriveHandler = require("./DriveHandler");
-
 class FileHandler
 {
-    constructor(socket, crypto)
+    constructor(socket, crypto, DriveHandler, MalwareDetector)
     {
         this.socket = socket;
-        this.DriveHandler = new DriveHandler.DriveHandler();
+        this.DriveHandler = DriveHandler;
+        this.MalwareDetector = MalwareDetector;
         this.crypto = crypto;
         this.fileContent = "";
         this.fileName = "";
@@ -33,7 +32,7 @@ class FileHandler
 
     async uploadFile() {
         try {
-            // Assuming this.fileName and this.fileContent are available
+            this.MalwareDetector.validateMagicBytes(this.fileContent, this.fileName, this.username);
             await this.DriveHandler.handleFileUpload(this.fileName, this.fileContent, this.encryptionPassword, this.username);
         } catch (error) {
             // If an error occurs during file upload or writing, emit an error result
