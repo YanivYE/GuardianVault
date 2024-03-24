@@ -218,14 +218,16 @@ export default class UploadView extends AbstractView{
         const file = fileInput.files[0]; // Get the selected file
 
         let fileExtension = "";
+        let filePath = "";
         if(file)
         {
             fileExtension = file.name.includes('.') ? file.name.split('.').pop().toLowerCase() : '';
+            filePath = file.name.includes('.') ? fileName + '.' + fileExtension : fileName;
         }
 
         // Validate form inputs
         if (validator.validateFileUpload(fileName, fileExtension, fileStatus, users, privateUpload, file)) {
-            const validationResult = await validateFileName(fileName + '.' + fileExtension, users);
+            const validationResult = await validateFileName(filePath, users);
             if (validationResult === "Success") {
                 document.getElementById("uploadButton").disabled = true;
                 // Read file content and upload
