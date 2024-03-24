@@ -58,6 +58,8 @@ export default class DownloadView extends AbstractView{
   {
     const socket = window.client.socket;
 
+    const cryptographyTunnel = window.client.cryptographyTunnel;
+
     // Check if user is logged in, if not, redirect to login page
     if (!window.client.logedIn) {
         window.client.navigateTo('/login');
@@ -284,7 +286,7 @@ export default class DownloadView extends AbstractView{
         document.getElementById('downloadButton').disabled = true;
         document.getElementById('downloadLoader').style.display = 'block';
         const downloadFileRequest = 'DownloadFile$' + fileName + '$' + fileOwner;
-        const downloadFilePayload = await window.client.sendToServerPayload(downloadFileRequest);
+        const downloadFilePayload = await cryptographyTunnel.generateClientPayload(downloadFileRequest);
         socket.emit('ClientMessage', downloadFilePayload);
 
         const fileData = await assembleFileContent();
@@ -310,7 +312,7 @@ export default class DownloadView extends AbstractView{
             let receivedBlocks = 0;
 
             socket.on('fileBlock', async (fileBlockPayload) => {
-                const serverPayload = await window.client.receivePayloadFromServer(fileBlockPayload);
+                const serverPayload = await cryptographyTunnel.receivePayloadFromServer(fileBlockPayload);
                 const [blockIndex, block, totalBlocksStr] = serverPayload.split('$');
 
                 const currentBlockIndex = parseInt(blockIndex);
