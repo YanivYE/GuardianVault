@@ -33,6 +33,10 @@ export default class InputValidation
             this.errorAlert("Input must not contain any quotation marks(`'\").")
             return false;
         }
+        if (this.validateInvalidCharacters(input)) {
+            this.errorAlert("Input must not contain any invalid characters({}:,).")
+            return false;
+        }
         return true;    
     }           
 
@@ -58,14 +62,31 @@ export default class InputValidation
         return regex.test(input);
     }
 
-    validateEmail(email) {
-        const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if(!regex.test(email))
+    validateInvalidCharacters(input)
+    {
+        const regex = /[{}:,]/;     // invlaid chars
+        return regex.test(input);
+    }
+
+    checkRegexMatch(input, regex, errorMessage)
+    {
+        if(!regex.test(input))
         {
-            this.errorAlert("Invalid Email address.");
+            this.errorAlert(errorMessage);
             return false;
         }
         return true;
+    }
+
+    validateEmail(email) {
+        const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return this.checkRegexMatch(email, regex, "Invalid Email address.");
+    }
+
+    validateVerificationCode(code)
+    {
+        const regex = /^\d{6}$/; // Matches exactly 6 digits
+        return this.checkRegexMatch(code, regex, "Code Verification must be a 6 digit sequence.");
     }
 
     validatePasswordStrength(strengthText)

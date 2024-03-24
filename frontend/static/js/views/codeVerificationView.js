@@ -4,7 +4,6 @@ export default class CodeVerificationView extends AbstractView{
     constructor() {
         super();
         this.setTitle("Code Verification");
-        this.setMessageBox(document.getElementById("message"));
     }
 
     async getHtml() {
@@ -39,30 +38,39 @@ export default class CodeVerificationView extends AbstractView{
 
     async executeViewScript()
     {
+        const validator = this.inputValidator;
+
+        const messageBox = document.getElementById("message");
+
+        validator.setMessageBox(messageBox);
+
         document.getElementById("verifyCodeForm").addEventListener('submit', async function (event) {
             event.preventDefault();
             
-            const message = document.getElementById("message");
             const verificationCode = document.getElementsByName("code")[0].value;
         
-            message.style.display = "none"; 
-        
-            const verifyCodeRequest = 'VerifyEmailCode$' + verificationCode;
-            const codeVerificationResult = await window.client.transferToServer(verifyCodeRequest, 'codeVerificationResult');
-        
-            if(codeVerificationResult === "Fail")
+            messageBox.style.display = "none"; 
+
+            if(validator.generalInputValidation(verificationCode) && 
+                validator.validateVerificationCode(verificationCode))
             {
-                message.style.display = "block";
-                message.innerText = "Wrong Verification Code!";
-            }
-            else if(codeVerificationResult === "passwordReset")
-            {
-                window.client.navigateTo('/resetPassword');
-            }
-            else
-            {
-                window.client.logedIn = true;
-                window.client.navigateTo('/menu');
+                const verifyCodeRequest = 'VerifyEmailCode$' + verificationCode;
+                const codeVerificationResult = await window.client.transferToServer(verifyCodeRequest, 'codeVerificationResult');
+            
+                if(codeVerificationResult === "Fail")
+                {
+                    messageBox.style.display = "block";
+                    messageBox.innerText = "Wrong Verification Code!";
+                }
+                else if(codeVerificationResult === "passwordReset")
+                {
+                    window.client.navigateTo('/resetPassword');
+                }
+                else
+                {
+                    window.client.logedIn = true;
+                    window.client.navigateTo('/menu');
+                }
             }
         });
     }

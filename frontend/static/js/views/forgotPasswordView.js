@@ -37,33 +37,33 @@ export default class ForgotPasswordView extends AbstractView {
 
     async executeViewScript()
     {
+        const validator = this.inputValidator;
+
+        const messageBox = document.getElementById("message");
+
+        validator.setMessageBox(messageBox);
+
         document.getElementById("forgotPasswordForm").addEventListener('submit', async function (event) {
             event.preventDefault();
         
-            const message = document.getElementById("message");
             const username = document.getElementsByName("username")[0].value.trim(); // Trim to remove leading/trailing whitespaces
         
-            if (!username) {
-                // Display error message if username is empty
-                message.style.display = "block";
-                message.innerText = "Please enter your username";
-                return; // Exit the function, preventing form submission
-            }
+            if(validator.generalInputValidation(username))
+            {
+                window.client.username = username;
         
-            window.client.username = username;
-        
-            message.style.display = "none";
-        
-            const forgotPasswordRequest = 'ForgotPassword$' + username;
-            const forgotPasswordResult = await window.client.transferToServer(forgotPasswordRequest, 'forgotPasswordResult');
-        
-            if (forgotPasswordResult === "Fail") {
-                message.style.display = "block";
-                message.innerText = "Username doesn't exist";
-            } else {
-                window.client.navigateTo('/codeVerification');
+                messageBox.style.display = "none";
+            
+                const forgotPasswordRequest = 'ForgotPassword$' + username;
+                const forgotPasswordResult = await window.client.transferToServer(forgotPasswordRequest, 'forgotPasswordResult');
+            
+                if (forgotPasswordResult === "Fail") {
+                    messageBox.style.display = "block";
+                    messageBox.innerText = "Username doesn't exist";
+                } else {
+                    window.client.navigateTo('/codeVerification');
+                }
             }
         });
     }
-
-}
+} 
