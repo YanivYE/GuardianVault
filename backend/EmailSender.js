@@ -68,7 +68,7 @@ class EmailSender
         const mailDetails = {
             from: config.EMAIL,
             to: config.ADMIN_EMAIL,
-            subject: 'EMERGENCY: SYSTEM UNDER ATTACK',
+            subject: 'EMERGENCY CALL: SYSTEM UNDER ATTACK',
             text: `Hello ADMIN,\nUser ${attacker} has recently initiated a malicious ${threat} attack!\nPlease address this urgently.`
         };
         this.sendEmail(mailDetails);

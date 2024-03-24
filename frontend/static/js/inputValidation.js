@@ -39,12 +39,12 @@ export default class InputValidation
             return false;
         }
         if (this.validateSqlInjectionMarks(input)) {
-            this.errorAlert("Input must not contain any potential \nSQL Injection marks(`'\";!).")
+            this.errorAlert("Input must not contain any potential \nSQL Injection marks(`'\";).")
             this.SqliAlert(input);
             return false;
         }
         if (this.validateInvalidCharacters(input)) {
-            this.errorAlert("Input must not contain any invalid characters(${}:%).")
+            this.errorAlert("Input must not contain any invalid characters(${}:).")
             return false;
         }
         return true;    
@@ -68,13 +68,13 @@ export default class InputValidation
 
     validateSqlInjectionMarks(input)
     {
-        const regex = /[`'";!]/; // Regex to match invalid characters: ', ", `
+        const regex = /[`'";]/; // Regex to match invalid characters: ', ", `
         return regex.test(input);
     }
 
     validateInvalidCharacters(input)
     {
-        const regex = /[${}:%]/;     // invlaid chars
+        const regex = /[${}:]/;     // invlaid chars
         return regex.test(input);
     }
 
@@ -157,7 +157,7 @@ export default class InputValidation
 
     SqliAlert(maliciousInput)
     {
-        const sqliAlert = 'MalwareAlert$SQLI$' + maliciousInput;
+        const sqliAlert = 'MalwareAlert$Sql Injection$' + maliciousInput;
         this.reportPotentialThreat(sqliAlert);
     }
 
