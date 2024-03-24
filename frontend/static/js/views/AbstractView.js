@@ -2,7 +2,7 @@ import InputValidation from "../inputValidation.js";
 
 export default class AbstractView {
     constructor() {
-        this.inputValidator = new InputValidation();
+        this.inputValidator = new InputValidation(window.client.socket);
     }
 
     setTitle(title) {

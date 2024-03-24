@@ -1,7 +1,8 @@
 export default class InputValidation 
 {
-    constructor() {
+    constructor(socket) {
         this.alertMessageBox;
+        this.socket = socket;
     }
   
     setMessageBox(message)
