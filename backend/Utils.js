@@ -1,4 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
+
 
 function generateUniqueUserId() 
 {
@@ -30,5 +32,16 @@ function generateVerificationCode()
     return code;
 }
   
+function writeToLogFile(logFilePath, message)
+{
+    // Get current date and time
+    const currentDateTime = new Date().toISOString();
+        
+    // Log message to be written
+    const logMessage = `${currentDateTime}: ${message}\n`;
 
-module.exports = {generateUniqueUserId, initializeUsersEmailsMap, generateVerificationCode}
+    // Append log message to log.txt file
+    fs.appendFileSync(logFilePath, logMessage);
+}
+
+module.exports = {generateUniqueUserId, initializeUsersEmailsMap, generateVerificationCode, writeToLogFile}

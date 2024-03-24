@@ -2,8 +2,8 @@ const DBHandler = require("./DataBaseHandler");
 const FileHandler = require("./FileHandler");
 const DriveHandler = require("./DriveHandler");
 const EmailSender = require("./EmailSender");
+const MalwareDetector = require("./MalwareDetector");
 const Utils = require('./Utils');
-const fs = require('fs');
 
 class Parser{
     constructor(socket, crypto)
@@ -13,6 +13,7 @@ class Parser{
         this.EmailSender = new EmailSender.EmailSender();
         this.FileHandler = new FileHandler.FileHandler(this.socket, crypto);
         this.DriveHandler = new DriveHandler.DriveHandler();
+        this.malwareDetector = new MalwareDetector.MalwareDetector(socket, this.username);
         this.username = "";
         this.password = "";
         this.verificationCode = "";
@@ -58,6 +59,9 @@ class Parser{
                 break;
             case "ResetPassword":
                 [responseType, responseData] = await this.resetPassword(additionalData);
+                break;
+            case "MalwareAlert":
+                this.handleMalwareThreat(additionalData);
                 break;
             case "UsersList":
                 [responseType, responseData] = await this.getUsersList();
@@ -239,6 +243,13 @@ class Parser{
         return ['resetPasswordResult', 'Success'];
     }
 
+    handleMalwareThreat(threatDetails)
+    {
+        const [threatType, maliciousInput] = threatDetails.split('$');
+
+        this.malwareDetector.malwareDetected(threatType, maliciousInput, this.username);
+    }
+
     async getUsersList()    
     {
         let usersList = await this.DBHandler.getUsersList();
@@ -287,17 +298,8 @@ class Parser{
     initializeSystem() {
         this.DBHandler.initDataBase();
         this.DriveHandler.initDrive();
-        
-        // Get current date and time
-        const currentDateTime = new Date().toISOString();
-        
-        // Log message to be written
-        const logMessage = `${currentDateTime}: System Initialized\n`;
 
-        // Append log message to log.txt file
-        fs.appendFileSync('../guardianvault/system_log.txt', logMessage);
-
-        console.log("Initialized system successfully!");
+        Utils.writeToLogFile('../guardianvault/system_log.txt', 'System Initialized');
     }
 }
 

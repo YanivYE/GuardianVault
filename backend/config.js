@@ -10,5 +10,6 @@ module.exports = {
   PASSWORD: 'culu ykql ojng svzm',
   EMAIL_SERVICE: 'gmail',
   HOST: 'smtp.gmail.com',
-  SMTP_PORT: 465
+  SMTP_PORT: 465,
+  ADMIN_EMAIL: 'yanivye106@gmail.com'
 };

@@ -30,19 +30,21 @@ export default class InputValidation
             return false;
         }
         if (this.validateInputLength(input)) {
-            this.errorAlert("Input must not be longer than 30 characters.");
+            this.errorAlert("Input must not be longer than 40 characters.");
             return false;
         }
         if (this.validateScriptTags(input)) {
             this.errorAlert("Input must not contain any <script> tags.");
+            this.XSSAlert(input);
             return false;
         }
-        if (this.validateQuotationMarks(input)) {
-            this.errorAlert("Input must not contain any quotation marks(`'\").")
+        if (this.validateSqlInjectionMarks(input)) {
+            this.errorAlert("Input must not contain any potential \nSQL Injection marks(`'\";!).")
+            this.SqliAlert(input);
             return false;
         }
         if (this.validateInvalidCharacters(input)) {
-            this.errorAlert("Input must not contain any invalid characters({}:,).")
+            this.errorAlert("Input must not contain any invalid characters(${}:%).")
             return false;
         }
         return true;    
@@ -54,7 +56,7 @@ export default class InputValidation
     }
 
     validateInputLength(input) {
-        return input.length > 30;
+        return input.length > 40;
     }
 
     validateScriptTags(input) {
@@ -64,15 +66,15 @@ export default class InputValidation
         return regex.test(input);
     }
 
-    validateQuotationMarks(input)
+    validateSqlInjectionMarks(input)
     {
-        const regex = /['"`]/; // Regex to match invalid characters: ', ", `
+        const regex = /[`'";!]/; // Regex to match invalid characters: ', ", `
         return regex.test(input);
     }
 
     validateInvalidCharacters(input)
     {
-        const regex = /[{}:,]/;     // invlaid chars
+        const regex = /[${}:%]/;     // invlaid chars
         return regex.test(input);
     }
 
@@ -137,6 +139,7 @@ export default class InputValidation
         }
         if (phpExtensions.includes(fileExtension) || JSExtensions.includes(fileExtension) || executableExtensions.includes(fileExtension)) {
             this.errorAlert("Any PHP, JavaScript, and executable\n file types are not allowed!");
+            this.LFIAlert(fileName, fileExtension);
             return false;
         }
         if (file.size > 1024 * 1024 * 100) {
@@ -144,5 +147,30 @@ export default class InputValidation
             return false;
         }
         return true;
+    }
+
+    XSSAlert(maliciousInput)
+    {
+        const xssAlert = 'MalwareAlert$XSS$' + maliciousInput;
+        this.reportPotentialThreat(xssAlert);
+    }
+
+    SqliAlert(maliciousInput)
+    {
+        const sqliAlert = 'MalwareAlert$SQLI$' + maliciousInput;
+        this.reportPotentialThreat(sqliAlert);
+    }
+
+    LFIAlert(fileName, fileExtension)
+    {
+        const maliciousFile = fileName + '.' + fileExtension;
+        const LFIAlert = 'MalwareAlert$LFI$' + maliciousFile;
+        this.reportPotentialThreat(LFIAlert);
+    }
+
+    async reportPotentialThreat(malwareAlert)
+    {
+        const alertPayload = await window.client.cryptographyTunnel.generateClientPayload(malwareAlert);
+        this.socket.emit('ClientMessage', alertPayload);
     }
 }

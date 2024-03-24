@@ -1,0 +1,6 @@
+2024-03-24T15:48:05.174Z: XSS Attack Detected! Attacker: Unknown, Malicious Input: <script> alert("Hello!"); </script>
+
+2024-03-24T15:49:03.826Z: LFI Attack Detected! Attacker: yaniv, Malicious Input: ccphp
+
+2024-03-24T15:49:27.895Z: SQLI Attack Detected! Attacker: yaniv, Malicious Input: cc''
+
