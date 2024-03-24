@@ -13,7 +13,7 @@ class Parser{
         this.EmailSender = new EmailSender.EmailSender();
         this.FileHandler = new FileHandler.FileHandler(this.socket, crypto);
         this.DriveHandler = new DriveHandler.DriveHandler();
-        this.malwareDetector = new MalwareDetector.MalwareDetector(socket, this.username);
+        this.malwareDetector = new MalwareDetector.MalwareDetector(socket, this.EmailSender);
         this.username = "";
         this.password = "";
         this.verificationCode = "";
