@@ -9,11 +9,18 @@ export default class InputValidation
         this.alertMessageBox = message;
     }
 
-    errorAlert(alertMessage)
-    {
-        this.alertMessageBox.style.color = "red";
-        this.alertMessageBox.innerText = alertMessage;
+    errorAlert(errorMessage) {
+        this.showMessage(errorMessage, "red");
+    }
+
+    successAlert(successMessage) {
+        this.showMessage(successMessage, "green");
+    }
+
+    showMessage(messageText, color) {
         this.alertMessageBox.style.display = "block";
+        this.alertMessageBox.style.color = color;
+        this.alertMessageBox.innerText = messageText;
     }
 
     generalInputValidation(input) {
@@ -89,11 +96,50 @@ export default class InputValidation
         return this.checkRegexMatch(code, regex, "Code Verification must be a 6 digit sequence.");
     }
 
+    validateFileName(fileName)
+    {
+        const regex = /^[a-zA-Z0-9]{1,12}$/; // Matches only letters and numbers
+        return this.checkRegexMatch(fileName, regex, "File name must contain up to 12 letters and digits.\nNo specail characters");
+    }
+
     validatePasswordStrength(strengthText)
     {
         if(strengthText !== 'Strong' && strengthText !== 'Excellent!')
         {
             this.errorAlert("Password strength must be at least Strong.");
+            return false;
+        }
+        return true;
+    }
+
+    // Function to validate form inputs
+    validateFileUpload(fileName, fileExtension, fileStatus, users, privateUpload, file) 
+    {
+        const phpExtensions = ['php', 'php3', 'php4', 'php5', 'phtml'];
+        const JSExtensions = ['js', 'mjs', 'jsx', 'ts', 'tsx'];
+        const executableExtensions = ['exe', 'bat', 'sh', 'cmd'];
+
+        if (!this.generalInputValidation(fileName) || !this.validateFileName(fileName)) {
+            return false;
+        }
+        if (!fileStatus) {
+            this.errorAlert("Please select either public or private upload");
+            return false;
+        }
+        if (!privateUpload && users.length === 0) {
+            this.errorAlert("Please select users for public upload");
+            return false;
+        }
+        if (!file) {
+            this.errorAlert("Please select a file to upload");
+            return false;
+        }
+        if (phpExtensions.includes(fileExtension) || JSExtensions.includes(fileExtension) || executableExtensions.includes(fileExtension)) {
+            this.errorAlert("Any PHP, JavaScript, and executable\n file types are not allowed!");
+            return false;
+        }
+        if (file.size > 1024 * 1024 * 100) {
+            this.errorAlert("File too large, limit is 100MB");
             return false;
         }
         return true;

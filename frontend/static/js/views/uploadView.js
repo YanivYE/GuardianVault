@@ -62,6 +62,12 @@ export default class UploadView extends AbstractView{
 
   async executeViewScript()
   {
+    const validator = this.inputValidator;
+
+    const messageBox = document.getElementById("message");
+
+    validator.setMessageBox(messageBox);
+
     if (!window.client.logedIn) {
       window.client.navigateTo('/login'); // Redirect to login page if not logged in
     }
@@ -74,7 +80,6 @@ export default class UploadView extends AbstractView{
     const fileInput = document.getElementById('fileInput-upload');
     const fileUpload = document.getElementById("fileUpload");
     const userSelectGroup = document.getElementById("userSelectGroup");
-    const message = document.getElementById("message"); // Error message element
     const loader = document.getElementById('uploadLoader');
 
     setupEventListeners();
@@ -93,7 +98,6 @@ export default class UploadView extends AbstractView{
         fileUpload.addEventListener('drop', onFileUploadDrop);
     }
 
-    
     // Event Listener Functions
     function onPublicButtonClick() {
         // Show the userSelectGroup field when the public button is clicked
@@ -158,20 +162,6 @@ export default class UploadView extends AbstractView{
         });
     }
 
-    function errorAlert(errorMessage) {
-        showMessage(errorMessage, "red");
-    }
-
-    function successAlert(successMessage) {
-        showMessage(successMessage, "green");
-    }
-
-    function showMessage(messageText, color) {
-        message.style.display = "block";
-        message.style.color = color;
-        message.innerText = messageText;
-    }
-
     async function getUsersListFromServer() {
         try {
             const usersListRequest = 'UsersList$';
@@ -227,53 +217,24 @@ export default class UploadView extends AbstractView{
         const fileInput = document.getElementById('fileInput-upload');
         const file = fileInput.files[0]; // Get the selected file
 
-        const fileExtension = file.name.split('.').pop().toLowerCase();
+        let fileExtension = "";
+        if(file)
+        {
+            fileExtension = file.name.includes('.') ? file.name.split('.').pop().toLowerCase() : '';
+        }
 
         // Validate form inputs
-        if (validateInputs(fileName, fileExtension, fileStatus, users, privateUpload, file)) {
+        if (validator.validateFileUpload(fileName, fileExtension, fileStatus, users, privateUpload, file)) {
             const validationResult = await validateFileName(fileName + '.' + fileExtension, users);
             if (validationResult === "Success") {
                 document.getElementById("uploadButton").disabled = true;
                 // Read file content and upload
                 readFileAndUpload(file);
             } else {
-                errorAlert("File name is already taken");
+                validator.errorAlert("File name is already taken");
             }
         }
     });
-
-    // Function to validate form inputs
-    function validateInputs(fileName, fileExtension, fileStatus, users, privateUpload, file) {
-        const phpExtensions = ['php', 'php3', 'php4', 'php5', 'phtml'];
-        const JSExtensions = ['js', 'mjs', 'jsx', 'ts', 'tsx'];
-        const executableExtensions = ['exe', 'bat', 'sh', 'cmd'];
-
-        if (fileName === '') {
-            errorAlert("Please enter a file name");
-            return false;
-        }
-        if (!fileStatus) {
-            errorAlert("Please select either public or private upload");
-            return false;
-        }
-        if (!privateUpload && users.length === 0) {
-            errorAlert("Please select users for public upload");
-            return false;
-        }
-        if (!file) {
-            errorAlert("Please select a file to upload");
-            return false;
-        }
-        if (phpExtensions.includes(fileExtension) || JSExtensions.includes(fileExtension) || executableExtensions.includes(fileExtension)) {
-            errorAlert("Any PHP, JavaScript, and executable\n file types are not allowed!");
-            return false;
-        }
-        if (file.size > 1024 * 1024 * 100) {
-            errorAlert("File too large, limit is 100MB");
-            return false;
-        }
-        return true;
-    }
 
     // Function to read file content and upload
     function readFileAndUpload(file) {
@@ -290,7 +251,7 @@ export default class UploadView extends AbstractView{
         const totalBlocks = Math.ceil(fileSize / blockSize);
         let offset = 0;
     
-        message.style.display = "none";
+        messageBox.style.display = "none";
         loader.style.display = 'block';
     
         function sendNextBlock() {
@@ -307,19 +268,19 @@ export default class UploadView extends AbstractView{
                             // Handle the case where chunk upload failed
                             console.error('Failed to upload block ' + blockIndex);
                             loader.style.display = 'none';
-                            errorAlert("Error occurred while uploading the file\nPlease try again later");
+                            validator.errorAlert("Error occurred while uploading the file\nPlease try again later");
                         }
                     })
                     .catch(error => {
                         console.error('Error uploading block: ', error);
                         // Handle the error
                         loader.style.display = 'none';
-                        errorAlert("Error occurred while uploading the file\nPlease try again later");
+                        validator.errorAlert("Error occurred while uploading the file\nPlease try again later");
                     });
             } else {
                 // All chunks have been uploaded successfully
                 loader.style.display = 'none';
-                successAlert("File uploaded successfully!");
+                validator.successAlert("File uploaded successfully!");
                 document.getElementById("uploadButton").disabled = false;
             }
         }

@@ -60,6 +60,8 @@ export default class DownloadView extends AbstractView{
 
     const cryptographyTunnel = window.client.cryptographyTunnel;
 
+    const messageBox = document.getElementById("message");
+
     // Check if user is logged in, if not, redirect to login page
     if (!window.client.logedIn) {
         window.client.navigateTo('/login');
@@ -282,7 +284,7 @@ export default class DownloadView extends AbstractView{
     async function downloadFile(fileName, fileOwner)
     {
         var fileDownloaded = false;
-        message.style.display = "none";
+        messageBox.style.display = "none";
         document.getElementById('downloadButton').disabled = true;
         document.getElementById('downloadLoader').style.display = 'block';
         const downloadFileRequest = 'DownloadFile$' + fileName + '$' + fileOwner;
@@ -359,9 +361,9 @@ export default class DownloadView extends AbstractView{
                 document.body.removeChild(a);
 
                 // Display success message
-                message.style.display = "block";
-                message.style.color = "green";
-                message.innerText = "File downloaded successfully!";
+                messageBox.style.display = "block";
+                messageBox.style.color = "green";
+                messageBox.innerText = "File downloaded successfully!";
                 document.getElementById('downloadButton').disabled = false;
             } else {
                 console.error('Failed to download file:', xhr.statusText);
@@ -377,7 +379,7 @@ export default class DownloadView extends AbstractView{
 
     async function deleteFile(fileName, fileOwner)
     {
-        message.style.display = "none"; 
+        messageBox.style.display = "none"; 
         document.getElementById('downloadLoader').style.display = 'block';
 
         const deleteFileRequest = 'DeleteFile$' + fileName + '$' + fileOwner;
@@ -389,9 +391,9 @@ export default class DownloadView extends AbstractView{
 
             document.getElementById('downloadLoader').style.display = 'none';
 
-            message.style.display = "block";
-            message.style.color = "green";
-            message.innerText = "File deleted successfully!";
+            messageBox.style.display = "block";
+            messageBox.style.color = "green";
+            messageBox.innerText = "File deleted successfully!";
         }
     }
   }
