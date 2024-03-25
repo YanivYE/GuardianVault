@@ -1,3 +1,5 @@
+import mmmagic from 'mmmagic';
+
 export default class InputValidation 
 {
     constructor(socket) {
@@ -147,6 +149,24 @@ export default class InputValidation
             return false;
         }
         return true;
+    }
+
+    async validateMagicBytes(fileContent) {
+        return new Promise((resolve, reject) => {
+            const magic = new mmmagic.Magic(mmmagic.MAGIC_MIME_TYPE);
+            
+            // Detect magic bytes
+            magic.detect(fileContent, (error, result) => {
+                if (error) {
+                    console.error('Error detecting magic bytes:', error);
+                    resolve(false); // Indicate validation failure
+                } else {
+                    console.log('Detected MIME type:', result);
+                    
+                    resolve(result); // Valid magic bytes
+                }
+            });
+        });
     }
 
     XSSAlert(maliciousInput)

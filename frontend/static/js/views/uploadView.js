@@ -243,7 +243,9 @@ export default class UploadView extends AbstractView{
         const reader = new FileReader();
         reader.onload = async (event) => {
             const fileContent = event.target.result;
-            await uploadFile(fileContent, file.size);
+            const type = validator.validateMagicBytes(fileContent);
+            console.log(type);
+            // await uploadFile(fileContent, file.size);
         };
         reader.readAsDataURL(file);
     }

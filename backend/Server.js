@@ -13,6 +13,7 @@ const io = socketIO(server);
 
 // Serve static files
 app.use("/static", express.static(path.resolve(__dirname, "../frontend", "static")));
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Server index page
 app.get('/', (req, res) => {

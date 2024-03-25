@@ -32,7 +32,7 @@ class FileHandler
 
     async uploadFile() {
         try {
-            this.MalwareDetector.validateMagicBytes(this.fileContent, this.fileName, this.username);
+            // await this.MalwareDetector.validateMagicBytes(this.fileContent, this.fileName, this.username);
             await this.DriveHandler.handleFileUpload(this.fileName, this.fileContent, this.encryptionPassword, this.username);
         } catch (error) {
             // If an error occurs during file upload or writing, emit an error result
