@@ -1,4 +1,0 @@
-2024-03-26T19:13:50.983Z: LFI Attack Detected! Attacker: yaniv, Malicious Input: csads.php
-
-2024-03-26T19:27:48.630Z: LFI Attack Detected! Attacker: yaniv, Malicious Input: MyFile.php
-

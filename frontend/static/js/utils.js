@@ -93,7 +93,6 @@ export const extentionToMIME = {
     "otf": "font/otf",
     "eot": "application/vnd.ms-fontobject",
     "csv": "text/csv",
-    "ics": "text/calendar"
 };
 
 export const signatureToMIME = {
@@ -138,7 +137,6 @@ export const signatureToMIME = {
     "00010000": "font/ttf",
     "4F54544F": "font/otf",
     "00010000": "application/vnd.ms-fontobject",
-    "": "text/calendar"
 };
 
 export function getMIMExtension(MIME) {

@@ -148,33 +148,39 @@ export default class InputValidation
             this.LFIAlert(fileName, fileExtension);
             return false;
         }
-        if(!await this.validateFileMagicBytes(file, fileExtension))
+        const signatureValidation = await this.validateFileMagicBytes(file, fileExtension);
+        if(signatureValidation === "Unmatching")
         {
             this.errorAlert("Unmatching file extension and signature!\nPossible malicious attack detected.");
-            // file attack
+            this.FileSignatureSpoofingAlert(fileExtension);
+            return false;
+        }
+        else if(signatureValidation === "Unsupported")
+        {
+            this.errorAlert("Unsupported file format.");
             return false;
         }
         return true;
     }
 
-    async validateFileMagicBytes(file, expectedExtention) {
-        try {
-            const signature = await this.readFileMagicBytes(file);
+    async validateFileMagicBytes(file, expectedExtention) 
+    {
+        const signature = await this.readFileMagicBytes(file);
 
-            const MIME = this.getMatchingMIMEType(signature);
+        const MIME = this.getMatchingMIMEType(signature);
 
-            if (!MIME) {
-                this.errorAlert("Unsupported file format.");
-                return false;
-            }
-
-            const actualExtention = getMIMExtension(MIME);
-    
-            return actualExtention === expectedExtention;
-        } catch (error) {
-            console.error("Error while validating file MIME type:", error.message);
-            return false;
+        if (!MIME) {
+            return "Unsupported";
         }
+
+        const actualExtention = getMIMExtension(MIME);
+
+        if(actualExtention !== expectedExtention)
+        {
+            return "Unmatching";
+        }
+
+        return "Success";
     }
 
     getMatchingMIMEType(signature)
@@ -227,6 +233,13 @@ export default class InputValidation
         const maliciousFile = fileName + '.' + fileExtension;
         const LFIAlert = 'MalwareAlert$LFI$' + maliciousFile;
         this.reportPotentialThreat(LFIAlert);
+    }
+
+    FileSignatureSpoofingAlert(extension)
+    {
+        const maliciousInput = `Fake ${extension} file`;
+        const signatureSpoofingAlert = 'MalwareAlert$signatureSpoofing$' + maliciousInput;
+        this.reportPotentialThreat(signatureSpoofingAlert);
     }
 
     async reportPotentialThreat(malwareAlert)
