@@ -1,3 +1,5 @@
+import { signatureToMIME, getMIMExtension } from "./utils.js";
+
 export default class InputValidation 
 {
     constructor(socket) {
@@ -116,13 +118,14 @@ export default class InputValidation
     }
 
     // Function to validate form inputs
-    validateFileUpload(fileName, fileExtension, fileStatus, users, privateUpload, file) 
+    async validateFileUpload(fileName, fileExtension, fileStatus, users, privateUpload, file) 
     {
         const phpExtensions = ['php', 'php3', 'php4', 'php5', 'phtml'];
         const JSExtensions = ['js', 'mjs', 'jsx', 'ts', 'tsx'];
         const executableExtensions = ['exe', 'bat', 'sh', 'cmd'];
 
-        if (!this.generalInputValidation(fileName) || !this.validateFileName(fileName)) {
+        if (!file) {
+            this.errorAlert("Please select a file to upload");
             return false;
         }
         if (!fileStatus) {
@@ -133,8 +136,11 @@ export default class InputValidation
             this.errorAlert("Please select users for public upload");
             return false;
         }
-        if (!file) {
-            this.errorAlert("Please select a file to upload");
+        if (file.size > 1024 * 1024 * 100) {
+            this.errorAlert("File too large, limit is 100MB");
+            return false;
+        }
+        if (!this.generalInputValidation(fileName) || !this.validateFileName(fileName)) {
             return false;
         }
         if (phpExtensions.includes(fileExtension) || JSExtensions.includes(fileExtension) || executableExtensions.includes(fileExtension)) {
@@ -142,29 +148,66 @@ export default class InputValidation
             this.LFIAlert(fileName, fileExtension);
             return false;
         }
-        if (file.size > 1024 * 1024 * 100) {
-            this.errorAlert("File too large, limit is 100MB");
+        if(!await this.validateFileMagicBytes(file, fileExtension))
+        {
+            this.errorAlert("Unmatching file extension and signature!\nPossible malicious attack detected.");
+            // file attack
             return false;
         }
         return true;
     }
 
-    async validateMagicBytes(fileContent) {
-        const fileType = this.getFileTypeFromDataURI(fileContent);
+    async validateFileMagicBytes(file, expectedExtention) {
+        try {
+            const signature = await this.readFileMagicBytes(file);
 
-        // Display the magic bytes
-        console.log("Type:", fileType);
+            const MIME = this.getMatchingMIMEType(signature);
+
+            if (!MIME) {
+                this.errorAlert("Unsupported file format.");
+                return false;
+            }
+
+            const actualExtention = getMIMExtension(MIME);
+    
+            return actualExtention === expectedExtention;
+        } catch (error) {
+            console.error("Error while validating file MIME type:", error.message);
+            return false;
+        }
     }
 
-    getFileTypeFromDataURI(dataURI) {
-        // Extract the portion of the data URI that contains the MIME type
-        const mimeString = dataURI.split(",")[0];
+    getMatchingMIMEType(signature)
+    {
+        for(const magicBytes in signatureToMIME)
+        {
+            if(signature.startsWith(magicBytes.toLowerCase()))
+            {
+                return signatureToMIME[magicBytes];
+            }
+        }
+
+        return null;
+    }
+
+    readFileMagicBytes(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
     
-        // Extract the file extension from the MIME type
-        const fileType = mimeString.split(":")[1].split(";")[0];
+            reader.onload = function(event) {
+                const arrayBuffer = event.target.result;
+                const byteArray = new Uint8Array(arrayBuffer.slice(0, 8)); // Read only the first 8 bytes
+                const hexContent = Array.from(byteArray, byte => byte.toString(16).padStart(2, '0')).join('');
+                resolve(hexContent);
+            };
     
-        // Return the file type
-        return fileType;
+            reader.onerror = function(event) {
+                reject(new Error("Error reading file."));
+            };
+    
+            // Read the file as an ArrayBuffer
+            reader.readAsArrayBuffer(file.slice(0, 8)); // Read only the first 8 bytes
+        });
     }
 
     XSSAlert(maliciousInput)

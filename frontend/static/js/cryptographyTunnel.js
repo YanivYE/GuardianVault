@@ -1,11 +1,11 @@
-import Utils from "./utils.js"
+import { hexToCryptoKey, arrayBufferToBase64, base64ToArrayBuffer, arrayBufferToHexString } from './utils.js';
 
 export default class Client {
     constructor() {
         this.sharedKey = null;
-        this.utils = new Utils();
     }
 
+    
     async performKeyExchange(socket, serverPublicKeyBase64) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -19,13 +19,13 @@ export default class Client {
                 );
     
                 const clientPublicKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
-                const clientPublicKeyBase64 = this.utils.arrayBufferToBase64(clientPublicKey);
+                const clientPublicKeyBase64 = arrayBufferToBase64(clientPublicKey);
     
                 socket.emit('client-public-key', clientPublicKeyBase64);
     
                 const importedServerPublicKey = await window.crypto.subtle.importKey(
                     "raw",
-                    this.utils.base64ToArrayBuffer(serverPublicKeyBase64),
+                    base64ToArrayBuffer(serverPublicKeyBase64),
                     {
                         name: "ECDH",
                         namedCurve: "P-256"
@@ -46,7 +46,7 @@ export default class Client {
                     256
                 );
     
-                this.sharedKey = await this.utils.hexToCryptoKey(this.utils.arrayBufferToHexString(this.sharedKey));
+                this.sharedKey = await hexToCryptoKey(arrayBufferToHexString(this.sharedKey));
     
                 resolve(); // Resolve the promise to indicate key exchange completion
             } catch (error) {
@@ -62,12 +62,12 @@ export default class Client {
         payload.set(iv, 0);
         payload.set(ciphertext, iv.length);
         payload.set(tag, iv.length + ciphertext.length);
-        const base64Payload = this.utils.arrayBufferToBase64(payload.buffer);
+        const base64Payload = arrayBufferToBase64(payload.buffer);
         return base64Payload;
     }
 
     async receivePayloadFromServer(ServerPayload) { 
-        const payload = this.utils.base64ToArrayBuffer(ServerPayload);
+        const payload = base64ToArrayBuffer(ServerPayload);
         return await this.decryptData(payload);
     }
 
