@@ -284,7 +284,9 @@ export default class DownloadView extends AbstractView{
     async function downloadFile(fileName, fileOwner)
     {
         var fileDownloaded = false;
-        messageBox.style.display = "none";
+        messageBox.style.display = "block";
+        messageBox.style.color = "gold";
+        messageBox.innerText = "Download might take a while...";
         document.getElementById('downloadButton').disabled = true;
         document.getElementById('downloadLoader').style.display = 'block';
         const downloadFileRequest = 'DownloadFile$' + fileName + '$' + fileOwner;

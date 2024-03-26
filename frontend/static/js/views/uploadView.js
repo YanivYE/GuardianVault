@@ -254,7 +254,15 @@ export default class UploadView extends AbstractView{
         const totalBlocks = Math.ceil(fileSize / blockSize);
         let offset = 0;
     
-        messageBox.style.display = "none";
+        if(fileSize > 1024 * 1024 * 50) // 50MB
+        {
+            messageBox.style.display = "block";
+            messageBox.style.color = "gold";
+            messageBox.innerText = "Large file size. Upload might take a while...";
+        }
+        else{
+            messageBox.style.display = "none";
+        }
         loader.style.display = 'block';
     
         function sendNextBlock() {
