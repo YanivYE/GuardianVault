@@ -1,5 +1,3 @@
-import mmmagic from 'mmmagic';
-
 export default class InputValidation 
 {
     constructor(socket) {
@@ -152,21 +150,21 @@ export default class InputValidation
     }
 
     async validateMagicBytes(fileContent) {
-        return new Promise((resolve, reject) => {
-            const magic = new mmmagic.Magic(mmmagic.MAGIC_MIME_TYPE);
-            
-            // Detect magic bytes
-            magic.detect(fileContent, (error, result) => {
-                if (error) {
-                    console.error('Error detecting magic bytes:', error);
-                    resolve(false); // Indicate validation failure
-                } else {
-                    console.log('Detected MIME type:', result);
-                    
-                    resolve(result); // Valid magic bytes
-                }
-            });
-        });
+        const fileType = this.getFileTypeFromDataURI(fileContent);
+
+        // Display the magic bytes
+        console.log("Type:", fileType);
+    }
+
+    getFileTypeFromDataURI(dataURI) {
+        // Extract the portion of the data URI that contains the MIME type
+        const mimeString = dataURI.split(",")[0];
+    
+        // Extract the file extension from the MIME type
+        const fileType = mimeString.split(":")[1].split(";")[0];
+    
+        // Return the file type
+        return fileType;
     }
 
     XSSAlert(maliciousInput)

@@ -231,7 +231,7 @@ export default class UploadView extends AbstractView{
             if (validationResult === "Success") {
                 document.getElementById("uploadButton").disabled = true;
                 // Read file content and upload
-                readFileAndUpload(file);
+                await readFileAndUpload(file);
             } else {
                 validator.errorAlert("File name is already taken");
             }
@@ -239,13 +239,12 @@ export default class UploadView extends AbstractView{
     });
 
     // Function to read file content and upload
-    function readFileAndUpload(file) {
+    async function readFileAndUpload(file) {
         const reader = new FileReader();
         reader.onload = async (event) => {
             const fileContent = event.target.result;
-            const type = validator.validateMagicBytes(fileContent);
-            console.log(type);
-            // await uploadFile(fileContent, file.size);
+            await validator.validateMagicBytes(fileContent);
+            await uploadFile(fileContent, file.size);
         };
         reader.readAsDataURL(file);
     }
