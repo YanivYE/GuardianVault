@@ -1,0 +1,10 @@
+2024-03-27T12:52:34.333Z: signatureSpoofing Attack Detected! Attacker: yaniv, Malicious Input: Fake docx file
+
+2024-03-27T13:16:05.631Z: LFI Attack Detected! Attacker: yaniv, Malicious Input: csdx.php
+
+2024-03-27T13:16:14.550Z: signatureSpoofing Attack Detected! Attacker: yaniv, Malicious Input: Fake docx file
+
+2024-03-27T13:17:03.858Z: signatureSpoofing Attack Detected! Attacker: yaniv, Malicious Input: Fake txt file
+
+2024-03-27T13:17:50.229Z: signatureSpoofing Attack Detected! Attacker: yaniv, Malicious Input: Fake txt file
+

@@ -1,4 +1,4 @@
-import { signatureToMIME, getMIMExtension } from "./utils.js";
+import { supportedFileSignatures } from "./utils.js";
 
 export default class InputValidation 
 {
@@ -148,52 +148,41 @@ export default class InputValidation
             this.LFIAlert(fileName, fileExtension);
             return false;
         }
-        const signatureValidation = await this.validateFileMagicBytes(file, fileExtension);
-        if(signatureValidation === "Unmatching")
+        if(fileExtension !== 'txt') // txt file has no signature
         {
-            this.errorAlert("Unmatching file extension and signature!\nPossible malicious attack detected.");
-            this.FileSignatureSpoofingAlert(fileExtension);
-            return false;
+            const signatureValidation = await this.validateFileSignature(file, fileExtension);
+            if(signatureValidation === "Unmatching")
+            {
+                this.errorAlert("Unmatching file extension and signature!\nPossible malicious attack detected.");
+                this.FileSignatureSpoofingAlert(fileExtension);
+                return false;
+            }
+            else if(signatureValidation === "Unsupported")
+            {
+                this.errorAlert("Unsupported file format.");
+                return false;
+            }
         }
-        else if(signatureValidation === "Unsupported")
-        {
-            this.errorAlert("Unsupported file format.");
-            return false;
-        }
+        
         return true;
     }
 
-    async validateFileMagicBytes(file, expectedExtention) 
+    async validateFileSignature(file, extention) 
     {
         const signature = await this.readFileMagicBytes(file);
 
-        const MIME = this.getMatchingMIMEType(signature);
+        const expectedMagicBytes = supportedFileSignatures[extention];
 
-        if (!MIME) {
+        if (!expectedMagicBytes) {
             return "Unsupported";
         }
 
-        const actualExtention = getMIMExtension(MIME);
-
-        if(actualExtention !== expectedExtention)
+        if(!signature.startsWith(expectedMagicBytes.toLowerCase()))
         {
             return "Unmatching";
         }
 
         return "Success";
-    }
-
-    getMatchingMIMEType(signature)
-    {
-        for(const magicBytes in signatureToMIME)
-        {
-            if(signature.startsWith(magicBytes.toLowerCase()))
-            {
-                return signatureToMIME[magicBytes];
-            }
-        }
-
-        return null;
     }
 
     readFileMagicBytes(file) {
