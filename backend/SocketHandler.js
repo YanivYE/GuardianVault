@@ -23,7 +23,7 @@ class SocketHandler {
 
             const [responseType, responseData] = await parser.parseClientMessage(message);
 
-            if(responseType !== "" && responseData !== "")  // except for download file request
+            if(responseType !== "" && responseData !== "")  // except for download file request and malware detection which doesnt return 
             {
                 const serverPayload = crypto.generateServerPayload(responseData);
 

@@ -13,7 +13,6 @@ export default class Client {
         this.socket = null;
         this.logedIn = false;
         this.username = "";
-        this.authenticationToken = null;
         this.cryptographyTunnel = new CryptographyTunnel();
     }
 
@@ -82,9 +81,9 @@ export default class Client {
     {
         this.logedIn = true;
         const authenticationRequest = 'Authentication$';
-        const CSRFToken = await window.client.transferToServer(authenticationRequest, 'authenticationResult');
-        this.authenticationToken = CSRFToken;
-        console.log(this.authenticationToken);
+        const token = await window.client.transferToServer(authenticationRequest, 'authenticationResult');
+        localStorage.setItem('csrfToken', token);
+        console.log(token);
         // ADD TOKEN TO EVERY OUTGOING MESSAGE
     }
 

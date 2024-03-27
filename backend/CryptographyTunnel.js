@@ -59,6 +59,12 @@ class CryptographyTunnel {
         // Return the decrypted plaintext
         return decryptedData;
     }
+
+    generateCSRFToken()
+    {
+        const token = crypto.randomBytes(32).toString('hex');
+        return token;
+    }
 }
 
 // Export an instance of CryptographyTunnel directly

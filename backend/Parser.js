@@ -9,6 +9,7 @@ class Parser{
     constructor(socket, crypto)
     {
         this.socket = socket;
+        this.crypto = crypto;
         this.DBHandler = new DBHandler.DataBaseHandler();
         this.EmailSender = new EmailSender.EmailSender();
         this.DriveHandler = new DriveHandler.DriveHandler();
@@ -71,6 +72,9 @@ class Parser{
                 break;
             case "sharedFileList":
                 [responseType, responseData] = await this.getSharedFilesList()
+                break;
+            case "Authentication":
+                [responseType, responseData] = this.authenticateLogedUser();
                 break;
             case "Logout":
                 [responseType, responseData] = await this.userLogout();
@@ -282,6 +286,12 @@ class Parser{
             filesString = "empty";
         }
         return ['sharedFileListResult', filesString];
+    }
+
+    authenticateLogedUser()
+    {
+        const csrfToken = this.crypto.generateCSRFToken();
+        return ['authenticationResult', csrfToken];
     }
 
     async userLogout()
