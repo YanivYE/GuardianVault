@@ -27,7 +27,7 @@ class Parser{
         let operation = "", additionalData = "";
         const fields = clientMessage.split('$');
 
-        if(this.logedIn)
+        if(this.logedIn)    // additional csrf token for authentication
         {
             const authenticationToken = fields[0];
 
@@ -318,7 +318,8 @@ class Parser{
 
         console.log(`User ${this.username} logged out`);
 
-        this.logedIn = false;;
+        this.logedIn = false;
+        this.malwareDetector.setCsrfToken("");
 
         return ['logoutResult', 'Success'];
     }
