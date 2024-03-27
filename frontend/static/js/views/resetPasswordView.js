@@ -199,8 +199,8 @@ export default class ResetPasswordView extends AbstractView{
 
           if(resetPasswordResult === 'Success')
           {
-              window.client.logedIn = true;
-              window.client.navigateTo('/menu');
+            await window.client.authenticate();
+            window.client.navigateTo('/menu');
           }
       }
     }

@@ -212,7 +212,7 @@ export default class SignupView extends AbstractView {
                     messageBox.textContent = "SignUp failed. Email already exists";
                     messageBox.style.display = 'block';
                 } else {
-                    window.client.logedIn = true;
+                    await window.client.authenticate();
                     window.client.navigateTo('/menu');
                 }
             }

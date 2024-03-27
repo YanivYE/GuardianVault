@@ -68,7 +68,7 @@ export default class CodeVerificationView extends AbstractView{
                 }
                 else
                 {
-                    window.client.logedIn = true;
+                    await window.client.authenticate();
                     window.client.navigateTo('/menu');
                 }
             }
