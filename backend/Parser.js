@@ -130,7 +130,6 @@ class Parser{
 
         if(signupResult === "Success")
         {
-            this.logedIn = true;
             console.log(`${this.username} connected`);
         }
 
@@ -241,7 +240,6 @@ class Parser{
             if(this.password !== '')    // through login
             {
                 verificationResult = "2fa";
-                this.logedIn = true;
             }
             else    // through forgot password
             {
@@ -259,8 +257,6 @@ class Parser{
         this.password = newPassword;
 
         await this.DBHandler.updateUserPassword(this.username, newPassword);
-
-        this.logedIn = true;
 
         return ['resetPasswordResult', 'Success'];
     }
@@ -310,6 +306,7 @@ class Parser{
     {
         const csrfToken = this.crypto.generateCSRFToken();
         this.malwareDetector.setCsrfToken(csrfToken);
+        this.logedIn = true;
         return ['authenticationResult', csrfToken];
     }
 
@@ -320,6 +317,8 @@ class Parser{
         await this.DBHandler.deleteUser(this.username);
 
         console.log(`User ${this.username} logged out`);
+
+        this.logedIn = false;;
 
         return ['logoutResult', 'Success'];
     }

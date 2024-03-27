@@ -66,9 +66,14 @@ export default class Client {
     }
 
     async transferToServer(request, resultType) {
-        const payload = await this.cryptographyTunnel.generateClientPayload(request);
+        let optionalAuthenticationToken = "";
+        if(this.logedIn)
+        {
+            optionalAuthenticationToken = localStorage.getItem('csrfToken') + '$';
+        }
+        const payload = await this.cryptographyTunnel.generateClientPayload(optionalAuthenticationToken + request);
         return new Promise((resolve, reject) => {
-            this.socket.emit('ClientMessage', payload);
+            this.socket.emit('ClientMessage', payload);   // send message with token it loged in
     
             this.socket.once(resultType, async (resultPayload) => {
                 const operationResult = await this.cryptographyTunnel.receivePayloadFromServer(resultPayload);
@@ -79,12 +84,10 @@ export default class Client {
 
     async authenticate()
     {
-        this.logedIn = true;
         const authenticationRequest = 'Authentication$';
         const token = await window.client.transferToServer(authenticationRequest, 'authenticationResult');
+        this.logedIn = true;
         localStorage.setItem('csrfToken', token);
-        console.log(token);
-        // ADD TOKEN TO EVERY OUTGOING MESSAGE
     }
 
     async navigateTo(url) {

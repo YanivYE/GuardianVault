@@ -8,3 +8,19 @@
 
 2024-03-27T13:17:50.229Z: signatureSpoofing Attack Detected! Attacker: yaniv, Malicious Input: Fake txt file
 
+2024-03-27T19:05:03.571Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-27T19:05:16.799Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-27T19:11:25.849Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-27T19:15:12.521Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-27T19:15:28.544Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-27T19:16:01.309Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-27T19:16:37.884Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-27T19:17:02.453Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
