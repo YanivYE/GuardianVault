@@ -62,6 +62,7 @@ export default class MenuView extends AbstractView{
         if(logoutResult === 'Success')
         {
           window.client.logedIn = false;
+          localStorage.setItem('csrfToken', "");
           document.getElementById('logoutLoader').style.display = 'none';
           window.client.navigateTo('/');
     

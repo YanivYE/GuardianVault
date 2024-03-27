@@ -18,20 +18,34 @@ class Parser{
         this.username = "";
         this.password = "";
         this.verificationCode = "";
+        this.logedIn = false;
     }
 
     async parseClientMessage(clientMessage)
     {
         let responseType = "", responseData = "";
+        let operation = "", additionalData = "";
         const fields = clientMessage.split('$');
 
-        const operation = fields[0];
+        if(this.logedIn)
+        {
+            const authenticationToken = fields[0];
 
-        // add csrf token at index 0
+            if(!this.malwareDetector.validateAuthenticatedUser(authenticationToken, this.username))
+            {
+                return ["", ""];    // unauthenticated
+            }   
 
-        const additionalData = fields.slice(1).join("$");
+            operation = fields[1];
 
+            additionalData = fields.slice(2).join("$");
+        }
+        else{
+            operation = fields[0];
 
+            additionalData = fields.slice(1).join("$");
+        }
+            
         switch(operation)
         {
             case "Login":
@@ -116,6 +130,7 @@ class Parser{
 
         if(signupResult === "Success")
         {
+            this.logedIn = true;
             console.log(`${this.username} connected`);
         }
 
@@ -226,6 +241,7 @@ class Parser{
             if(this.password !== '')    // through login
             {
                 verificationResult = "2fa";
+                this.logedIn = true;
             }
             else    // through forgot password
             {
@@ -243,6 +259,8 @@ class Parser{
         this.password = newPassword;
 
         await this.DBHandler.updateUserPassword(this.username, newPassword);
+
+        this.logedIn = true;
 
         return ['resetPasswordResult', 'Success'];
     }
@@ -291,6 +309,7 @@ class Parser{
     authenticateLogedUser()
     {
         const csrfToken = this.crypto.generateCSRFToken();
+        this.malwareDetector.setCsrfToken(csrfToken);
         return ['authenticationResult', csrfToken];
     }
 
