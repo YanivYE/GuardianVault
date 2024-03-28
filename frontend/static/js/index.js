@@ -3,6 +3,7 @@ import Client from "./client.js";
 // Initialize client
 window.client = new Client();
 await window.client.init();
+localStorage.setItem('csrfToken', "");
 
 // Router for handling popstate events
 window.addEventListener("popstate", window.client.router);

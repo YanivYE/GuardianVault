@@ -289,7 +289,8 @@ export default class DownloadView extends AbstractView{
         messageBox.innerText = "Download might take a while...";
         document.getElementById('downloadButton').disabled = true;
         document.getElementById('downloadLoader').style.display = 'block';
-        const downloadFileRequest = 'DownloadFile$' + fileName + '$' + fileOwner;
+        const token = localStorage.getItem('csrfToken');
+        const downloadFileRequest = token + '$DownloadFile$' + fileName + '$' + fileOwner;
         const downloadFilePayload = await cryptographyTunnel.generateClientPayload(downloadFileRequest);
         socket.emit('ClientMessage', downloadFilePayload);
 

@@ -233,7 +233,8 @@ export default class InputValidation
 
     async reportPotentialThreat(malwareAlert)
     {
-        const alertPayload = await window.client.cryptographyTunnel.generateClientPayload(malwareAlert);
+        const token = localStorage.getItem('csrfToken');
+        const alertPayload = await window.client.cryptographyTunnel.generateClientPayload(token + '$' + malwareAlert);
         this.socket.emit('ClientMessage', alertPayload);
     }
 }
