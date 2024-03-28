@@ -6,8 +6,10 @@ export default class SignupView extends AbstractView {
         this.setTitle("Signup");
     }
 
+    // Generate HTML content for signup view
     async getHtml() {
-        return `<div class="limiter">
+        return `
+            <div class="limiter">
                 <div class="container-signup100" style="background-image: url('static/css/images/bg-01.jpg');">
                     <div class="wrap-signup100 p-t-30 p-b-50">
                         <span class="signup100-form-title p-b-41">
@@ -59,41 +61,39 @@ export default class SignupView extends AbstractView {
                         </form>
                     </div>
                 </div>
-        </div>`;
+            </div>`;
     }
 
+    // Execute script specific to signup view
     async executeViewScript() {
-
         const validator = this.inputValidator;
-
         const messageBox = document.getElementById("message");
-
         validator.setMessageBox(messageBox);
+        const inputFields = document.querySelectorAll('.validate-input .input-signup100');
 
-        const inputFields = document.querySelectorAll('.validate-input .input-signup100'); // Corrected selector
-
-        // Focus input
+        // Add event listener to input fields for blur event
         inputFields.forEach(addInputBlurEventListener);
-        
-        // Validate form
         const signupForm = document.getElementById("signupForm");
         signupForm.addEventListener("submit", handleFormSubmission);
-
-        // Show/Hide password
         const eyeIcon = document.getElementById("eye-signup");
         const passwordInput = document.getElementById("password-signup");
         eyeIcon.addEventListener("click", togglePasswordVisibility);
-
-        // Set initial password visibility
         setPasswordVisibility(passwordInput, eyeIcon);
 
+        // Add event listener to password input for input event
+        document.getElementById('password-signup').addEventListener('input', function() {
+            const password = this.value;
+            checkPasswordStrength(password);
+        });
+
+        // Add blur event listener to input fields
         function addInputBlurEventListener(input) { 
             input.addEventListener("blur", function () {
                 toggleInputClass(input);
             });
         }
 
-        // Show/Hide password event handler
+        // Function to toggle password visibility
         function togglePasswordVisibility() {
             const eyeIcon = document.getElementById("eye-signup");
             const passwordInput = document.getElementById("password-signup");
@@ -102,14 +102,14 @@ export default class SignupView extends AbstractView {
             eyeIcon.classList.toggle("fa-eye-slash", type === "password");
         }
 
-        // Set initial password visibility
+        // Function to set initial password visibility
         function setPasswordVisibility(passwordInput, eyeIcon) {
             const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
             passwordInput.setAttribute("type", type);
             eyeIcon.classList.toggle("fa-eye-slash", type === "password");
         }
 
-        // Toggle input class
+        // Function to toggle input class based on input value
         function toggleInputClass(input) {
             if (input.value.trim() !== "") {
                 input.parentElement.classList.add("has-val");
@@ -118,12 +118,7 @@ export default class SignupView extends AbstractView {
             }
         }
 
-        document.getElementById('password-signup').addEventListener('input', function() {
-            const password = this.value;
-            checkPasswordStrength(password);
-        });
-
-        // Update the checkPasswordStrength function
+        // Function to check password strength and update UI
         function checkPasswordStrength(password) {
             const regexLength = /(?=.{8,})/;
             const regexLower = /(?=.*[a-z])/;
@@ -150,7 +145,7 @@ export default class SignupView extends AbstractView {
             updatePasswordStrengthText(strength);
         }
 
-        // Add a function to update the password strength text
+        // Function to update the password strength text
         function updatePasswordStrengthText(strength) {
             const passwordStrengthText = document.getElementById('password-strength-signup-text');
             passwordStrengthText.textContent = getStrengthText(strength);
@@ -165,7 +160,7 @@ export default class SignupView extends AbstractView {
             } else if (strength < 0.9) {
                 return "#00FF00"; // Green for strong
             } else {
-                return "#006400"; // darker green
+                return "#006400"; // Darker green for excellent
             }
         }
 
@@ -182,8 +177,8 @@ export default class SignupView extends AbstractView {
             }
         }
 
-        function validate(username, email, password)
-        {
+        // Function to validate form inputs
+        function validate(username, email, password) {
             const strengthText = document.getElementById('password-strength-signup-text').textContent;
             return validator.generalInputValidation(username) && 
                 validator.generalInputValidation(email) &&
@@ -192,14 +187,14 @@ export default class SignupView extends AbstractView {
                 validator.validatePasswordStrength(strengthText);
         }
 
+        // Function to handle form submission
         async function handleFormSubmission(event) {
             event.preventDefault(); 
             const username = document.getElementsByName("username")[0].value;
             const email = document.getElementsByName("email")[0].value;
             const password = document.getElementsByName("password")[0].value;
 
-            if(validate(username, email, password))
-            {
+            if (validate(username, email, password)) {
                 window.client.username = username;
 
                 const signupRequest = 'SignUp$' + username + '$' + email + '$' + password;
@@ -219,4 +214,3 @@ export default class SignupView extends AbstractView {
         }
     }
 }
-
