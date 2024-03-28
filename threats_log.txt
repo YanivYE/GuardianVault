@@ -44,3 +44,7 @@
 
 2024-03-28T10:30:53.430Z: XSS Attack Detected! Attacker: yaniv, Malicious Input: <script> alert(1); </script>
 
+2024-03-28T13:14:56.673Z: XSS Attack Detected! Attacker: elior, Malicious Input: <script> alert(1); </script>
+
+2024-03-28T13:15:22.128Z: Sql Injection Attack Detected! Attacker: elior, Malicious Input: <script> alert(1);
+

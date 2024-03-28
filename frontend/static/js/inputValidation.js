@@ -103,7 +103,7 @@ export default class InputValidation
 
     validateFileName(fileName)
     {
-        const regex = /^[a-zA-Z0-9]{1,12}$/; // Matches only letters and numbers
+        const regex = /^[a-zA-Z0-9\s]{1,12}$/; // Matches only letters and numbers
         return this.checkRegexMatch(fileName, regex, "File name must contain up to 12 letters and digits.\nNo specail characters");
     }
 
@@ -233,7 +233,7 @@ export default class InputValidation
 
     async reportPotentialThreat(malwareAlert)
     {
-        const token = localStorage.getItem('csrfToken');
+        const token = localStorage.getItem(window.client.username);
         const alertPayload = await window.client.cryptographyTunnel.generateClientPayload(token + '$' + malwareAlert);
         this.socket.emit('ClientMessage', alertPayload);
     }

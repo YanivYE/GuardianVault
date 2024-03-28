@@ -69,7 +69,7 @@ export default class Client {
         let optionalAuthenticationToken = "";
         if(this.logedIn)
         {
-            optionalAuthenticationToken = localStorage.getItem('csrfToken') + '$';
+            optionalAuthenticationToken = localStorage.getItem(this.username) + '$';
         }
         const payload = await this.cryptographyTunnel.generateClientPayload(optionalAuthenticationToken + request);
         return new Promise((resolve, reject) => {
@@ -87,7 +87,7 @@ export default class Client {
         const authenticationRequest = 'Authentication$';
         const token = await window.client.transferToServer(authenticationRequest, 'authenticationResult');
         this.logedIn = true;
-        localStorage.setItem('csrfToken', token);
+        localStorage.setItem(this.username, token);
     }
 
     async navigateTo(url) {
