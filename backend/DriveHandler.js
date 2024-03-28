@@ -13,6 +13,7 @@ class DriveHandler {
         this.compressor = new Compressor.Compressor();
     }
 
+    // Establish connection to Google Drive
     connectToDrive() {
         const oauth2Client = new google.auth.OAuth2(
             config.CLIENT_ID,
@@ -27,6 +28,7 @@ class DriveHandler {
         });
     }
 
+    // Create a folder in Google Drive
     async createFolder(username) {
         const auth = new GoogleAuth({
             scopes: 'https://www.googleapis.com/auth/drive',
@@ -48,6 +50,7 @@ class DriveHandler {
         }
     }
 
+    // Upload a file to a specified folder in Google Drive
     async uploadFile(filePath, username) {
         try {
             const fileName = path.basename(filePath);
@@ -73,6 +76,7 @@ class DriveHandler {
         }
     }
 
+    // Delete a file from a specified folder in Google Drive
     async deleteFile(fileName, dirName) {
         try {
             const fileId = await this.getFileIdByNameInFolder(fileName, dirName);
@@ -86,6 +90,7 @@ class DriveHandler {
         }
     }
 
+    // Delete a user's folder and its contents from Google Drive
     async deleteUser(username) {
         try {
             const folderId = await this.findFolderIdByUsername(username);
@@ -110,6 +115,7 @@ class DriveHandler {
         }
     }
 
+    // Find the folder ID in Google Drive by username
     async findFolderIdByUsername(username) {
         try {
             const response = await this.drive.files.list({
@@ -127,6 +133,7 @@ class DriveHandler {
         }
     }
 
+    // Get the file ID by name in a specified folder in Google Drive
     async getFileIdByNameInFolder(fileName, dirName) {
         try {
             const folderResponse = await this.drive.files.list({
@@ -151,6 +158,7 @@ class DriveHandler {
         }
     }
 
+    // Handle file upload by encrypting, compressing, and uploading to Google Drive
     async handleFileUpload(fileName, fileData, encryptionPassword, username) {
         const encryptedFileData = this.atRestCrypto.encryptFile(fileData, encryptionPassword);
 
@@ -167,6 +175,7 @@ class DriveHandler {
         });
     }
 
+    // Handle file download by retrieving from Google Drive, decompressing, and decrypting
     async handleFileDownload(fileName, dirName, decryptionPassword) {
         const compressedData = await this.retrieveFromDrive(fileName, dirName);
         const decompressedData = this.compressor.decompressFile(compressedData);
@@ -174,6 +183,7 @@ class DriveHandler {
         return decryptedFileData;
     }
 
+    // Retrieve file from Google Drive
     async retrieveFromDrive(fileName, dirName) {
         try {
             const result = await this.drive.files.get({
@@ -192,6 +202,7 @@ class DriveHandler {
         }
     }
 
+    // Initialize Google Drive by deleting all files
     async initDrive() {
         try {
             const response = await this.drive.files.list();
@@ -208,6 +219,7 @@ class DriveHandler {
         }
     }
 
+    // Get MIME type of a file based on its extension
     getMimeType(fileName) {
         const extension = path.extname(fileName).toLowerCase().slice(1);
         const mimeTypes = {

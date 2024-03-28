@@ -1,11 +1,12 @@
+// Import necessary modules
 const nodemailer = require('nodemailer');
 const Utils = require('./Utils');
 const config = require('./config');
 
-class EmailSender
-{
-    constructor()
-    {
+// Class for sending emails
+class EmailSender {
+    constructor() {
+        // Initialize nodemailer transporter
         this.transporter = nodemailer.createTransport({
             service: config.EMAIL_SERVICE,
             host: config.HOST,
@@ -18,61 +19,73 @@ class EmailSender
         });
     }
 
-    sendEmail(mailDetails)
-    {
-        this.transporter.sendMail(mailDetails, function(error, info){
+    // Function to send email
+    sendEmail(mailDetails) {
+        this.transporter.sendMail(mailDetails, function(error, info) {
             if (error) {
-                console.log(error);
-            } 
+                console.error("Error occurred while sending email:", error);
+            }
         });
     }
 
-    sendEmailVerificationCode(userEmail)
-    {        
+    // Function to send verification code email
+    sendEmailVerificationCode(userEmail) {
+        // Generate verification code
         const verificationCode = Utils.generateVerificationCode();
-        console.log(verificationCode);
+        console.log("Verification code:", verificationCode);    // DELETE
+
+        // Prepare email details
         const mailDetails = {
             from: config.EMAIL,
-            to: userEmail, // recipient email address
+            to: userEmail,
             subject: 'Verification Code',
             text: `Your verification code is: ${verificationCode}`
         };
+
+        // Send email
         this.sendEmail(mailDetails);
 
         return verificationCode;
     }
- 
-    sendUsersNotifications(fileOwner, fileName, usersEmailsMap) 
-    {
-        for (const [user, email] of usersEmailsMap) 
-        {
-            if(user !== '')
-            {
+
+    // Function to send notifications to users
+    sendUsersNotifications(fileOwner, fileName, usersEmailsMap) {
+        for (const [user, email] of usersEmailsMap) {
+            if (user !== '') {
+                // Send notification to each user
                 this.sendNotification(fileOwner, fileName, email);
             }
         }
     }
 
+    // Function to send notification email
     sendNotification(fileOwner, fileName, sendToEmail) {
+        // Prepare email details
         const mailDetails = {
             from: config.EMAIL,
             to: sendToEmail,
             subject: 'Access Notification',
             text: `${fileOwner} shared the file: ${fileName} with you`
         };
+
+        // Send email
         this.sendEmail(mailDetails);
     }
 
-    sendAdminThreatAlert(threat, attacker)
-    {
+    // Function to send admin threat alert
+    sendAdminThreatAlert(threat, attacker) {
+        // Prepare email details
         const mailDetails = {
             from: config.EMAIL,
             to: config.ADMIN_EMAIL,
             subject: 'EMERGENCY CALL: SYSTEM UNDER ATTACK',
             text: `Hello ADMIN,\nUser ${attacker} has recently initiated a malicious ${threat} attack!\nPlease address this urgently.`
         };
+
+        // Send email
         this.sendEmail(mailDetails);
     }
 }
 
-module.exports = {EmailSender};
+// Export EmailSender class
+module.exports = { EmailSender };
