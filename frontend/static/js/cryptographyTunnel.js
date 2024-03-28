@@ -1,14 +1,20 @@
-import { hexToCryptoKey, arrayBufferToBase64, base64ToArrayBuffer, arrayBufferToHexString } from './utils.js';
+import { 
+    hexToCryptoKey, 
+    arrayBufferToBase64, 
+    base64ToArrayBuffer, 
+    arrayBufferToHexString 
+} from './utils.js';
 
 export default class Client {
     constructor() {
         this.sharedKey = null;
     }
 
-    
+    // Performs key exchange with the server.
     async performKeyExchange(socket, serverPublicKeyBase64) {
         return new Promise(async (resolve, reject) => {
             try {
+                // Generate ECDH key pair
                 const keyPair = await window.crypto.subtle.generateKey(
                     {
                         name: "ECDH",
@@ -17,12 +23,15 @@ export default class Client {
                     true,
                     ["deriveKey", "deriveBits"]
                 );
-    
+
+                // Export client's public key
                 const clientPublicKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
                 const clientPublicKeyBase64 = arrayBufferToBase64(clientPublicKey);
-    
+
+                // Send client's public key to server
                 socket.emit('client-public-key', clientPublicKeyBase64);
-    
+
+                // Import server's public key
                 const importedServerPublicKey = await window.crypto.subtle.importKey(
                     "raw",
                     base64ToArrayBuffer(serverPublicKeyBase64),
@@ -33,21 +42,23 @@ export default class Client {
                     true,
                     []
                 );
-    
+
+                // Derive shared secret
                 const sharedSecretAlgorithm = {
                     name: 'ECDH',
                     namedCurve: 'P-256',
                     public: importedServerPublicKey
                 };
-    
+
                 this.sharedKey = await window.crypto.subtle.deriveBits(
                     sharedSecretAlgorithm,
                     keyPair.privateKey,
                     256
                 );
-    
+
+                // Convert shared key to usable format
                 this.sharedKey = await hexToCryptoKey(arrayBufferToHexString(this.sharedKey));
-    
+
                 resolve(); // Resolve the promise to indicate key exchange completion
             } catch (error) {
                 reject(error); // Reject with error if key exchange fails
@@ -55,7 +66,7 @@ export default class Client {
         });
     }
 
-    // Function to send payload to the server
+    // Generates a payload for sending to the server.
     async generateClientPayload(data) {
         const { iv, ciphertext, tag } = await this.encryptData(data);
         const payload = new Uint8Array(iv.length + ciphertext.length + tag.length);
@@ -66,11 +77,13 @@ export default class Client {
         return base64Payload;
     }
 
-    async receivePayloadFromServer(ServerPayload) { 
-        const payload = base64ToArrayBuffer(ServerPayload);
+    // Decrypts the payload received from the server.
+    async receivePayloadFromServer(serverPayload) {
+        const payload = base64ToArrayBuffer(serverPayload);
         return await this.decryptData(payload);
     }
 
+    // Encrypts data using AES-GCM.
     async encryptData(data) {    
         // Generate a random IV (Initialization Vector)
         const iv = crypto.getRandomValues(new Uint8Array(16));
@@ -92,6 +105,7 @@ export default class Client {
         return { iv, ciphertext, tag };
     }
 
+    // Decrypts data encrypted using AES-GCM.
     async decryptData(payload) {    
         try {
             // Decrypt the data using AES-GCM

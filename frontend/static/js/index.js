@@ -1,35 +1,55 @@
 import Client from "./client.js";
 
 // Initialize client
-window.client = new Client();
-await window.client.init();
+const initializeClient = async () => {
+  window.client = new Client();
+  await window.client.init();
+};
 
-// Router for handling popstate events
-window.addEventListener("popstate", window.client.router);
+// Handle popstate events with router
+const handlePopState = () => {
+  window.client.router();
+};
 
-// Add click event listener to the button
-const continueButton = document.getElementById('continueButton');
-continueButton.addEventListener('click', function(event) {
-  // Prevent default action (click) during the first 3 seconds
-  if (this.hasAttribute('disabled')) {
-    event.preventDefault();
-  }
-});
-
-// Enable the button after 1 seconds
-setTimeout(function() {
-  continueButton.removeAttribute('disabled');
-  document.getElementById('connectionStatus').textContent = 'Established';
-  // Remove animation class
-  document.getElementById('connectionStatus').classList.remove('animating');
-}, 1000);
+// Enable the button after 3 seconds
+const enableButton = () => {
+  const continueButton = document.getElementById('continueButton');
+  setTimeout(() => {
+    continueButton.removeAttribute('disabled');
+    document.getElementById('connectionStatus').textContent = 'Established';
+    // Remove animation class
+    document.getElementById('connectionStatus').classList.remove('animating');
+  }, 3000);
+};
 
 // Add animation class while establishing connection
-setTimeout(function() {
-  document.getElementById('connectionStatus').classList.add('animating');
-}, 300);
+const addConnectionAnimation = () => {
+  setTimeout(() => {
+    document.getElementById('connectionStatus').classList.add('animating');
+  }, 500);
+};
 
-// Add click event listener to the button for navigation
-continueButton.addEventListener('click', async () => {
-  window.client.navigateTo('/login');
-});
+// Handle click event on continue button
+const handleContinueButtonClick = () => {
+  const continueButton = document.getElementById('continueButton');
+  continueButton.addEventListener('click', (event) => {
+    // Prevent default action (click) during the first 3 seconds
+    if (continueButton.hasAttribute('disabled')) {
+      event.preventDefault();
+    } else {
+      window.client.navigateTo('/login');
+    }
+  });
+};
+
+// Main function to run the initialization and event listeners
+const main = async () => {
+  await initializeClient();
+  window.addEventListener("popstate", handlePopState);
+  enableButton();
+  addConnectionAnimation();
+  handleContinueButtonClick();
+};
+
+// Run the main function
+main();

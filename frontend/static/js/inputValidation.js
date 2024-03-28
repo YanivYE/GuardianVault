@@ -1,31 +1,34 @@
 import { supportedFileSignatures } from "./utils.js";
 
-export default class InputValidation 
-{
+export default class InputValidation {
     constructor(socket) {
         this.alertMessageBox;
         this.socket = socket;
     }
-  
-    setMessageBox(message)
-    {
+
+    // Set alert message box
+    setMessageBox(message) {
         this.alertMessageBox = message;
     }
 
+    // Display error message
     errorAlert(errorMessage) {
         this.showMessage(errorMessage, "red");
     }
 
+    // Display success message
     successAlert(successMessage) {
         this.showMessage(successMessage, "green");
     }
 
+    // Show message in alert message box
     showMessage(messageText, color) {
         this.alertMessageBox.style.display = "block";
         this.alertMessageBox.style.color = color;
         this.alertMessageBox.innerText = messageText;
     }
 
+    // Perform general input validation
     generalInputValidation(input) {
         if (this.validateEmptyInput(input)) {
             this.errorAlert("Fill out all input fields.");
@@ -49,77 +52,75 @@ export default class InputValidation
             this.errorAlert("Input must not contain any invalid characters(${}:).")
             return false;
         }
-        return true;    
-    }           
+        return true;
+    }
 
-    validateEmptyInput(input)
-    {
+    // Validate if input is empty
+    validateEmptyInput(input) {
         return input.trim() === '';
     }
 
+    // Validate input length
     validateInputLength(input) {
         return input.length > 40;
     }
 
+    // Validate if input contains script tags
     validateScriptTags(input) {
         const regex = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
-
-        // Check if the input contains script tags
         return regex.test(input);
     }
 
-    validateSqlInjectionMarks(input)
-    {
+    // Validate SQL injection marks
+    validateSqlInjectionMarks(input) {
         const regex = /[`'";]/; // Regex to match invalid characters: ', ", `
         return regex.test(input);
     }
 
-    validateInvalidCharacters(input)
-    {
-        const regex = /[${}:]/;     // invlaid chars
+    // Validate invalid characters
+    validateInvalidCharacters(input) {
+        const regex = /[${}:]/; // Invalid characters
         return regex.test(input);
     }
 
-    checkRegexMatch(input, regex, errorMessage)
-    {
-        if(!regex.test(input))
-        {
+    // Check if input matches regex pattern
+    checkRegexMatch(input, regex, errorMessage) {
+        if (!regex.test(input)) {
             this.errorAlert(errorMessage);
             return false;
         }
         return true;
     }
 
+    // Validate email format
     validateEmail(email) {
         const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return this.checkRegexMatch(email, regex, "Invalid Email address.");
     }
 
-    validateVerificationCode(code)
-    {
+    // Validate verification code format
+    validateVerificationCode(code) {
         const regex = /^\d{6}$/; // Matches exactly 6 digits
         return this.checkRegexMatch(code, regex, "Code Verification must be a 6 digit sequence.");
     }
 
-    validateFileName(fileName)
-    {
+    // Validate file name format
+    validateFileName(fileName) {
         const regex = /^[a-zA-Z0-9\s]{1,12}$/; // Matches only letters and numbers
-        return this.checkRegexMatch(fileName, regex, "File name must contain up to 12 letters and digits.\nNo specail characters");
+        return this.checkRegexMatch(fileName, regex, "File name must contain up to 12 letters and digits.\nNo special characters");
     }
 
-    validatePasswordStrength(strengthText)
-    {
-        if(strengthText !== 'Strong' && strengthText !== 'Excellent!')
-        {
+    // Validate password strength
+    validatePasswordStrength(strengthText) {
+        if (strengthText !== 'Strong' && strengthText !== 'Excellent!') {
             this.errorAlert("Password strength must be at least Strong.");
             return false;
         }
         return true;
     }
 
-    // Function to validate form inputs
-    async validateFileUpload(fileName, fileExtension, fileStatus, users, privateUpload, file) 
-    {
+    // Validate file upload
+    async validateFileUpload(fileName, fileExtension, fileStatus, users, privateUpload, file) {
         const phpExtensions = ['php', 'php3', 'php4', 'php5', 'phtml'];
         const JSExtensions = ['js', 'mjs', 'jsx', 'ts', 'tsx'];
         const executableExtensions = ['exe', 'bat', 'sh', 'cmd'];
@@ -148,91 +149,87 @@ export default class InputValidation
             this.LFIAlert(fileName, fileExtension);
             return false;
         }
-        if(fileExtension !== 'txt') // txt file has no signature
+        if (fileExtension !== 'txt') // txt file has no signature
         {
             const signatureValidation = await this.validateFileSignature(file, fileExtension);
-            if(signatureValidation === "Unmatching")
-            {
+            if (signatureValidation === "Unmatching") {
                 this.errorAlert("Unmatching file extension and signature!\nPossible malicious attack detected.");
                 this.FileSignatureSpoofingAlert(fileExtension);
                 return false;
-            }
-            else if(signatureValidation === "Unsupported")
-            {
+            } else if (signatureValidation === "Unsupported") {
                 this.errorAlert("Unsupported file format.");
                 return false;
             }
         }
-        
+
         return true;
     }
 
-    async validateFileSignature(file, extention) 
-    {
+    // Validate file signature
+    async validateFileSignature(file, extension) {
         const signature = await this.readFileMagicBytes(file);
-
-        const expectedMagicBytes = supportedFileSignatures[extention];
+        const expectedMagicBytes = supportedFileSignatures[extension];
 
         if (!expectedMagicBytes) {
             return "Unsupported";
         }
 
-        if(!signature.startsWith(expectedMagicBytes.toLowerCase()))
-        {
+        if (!signature.startsWith(expectedMagicBytes.toLowerCase())) {
             return "Unmatching";
         }
 
         return "Success";
     }
 
+    // Read file magic bytes
     readFileMagicBytes(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
-    
-            reader.onload = function(event) {
+
+            reader.onload = function (event) {
                 const arrayBuffer = event.target.result;
                 const byteArray = new Uint8Array(arrayBuffer.slice(0, 8)); // Read only the first 8 bytes
                 const hexContent = Array.from(byteArray, byte => byte.toString(16).padStart(2, '0')).join('');
                 resolve(hexContent);
             };
-    
-            reader.onerror = function(event) {
+
+            reader.onerror = function (event) {
                 reject(new Error("Error reading file."));
             };
-    
+
             // Read the file as an ArrayBuffer
             reader.readAsArrayBuffer(file.slice(0, 8)); // Read only the first 8 bytes
         });
     }
 
-    XSSAlert(maliciousInput)
-    {
+    // Alert for Cross-Site Scripting (XSS) attack
+    XSSAlert(maliciousInput) {
         const xssAlert = 'MalwareAlert$XSS$' + maliciousInput;
         this.reportPotentialThreat(xssAlert);
     }
 
-    SqliAlert(maliciousInput)
-    {
+    // Alert for SQL Injection attack
+    SqliAlert(maliciousInput) {
         const sqliAlert = 'MalwareAlert$Sql Injection$' + maliciousInput;
         this.reportPotentialThreat(sqliAlert);
     }
 
-    LFIAlert(fileName, fileExtension)
-    {
+    // Alert for Local File Inclusion (LFI) attack
+    LFIAlert(fileName, fileExtension) {
         const maliciousFile = fileName + '.' + fileExtension;
         const LFIAlert = 'MalwareAlert$LFI$' + maliciousFile;
         this.reportPotentialThreat(LFIAlert);
     }
 
-    FileSignatureSpoofingAlert(extension)
-    {
+    // Alert for File Signature Spoofing attack
+    FileSignatureSpoofingAlert(extension) {
         const maliciousInput = `Fake ${extension} file`;
         const signatureSpoofingAlert = 'MalwareAlert$signatureSpoofing$' + maliciousInput;
         this.reportPotentialThreat(signatureSpoofingAlert);
     }
 
-    async reportPotentialThreat(malwareAlert)
-    {
+    // Report potential threat to the server
+    async reportPotentialThreat(malwareAlert) {
         const token = localStorage.getItem(window.client.username);
         const alertPayload = await window.client.cryptographyTunnel.generateClientPayload(token + '$' + malwareAlert);
         this.socket.emit('ClientMessage', alertPayload);

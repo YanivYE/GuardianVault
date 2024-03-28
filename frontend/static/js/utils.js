@@ -1,5 +1,9 @@
+// Converts a hexadecimal string to a cryptographic key.
 export async function hexToCryptoKey(hexString) {
+    // Convert hexadecimal string to array of bytes
     const keyData = hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
+
+    // Import key from raw bytes
     const cryptoKey = await crypto.subtle.importKey(
         "raw",
         new Uint8Array(keyData),
@@ -7,15 +11,18 @@ export async function hexToCryptoKey(hexString) {
         false,
         ["encrypt", "decrypt"]
     );
+
     return cryptoKey;
 }
 
+// Converts an array buffer to a base64 string.
 export function arrayBufferToBase64(arrayBuffer) {
     const uint8Array = new Uint8Array(arrayBuffer);
     const binaryString = Array.from(uint8Array, byte => String.fromCharCode(byte)).join('');
     return btoa(binaryString);
 }
 
+// Converts a base64 string to an array buffer.
 export function base64ToArrayBuffer(base64) {
     const binaryString = atob(base64);
     const length = binaryString.length;
@@ -23,17 +30,22 @@ export function base64ToArrayBuffer(base64) {
     const uint8Array = new Uint8Array(arrayBuffer);
 
     for (let i = 0; i < length; i++) {
-    uint8Array[i] = binaryString.charCodeAt(i);
+        uint8Array[i] = binaryString.charCodeAt(i);
     }
 
     return arrayBuffer;
 }
 
+// Converts an array buffer to a hexadecimal string.
 export function arrayBufferToHexString(arrayBuffer) {
     const byteArray = new Uint8Array(arrayBuffer);
     return Array.from(byteArray, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
+/**
+ * Object containing supported file signatures.
+ * Keys are file extensions, values are corresponding signatures in hexadecimal format.
+ */
 export const supportedFileSignatures = {
     "png": "89504E47",
     "jpg": "FFD8FF",
