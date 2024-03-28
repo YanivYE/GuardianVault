@@ -59,8 +59,6 @@ class FileHandler {
                     this.socket.emit('fileBlock', fileBlockPayload);
                     offset += blockSize;
                     sendNextBlock(); // Call recursively
-                } else {
-                    console.log('File downloaded successfully!');
                 }
             };
 

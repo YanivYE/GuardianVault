@@ -70,7 +70,7 @@ class DriveHandler {
                 },
             });
 
-            console.log('File uploaded:', response.data);
+            console.log('File uploaded:', response.name);
         } catch (error) {
             console.error('Error uploading file:', error);
         }
