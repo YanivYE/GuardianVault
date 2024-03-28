@@ -23,7 +23,8 @@ export default class MenuView extends AbstractView{
         <div class="form-group-menu" id="logoutLoader" style="display: none;">
             <div class="loader"></div>
         </div>
-        <button class="logout-button-menu" id="logoutButton">Logout</button>
+        <h2>‎ </h2>
+        <button class="logout-button-menu" id="logoutButton"></button>
     </div>
     `;
   }

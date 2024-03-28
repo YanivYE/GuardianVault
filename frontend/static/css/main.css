@@ -3432,13 +3432,13 @@ h1 {
 
 .logout-button-menu {
   background-image: url('images/logout.png');
-  border: none;
-  border-radius: 20px;
-  padding: 10px 20px;
-  font-size: 20px;
-  cursor: pointer;
-  margin-top: 20px; /* Adjust the top margin */
-  margin-bottom: 20px; /* Adds some space between the button and the bottom */
+  background-size: cover; /* Cover the entire button with the background image */
+  border: none; /* Remove button border */
+  padding: 30px 30px; /* Padding inside the button */
+  font-size: 16px; /* Text size */
+  cursor: pointer; /* Show pointer cursor on hover */
+  outline: none; /* Remove focus outline */
+  /* Add any additional styling you want */
 }
 
 .loader {
