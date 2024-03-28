@@ -68,7 +68,7 @@ export default class UploadView extends AbstractView{
 
     validator.setMessageBox(messageBox);
 
-    if (!window.client.logedIn) {
+    if (!window.client.loggedIn) {
       window.client.navigateTo('/login'); // Redirect to login page if not logged in
     }
 

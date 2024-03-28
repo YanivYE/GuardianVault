@@ -31,7 +31,7 @@ export default class MenuView extends AbstractView{
 
   async executeViewScript()
   {
-    if (!window.client.logedIn) {
+    if (!window.client.loggedIn) {
       window.client.navigateTo('/login'); // Redirect to login page if not logged in
     }
       

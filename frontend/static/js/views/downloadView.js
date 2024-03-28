@@ -63,7 +63,7 @@ export default class DownloadView extends AbstractView{
     const messageBox = document.getElementById("message");
 
     // Check if user is logged in, if not, redirect to login page
-    if (!window.client.logedIn) {
+    if (!window.client.loggedIn) {
         window.client.navigateTo('/login');
     }
 
