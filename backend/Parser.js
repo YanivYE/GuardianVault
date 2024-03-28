@@ -1,3 +1,4 @@
+// Import required modules
 const DBHandler = require("./DataBaseHandler");
 const FileHandler = require("./FileHandler");
 const DriveHandler = require("./DriveHandler");
@@ -5,9 +6,10 @@ const EmailSender = require("./EmailSender");
 const MalwareDetector = require("./MalwareDetector");
 const Utils = require('./Utils');
 
-class Parser{
-    constructor(socket, crypto)
-    {
+// Define Parser class
+class Parser {
+    constructor(socket, crypto) {
+        // Initialize class properties
         this.socket = socket;
         this.crypto = crypto;
         this.DBHandler = new DBHandler.DataBaseHandler();
@@ -18,36 +20,30 @@ class Parser{
         this.username = "";
         this.password = "";
         this.verificationCode = "";
-        this.logedIn = false;
+        this.loggedIn = false;
     }
 
-    async parseClientMessage(clientMessage)
-    {
+    // Parse client messages
+    async parseClientMessage(clientMessage) {
         let responseType = "", responseData = "";
         let operation = "", additionalData = "";
         const fields = clientMessage.split('$');
 
-        if(this.logedIn)    // additional csrf token for authentication
-        {
+        // Check if user is logged in for additional CSRF token
+        if (this.loggedIn) {
             const authenticationToken = fields[0];
-
-            if(!this.malwareDetector.validateAuthenticatedUser(authenticationToken, this.username))
-            {
-                return ["", ""];    // unauthenticated
-            }   
-
+            if (!this.malwareDetector.validateAuthenticatedUser(authenticationToken, this.username)) {
+                return ["", ""]; // Unauthenticated
+            }
             operation = fields[1];
-
             additionalData = fields.slice(2).join("$");
-        }
-        else{
+        } else {
             operation = fields[0];
-
             additionalData = fields.slice(1).join("$");
         }
-            
-        switch(operation)
-        {
+
+        // Handle different operations
+        switch (operation) {
             case "Login":
                 [responseType, responseData] = await this.parseLoginRequest(additionalData);
                 break;
@@ -82,13 +78,13 @@ class Parser{
                 [responseType, responseData] = await this.getUsersList();
                 break;
             case "ownFileList":
-                [responseType, responseData] = await this.getOwnFilesList()
+                [responseType, responseData] = await this.getOwnFilesList();
                 break;
             case "sharedFileList":
-                [responseType, responseData] = await this.getSharedFilesList()
+                [responseType, responseData] = await this.getSharedFilesList();
                 break;
             case "Authentication":
-                [responseType, responseData] = this.authenticateLogedUser();
+                [responseType, responseData] = this.authenticateLoggedInUser();
                 break;
             case "Logout":
                 [responseType, responseData] = await this.userLogout();
@@ -102,25 +98,22 @@ class Parser{
         return [responseType, responseData];
     }
 
-    async parseLoginRequest(loginRequest)
-    {
+    // Parse login request
+    async parseLoginRequest(loginRequest) {
         let loginResult = "Fail";
         [this.username, this.password] = loginRequest.split('$');
 
-        if(await this.DBHandler.validateUserLogin(this.username, this.password))
-        {
+        if (await this.DBHandler.validateUserLogin(this.username, this.password)) {
             loginResult = "Success";
             console.log(`${this.username} connected`);
-
             const userEmail = await this.DBHandler.getUserEmail(this.username);
-
             this.verificationCode = this.EmailSender.sendEmailVerificationCode(userEmail);
         }
         return ['loginResult', loginResult];
     }
 
-    async parseSignupRequest(signupRequest)
-    {
+    // Parse signup request
+    async parseSignupRequest(signupRequest) {
         const [username, email, password] = signupRequest.split('$');
 
         this.username = username;
@@ -128,208 +121,177 @@ class Parser{
 
         const signupResult = await this.DBHandler.validateUserSignup(this.username, email, this.password);
 
-        if(signupResult === "Success")
-        {
+        if (signupResult === "Success") {
             console.log(`${this.username} connected`);
         }
 
         return ['signupResult', signupResult];
     }
 
+    // Parse upload file block request
     parseUploadFileBlockRequest(uploadFileBlockRequest) {
-        var isLastBlock = false;
+        let isLastBlock = false;
         const [blockIndex, blockContent, totalBlocks] = uploadFileBlockRequest.split('$');
 
-        if(parseInt(blockIndex) === parseInt(totalBlocks) - 1)  // the last block
-        {
+        if (parseInt(blockIndex) === parseInt(totalBlocks) - 1) { // Check if it's the last block
             isLastBlock = true;
         }
 
         const blockResult = this.FileHandler.assembleFileContent(blockContent, isLastBlock);
-        
+
         return ['uploadBlockResult', blockResult];
     }
 
-    async validateFileName(validationData)
-    {
+    // Validate file name
+    async validateFileName(validationData) {
         const [fileName, usersString] = validationData.split('$');
-
         const users = usersString.split(',');
-
         const fileNameResult = await this.DBHandler.validateFileName(fileName, this.username);
 
         this.FileHandler.setUploadDetails(fileName, this.username, this.password);
 
-        if(fileNameResult === "Success")
-        {            
+        if (fileNameResult === "Success") {
             await this.DBHandler.setUsersPermissions(users, fileName, this.username, this.password);
-
             const usersEmailMap = await Utils.initializeUsersEmailsMap(this.DBHandler, users);
-
             this.EmailSender.sendUsersNotifications(this.username, fileName, usersEmailMap);
         }
 
         return ['validateNameResult', fileNameResult];
     }
 
-
-    async parseDownloadFileRequest(downloadFileRequest)
-    {
+    // Parse download file request
+    async parseDownloadFileRequest(downloadFileRequest) {
         let ownerPassword = "";
         let [fileName, fileOwner] = downloadFileRequest.split('$');
 
-        if(fileOwner === 'null')    // the current connected user
-        {
+        if (fileOwner === 'null') { // If the current user is the owner
             fileOwner = this.username;
             ownerPassword = this.password;
-        }
-        else
-        {
+        } else {
             ownerPassword = await this.DBHandler.getFileEncryptionPassword(fileOwner, fileName);
         }
 
         this.FileHandler.downloadFile(fileName, fileOwner, ownerPassword);
     }
 
-    async deleteFile(fileData)
-    {
+    // Delete file
+    async deleteFile(fileData) {
         let [fileName, fileOwner] = fileData.split('$');
 
-        if(fileOwner === 'null')    // connected user
-        {
+        if (fileOwner === 'null') { // If the current user is the owner
             fileOwner = this.username;
-
             await this.DriveHandler.deleteFile(fileName, fileOwner);
-
             await this.DBHandler.deleteOwnFile(fileName, fileOwner);
-        }
-        else
-        {
+        } else {
             await this.DBHandler.deleteSharedFile(fileName, fileOwner);
         }
 
         return ['deleteFileResult', 'Success'];
     }
 
-    async forgotPassword(forgotPasswordRequest)
-    {
+    // Handle forgot password
+    async forgotPassword(forgotPasswordRequest) {
         const username = forgotPasswordRequest.split('$');
 
         this.password = "";
 
         let userEmailResult = await this.DBHandler.getUserEmail(username);
 
-        if(userEmailResult !== "Fail")
-        {
+        if (userEmailResult !== "Fail") {
             this.verificationCode = this.EmailSender.sendEmailVerificationCode(userEmailResult);
             this.username = username;
             userEmailResult = "Success";
-        } 
+        }
 
         return ['forgotPasswordResult', userEmailResult];
     }
 
-    verifyEmailCode(verifyCodeRequest)
-    {
+    // Verify email code
+    verifyEmailCode(verifyCodeRequest) {
         let verificationResult = "Fail";
-
         const enteredCode = verifyCodeRequest.split('$')[0];
 
-        if(enteredCode === this.verificationCode)
-        {
-            if(this.password !== '')    // through login
-            {
+        if (enteredCode === this.verificationCode) {
+            if (this.password !== '') { // Through login
                 verificationResult = "2fa";
-            }
-            else    // through forgot password
-            {
+            } else { // Through forgot password
                 verificationResult = "passwordReset";
             }
         }
-        
+
         return ['codeVerificationResult', verificationResult];
     }
 
-    async resetPassword(resetPasswordRequest)
-    {
+    // Reset password
+    async resetPassword(resetPasswordRequest) {
         const newPassword = resetPasswordRequest.split('$')[0];
-
         this.password = newPassword;
-
         await this.DBHandler.updateUserPassword(this.username, newPassword);
 
         return ['resetPasswordResult', 'Success'];
     }
 
-    handleMalwareThreat(threatDetails)
-    {
+    // Handle malware threat
+    handleMalwareThreat(threatDetails) {
         const [threatType, maliciousInput] = threatDetails.split('$');
-
         this.malwareDetector.malwareDetected(threatType, maliciousInput, this.username);
     }
 
-    async getUsersList()    
-    {
+    // Get users list
+    async getUsersList() {
         let usersList = await this.DBHandler.getUsersList();
         usersList.splice(usersList.indexOf(this.username), 1);
         let usersString = usersList.join(',');
-        if(usersList.length === 0)
-        {
+        if (usersList.length === 0) {
             usersString = "empty";
         }
         return ['usersListResult', usersString];
     }
 
-    async getOwnFilesList()  
-    {
+    // Get own files list
+    async getOwnFilesList() {
         const filesList = await this.DBHandler.getUserFilesList(this.username);
         let filesString = filesList.join(',');
-        if(filesList.length === 0)
-        {
+        if (filesList.length === 0) {
             filesString = "empty";
         }
         return ['ownFileListResult', filesString];
     }
 
-    async getSharedFilesList()   
-    {
+    // Get shared files list
+    async getSharedFilesList() {
         const filesList = await this.DBHandler.getUserSharedFilesList(this.username);
         let filesString = filesList.map(({ user, files }) => `${user}:${files.join(',')}`).join('#');
-        if(filesList.length === 0)
-        {
+        if (filesList.length === 0) {
             filesString = "empty";
         }
         return ['sharedFileListResult', filesString];
     }
 
-    authenticateLogedUser()
-    {
+    // Authenticate logged-in user
+    authenticateLoggedInUser() {
         const csrfToken = this.crypto.generateCSRFToken();
         this.malwareDetector.setCsrfToken(csrfToken);
-        this.logedIn = true;
+        this.loggedIn = true;
         return ['authenticationResult', csrfToken];
     }
 
-    async userLogout()
-    {
+    // User logout
+    async userLogout() {
         await this.DriveHandler.deleteUser(this.username);
-   
         await this.DBHandler.deleteUser(this.username);
-
         console.log(`User ${this.username} logged out`);
-
-        this.logedIn = false;
+        this.loggedIn = false;
         this.malwareDetector.setCsrfToken("");
-
         return ['logoutResult', 'Success'];
     }
 
+    // Initialize system
     initializeSystem() {
         this.DBHandler.initDataBase();
         this.DriveHandler.initDrive();
-
         Utils.writeToLogFile('../guardianvault/system_log.txt', 'System Initialized');
     }
 }
 
-module.exports = {Parser};
+module.exports = { Parser };

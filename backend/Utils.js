@@ -2,41 +2,38 @@ const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 
 
-function generateUniqueUserId() 
-{
+// Generates a unique user ID using UUIDv4.
+
+function generateUniqueUserId() {
     return uuidv4();
 }
 
-async function initializeUsersEmailsMap(DBHandler, usersArray)
-{
+// Initializes a map of users' emails.
+async function initializeUsersEmailsMap(DBHandler, usersArray) {
     let map = new Map();
-    for(const user of usersArray)
-    {
-        if(user !== '')
-        {
+    for (const user of usersArray) {
+        if (user !== '') {
             const userEmail = await DBHandler.getUserEmail(user);
-
             map.set(user, userEmail);
         }
     }
-
     return map;
-}  
+}
 
-function generateVerificationCode()
-{
+// Generates a verification code of 6 digits.
+function generateVerificationCode() {
     let code = '';
     for (let i = 0; i < 6; i++) {
         code += Math.floor(Math.random() * 10); // Generate a random digit (0-9)
     }
     return code;
 }
-  
-function writeToLogFile(logFilePath, message)
-{
+
+// Writes a message to a log file.
+function writeToLogFile(logFilePath, message) {
     // Get current date and time
     const currentDateTime = new Date().toISOString();
-        
+
     // Log message to be written
     const logMessage = `${currentDateTime}: ${message}\n`;
 
@@ -44,4 +41,9 @@ function writeToLogFile(logFilePath, message)
     fs.appendFileSync(logFilePath, logMessage);
 }
 
-module.exports = {generateUniqueUserId, initializeUsersEmailsMap, generateVerificationCode, writeToLogFile}
+module.exports = {
+    generateUniqueUserId,
+    initializeUsersEmailsMap,
+    generateVerificationCode,
+    writeToLogFile
+};
