@@ -3,10 +3,10 @@ const http = require('http');
 const path = require('path');
 const socketIO = require('socket.io');
 const config = require('./config');
-const Handler = require('./SocketHandler');
+const SocketHandler = require('./SocketHandler');
 const Utils = require('./Utils');
 
-// create app & server
+// Create app, server & socket
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -14,7 +14,7 @@ const io = socketIO(server);
 // Serve static files
 app.use("/static", express.static(path.resolve(__dirname, "../frontend", "static")));
 
-// Server index page
+// Serve index page
 app.get('/', (req, res) => {
     const filePath = path.resolve(__dirname, `../frontend`, 'index.html');
     res.setHeader('Content-Type', 'text/html');
@@ -30,11 +30,14 @@ server.listen(config.PORT, config.LOCAL_IP, () => {
     console.log(`Server is running on http://${config.LOCAL_IP}:${config.PORT}`);
 });
 
+// Handle socket connection
 io.on('connection', (socket) => {
     const userId = Utils.generateUniqueUserId();
     console.log(`User ${userId} connected`);
-    const socketHandler = new Handler.SocketHandler(socket);
+    const socketHandler = new SocketHandler.SocketHandler(socket);
     socketHandler.handleClientConnection();
+    
+    // Handle disconnection
     socket.on('disconnect', () => {
         console.log(`User ${userId} disconnected`);
     });
