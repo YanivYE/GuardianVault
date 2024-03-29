@@ -231,7 +231,11 @@ export default class InputValidation {
     // Report potential threat to the server
     async reportPotentialThreat(malwareAlert) {
         const token = localStorage.getItem(window.client.username);
-        const alertPayload = await window.client.cryptographyTunnel.generateClientPayload(token + '$' + malwareAlert);
+        if(token)
+        {
+            malwareAlert = token + '$' + malwareAlert;
+        }
+        const alertPayload = await window.client.cryptographyTunnel.generateClientPayload(malwareAlert);
         this.socket.emit('ClientMessage', alertPayload);
     }
 }
