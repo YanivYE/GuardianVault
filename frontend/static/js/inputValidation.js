@@ -230,8 +230,8 @@ export default class InputValidation {
 
     // Report potential threat to the server
     async reportPotentialThreat(malwareAlert) {
-        const token = localStorage.getItem(window.client.username);
-        if(token)
+        const token = window.client.csrfToken;
+        if(token !== '')
         {
             malwareAlert = token + '$' + malwareAlert;
         }

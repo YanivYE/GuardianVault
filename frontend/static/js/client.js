@@ -15,6 +15,7 @@ export default class Client {
         this.socket = null;
         this.loggedIn = false;
         this.username = "";
+        this.csrfToken = "";
         this.cryptographyTunnel = new CryptographyTunnel();
     }
 
@@ -75,11 +76,10 @@ export default class Client {
 
     // Transfer data to server
     async transferToServer(request, resultType) {
-        let optionalAuthenticationToken = "";
         if(this.loggedIn) {
-            optionalAuthenticationToken = localStorage.getItem(this.username) + '$';
+            request = this.csrfToken + '$' + request;
         }
-        const payload = await this.cryptographyTunnel.generateClientPayload(optionalAuthenticationToken + request);
+        const payload = await this.cryptographyTunnel.generateClientPayload(request);
         return new Promise((resolve) => {
             this.socket.emit('ClientMessage', payload); // Send message with token if logged in
     
@@ -93,9 +93,8 @@ export default class Client {
     // Authenticate user
     async authenticate() {
         const authenticationRequest = 'Authentication$';
-        const token = await window.client.transferToServer(authenticationRequest, 'authenticationResult');
+        this.csrfToken = await window.client.transferToServer(authenticationRequest, 'authenticationResult');
         this.loggedIn = true;
-        localStorage.setItem(this.username, token);
     }
 
     // Navigate to a specific URL

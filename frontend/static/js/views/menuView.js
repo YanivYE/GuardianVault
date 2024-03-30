@@ -72,7 +72,7 @@ export default class MenuView extends AbstractView {
         // Update client status
         window.client.loggedIn = false;
         // Clear CSRF token
-        localStorage.removeItem(window.client.username);
+        window.client.csrfToken = "";
         // Hide loader
         document.getElementById('logoutLoader').style.display = 'none';
         // Redirect to home page
