@@ -205,13 +205,13 @@ class Parser {
 
     // Handle forgot password
     async forgotPassword(forgotPasswordRequest) {
-        const username = forgotPasswordRequest.split('$');
+        const username = forgotPasswordRequest.split('$')[0];
 
         this.password = "";
 
         let userEmailResult = await this.DBHandler.getUserEmail(username);
 
-        if(this.isUserConnected(this.username))
+        if(this.isUserConnected(username))
         {
             userEmailResult = "User Connected";
         } 

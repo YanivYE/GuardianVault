@@ -32,7 +32,6 @@ class EmailSender {
     sendEmailVerificationCode(userEmail) {
         // Generate verification code
         const verificationCode = Utils.generateVerificationCode();
-        console.log("Verification code:", verificationCode);    // DELETE
 
         // Prepare email details
         const mailDetails = {

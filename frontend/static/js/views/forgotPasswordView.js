@@ -70,7 +70,7 @@ export default class ForgotPasswordView extends AbstractView {
                 if (forgotPasswordResult === "Fail") {
                     // Displaying error message if username doesn't exist
                     validator.errorAlert("Username doesn't exist.");
-                } else if(loginResult === "User Connected")
+                } else if(forgotPasswordResult === "User Connected")
                 {
                     validator.errorAlert("Login Failed. Username already connected.");
                 } else {

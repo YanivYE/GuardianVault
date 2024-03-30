@@ -64,3 +64,7 @@
 
 2024-03-30T10:36:54.453Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
 
+2024-03-30T11:49:17.238Z: signatureSpoofing Attack Detected! Attacker: elior, Malicious Input: Fake docx file
+
+2024-03-30T11:49:23.101Z: LFI Attack Detected! Attacker: elior, Malicious Input: vfd.php
+
