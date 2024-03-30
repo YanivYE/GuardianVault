@@ -48,7 +48,9 @@ export default class DownloadView extends AbstractView {
         // Initialization
         const socket = window.client.socket;
         const cryptographyTunnel = window.client.cryptographyTunnel;
+        const validator = this.inputValidator;
         const messageBox = document.getElementById("message");
+        validator.setMessageBox(messageBox);
 
         // Redirect to login page if not logged in
         if (!window.client.loggedIn) {
@@ -271,9 +273,7 @@ export default class DownloadView extends AbstractView {
 
         async function downloadFile(fileName, fileOwner) {
             let fileDownloaded = false;
-            messageBox.style.display = "block";
-            messageBox.style.color = "gold";
-            messageBox.innerText = "Download might take a while...";
+            validator.delayAlert("Download might take a while...");
             document.getElementById('downloadButton').disabled = true;
             document.getElementById('downloadLoader').style.display = 'block';
             const token = window.client.csrfToken;
@@ -358,9 +358,7 @@ export default class DownloadView extends AbstractView {
                     document.body.removeChild(a);
         
                     // Display success message
-                    messageBox.style.display = "block";
-                    messageBox.style.color = "green";
-                    messageBox.innerText = "File downloaded successfully!";
+                    validator.successAlert("File downloaded successfully!");
                     document.getElementById('downloadButton').disabled = false;
                 } else {
                     console.error('Failed to download file:', xhr.statusText);
@@ -388,9 +386,7 @@ export default class DownloadView extends AbstractView {
                 document.getElementById('downloadLoader').style.display = 'none';
         
                 // Display success message
-                messageBox.style.display = "block";
-                messageBox.style.color = "green";
-                messageBox.innerText = "File deleted successfully!";
+                validator.successAlert("File deleted successfully!");
             }
         }
     }

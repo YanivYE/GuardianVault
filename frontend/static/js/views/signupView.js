@@ -201,11 +201,9 @@ export default class SignupView extends AbstractView {
                 const signupResult = await window.client.transferToServer(signupRequest, 'signupResult');
 
                 if (signupResult === "UsernameFail") {
-                    messageBox.textContent = "SignUp failed. Username already exists";
-                    messageBox.style.display = 'block';
+                    validator.errorAlert("Signup Failed. Username already exists.")
                 } else if (signupResult === "EmailFail") {
-                    messageBox.textContent = "SignUp failed. Email already exists";
-                    messageBox.style.display = 'block';
+                    validator.errorAlert("Signup Failed. Email already exists.")
                 } else {
                     await window.client.authenticate();
                     window.client.navigateTo('/menu');

@@ -26,6 +26,7 @@ export default class MenuView extends AbstractView {
         </div>
         <h2>‎ </h2>
         <button class="logout-button-menu" id="logoutButton"></button>
+        <div id="message" style="color: red; display: none;"></div>
       </div>
     `;
   }
@@ -37,6 +38,10 @@ export default class MenuView extends AbstractView {
       window.client.navigateTo('/login');
       return;
     }
+
+    const validator = this.inputValidator;
+    const messageBox = document.getElementById("message");
+    validator.setMessageBox(messageBox);
     
     const username = window.client.username;
     document.getElementById("title").textContent = `Welcome ${username}!`;
@@ -62,6 +67,7 @@ export default class MenuView extends AbstractView {
     async function userLogout() {
       // Display loader
       document.getElementById('logoutLoader').style.display = 'block';
+      validator.delayAlert("Logout might take a while...");
 
       // Perform logout request to the server
       const logoutRequest = 'Logout$';

@@ -202,9 +202,7 @@ export default class ResetPasswordView extends AbstractView {
             // Validate password
             if (validate(password)) {
                 // Display success message
-                messageBox.style.display = "block";
-                messageBox.style.color = "green"
-                messageBox.innerText = "Password reset successfully!";
+                validator.successAlert("Password reset successfully!");
                 
                 // Send reset password request to server
                 const resetPasswordRequest = 'ResetPassword$' + password;

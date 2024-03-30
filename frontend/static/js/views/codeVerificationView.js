@@ -58,8 +58,7 @@ export default class CodeVerificationView extends AbstractView {
                 // Handle verification result
                 if (codeVerificationResult === "Fail") {
                     // Display error message for incorrect verification code
-                    messageBox.style.display = "block";
-                    messageBox.innerText = "Wrong Verification Code!";
+                    validator.errorAlert("Wrong Verification Code!");
                 } else if (codeVerificationResult === "passwordReset") {
                     // Navigate to password reset page if verification successful
                     window.client.navigateTo('/resetPassword');

@@ -21,6 +21,11 @@ export default class InputValidation {
         this.showMessage(successMessage, "green");
     }
 
+    delayAlert(delayMessage)
+    {
+        this.showMessage(delayMessage, 'gold');
+    }
+
     // Show message in alert message box
     showMessage(messageText, color) {
         this.alertMessageBox.style.display = "block";
