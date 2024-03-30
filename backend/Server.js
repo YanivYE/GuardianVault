@@ -36,9 +36,4 @@ io.on('connection', (socket) => {
     console.log(`User ${userId} connected`);
     const socketHandler = new SocketHandler.SocketHandler(socket);
     socketHandler.handleClientConnection();
-    
-    // Handle disconnection
-    socket.on('disconnect', () => {
-        console.log(`User ${userId} disconnected`);
-    });
 });

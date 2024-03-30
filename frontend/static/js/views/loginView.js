@@ -121,9 +121,13 @@ export default class LoginView extends AbstractView {
     
                 if (loginResult === "Success") {
                     window.client.navigateTo("/codeVerification");
-                } else {
-                    messageBox.innerText = "Login failed. Username or password are incorrect";
-                    messageBox.style.display = "block";
+                } 
+                else if(loginResult === "User Connected")
+                {
+                    validator.errorAlert("Login Failed. Username already connected.");
+                }
+                else {
+                    validator.errorAlert("Login Failed. Username or password are incorrect.");
                 }
             }
         }

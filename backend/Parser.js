@@ -6,6 +6,9 @@ const EmailSender = require("./EmailSender");
 const MalwareDetector = require("./MalwareDetector");
 const Utils = require('./Utils');
 
+// Define global variable to store connected users
+global.connectedUsers = [];
+
 // Define Parser class
 class Parser {
     constructor(socket, crypto) {
@@ -21,6 +24,14 @@ class Parser {
         this.password = "";
         this.verificationCode = "";
         this.loggedIn = false;
+
+        // Handle disconnection
+        this.socket.on('disconnect', () => {
+            if(this.isUserConnected(this.username))
+            {
+                this.disconnectUser(this.username);
+            }
+        }); 
     }
 
     // Parse client messages
@@ -103,11 +114,18 @@ class Parser {
         let loginResult = "Fail";
         [this.username, this.password] = loginRequest.split('$');
 
-        if (await this.DBHandler.validateUserLogin(this.username, this.password)) {
-            loginResult = "Success";
-            console.log(`${this.username} connected`);
-            const userEmail = await this.DBHandler.getUserEmail(this.username);
-            this.verificationCode = this.EmailSender.sendEmailVerificationCode(userEmail);
+        if(this.isUserConnected(this.username))
+        {
+            loginResult = "User Connected";
+        } 
+        else {
+            const isValidLogin = await this.DBHandler.validateUserLogin(this.username, this.password);
+            if (isValidLogin) {
+                loginResult = "Success";
+                
+                const userEmail = await this.DBHandler.getUserEmail(this.username);
+                this.verificationCode = this.EmailSender.sendEmailVerificationCode(userEmail);
+            }
         }
         return ['loginResult', loginResult];
     }
@@ -120,10 +138,6 @@ class Parser {
         this.password = password;
 
         const signupResult = await this.DBHandler.validateUserSignup(this.username, email, this.password);
-
-        if (signupResult === "Success") {
-            console.log(`${this.username} connected`);
-        }
 
         return ['signupResult', signupResult];
     }
@@ -197,10 +211,16 @@ class Parser {
 
         let userEmailResult = await this.DBHandler.getUserEmail(username);
 
-        if (userEmailResult !== "Fail") {
-            this.verificationCode = this.EmailSender.sendEmailVerificationCode(userEmailResult);
-            this.username = username;
-            userEmailResult = "Success";
+        if(this.isUserConnected(this.username))
+        {
+            userEmailResult = "User Connected";
+        } 
+        else{
+            if (userEmailResult !== "Fail") {
+                this.verificationCode = this.EmailSender.sendEmailVerificationCode(userEmailResult);
+                this.username = username;
+                userEmailResult = "Success";
+            }
         }
 
         return ['forgotPasswordResult', userEmailResult];
@@ -273,14 +293,24 @@ class Parser {
         const csrfToken = this.crypto.generateCSRFToken();
         this.malwareDetector.setCsrfToken(csrfToken);
         this.loggedIn = true;
+        global.connectedUsers.push(this.username);
+        console.log(`${this.username} connected`);
         return ['authenticationResult', csrfToken];
+    }
+
+    isUserConnected(username) {
+        return global.connectedUsers.includes(username);
+    }
+
+    disconnectUser(username) {
+        global.connectedUsers = global.connectedUsers.filter(user => user !== username);
+        console.log(`User ${username} disconnected.`);
     }
 
     // User logout
     async userLogout() {
         await this.DriveHandler.deleteUser(this.username);
         await this.DBHandler.deleteUser(this.username);
-        console.log(`User ${this.username} logged out`);
         this.loggedIn = false;
         this.malwareDetector.setCsrfToken("");
         return ['logoutResult', 'Success'];
