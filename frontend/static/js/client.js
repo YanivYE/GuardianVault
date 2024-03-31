@@ -94,6 +94,7 @@ export default class Client {
     async authenticate() {
         const authenticationRequest = 'Authentication$';
         this.csrfToken = await window.client.transferToServer(authenticationRequest, 'authenticationResult');
+        console.log(this.csrfToken);
         this.loggedIn = true;
     }
 

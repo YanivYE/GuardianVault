@@ -1,5 +1,5 @@
 // Import required modules
-const KeyExchange = require("./ServerKeyExchange");
+const KeyExchange = require("./KeyExchange");
 const CryptographyTunnel = require("./CryptographyTunnel");
 const Parser = require("./Parser");
 
