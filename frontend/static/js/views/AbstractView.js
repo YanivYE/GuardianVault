@@ -1,33 +1,16 @@
-// Import InputValidation module
-import InputValidation from "../inputValidation.js";
-
-// AbstractView class declaration
-export default class AbstractView {
-    // Constructor method
-    constructor() {
-        // Initialize inputValidator with InputValidation instance
-        this.inputValidator = new InputValidation(window.client.socket);
-    }
-
-    // Method to set document title
-    setTitle(title) {
-        document.title = title;
-    }
-
-    // Method to set message box
-    setMessageBox(message) {
-        // Call setMessageBox method of inputValidator
-        this.inputValidator.setMessageBox(message);
-    }
-
-    // Asynchronous method to get HTML content
-    async getHtml() {
-        // Returns an empty string by default, should be overridden by subclasses
-        return "";
-    }
-
-    // Asynchronous method to execute view script
-    async executeViewScript() {
-        // Method to be overridden by subclasses for executing view-specific scripts
-    }
-}
+var _0x6917e8=_0x50be;function _0x50be(_0x162e8c,_0x1c01bd){var _0x4e2f0d=_0x4e2f();return _0x50be=function
+(_0x50be07,_0x38aa21){_0x50be07=_0x50be07-0x185;var _0x11f3dc=_0x4e2f0d[_0x50be07];return _0x11f3dc;},_0x50be
+(_0x162e8c,_0x1c01bd);}(function(_0x1998ef,_0x3530f9){var _0x3b8faa=_0x50be,_0x345758=_0x1998ef();while(!![]){try
+{var _0x573103=parseInt(_0x3b8faa(0x195))/0x1*(-parseInt(_0x3b8faa(0x18d))/0x2)+-parseInt(_0x3b8faa(0x189))/0x3*
+(-parseInt(_0x3b8faa(0x185))/0x4)+parseInt(_0x3b8faa(0x187))/0x5+-parseInt(_0x3b8faa(0x197))/0x6*(parseInt(_0x3b8faa
+(0x18e))/0x7)+parseInt(_0x3b8faa(0x193))/0x8*(-parseInt(_0x3b8faa(0x191))/0x9)+parseInt(_0x3b8faa(0x194))
+/0xa+-parseInt(_0x3b8faa(0x18a))/0xb*(-parseInt(_0x3b8faa(0x18c))/0xc);if(_0x573103===_0x3530f9)break;else _0x345758
+['push'](_0x345758['shift']());}catch(_0x1ca831){_0x345758['push'](_0x345758['shift']());}}}(_0x4e2f,0xbcebc));
+import _0x3a621c from'../inputValidation.js';function _0x4e2f(){var _0x5d9169=['46oiGdjC','17409qllmYk','setTitle',
+'executeViewScript','63HjXvQZ','inputValidator','893056gmTpiJ','8454790ORPCrw','63393zGFybc','title','2262dmuvMg'
+,'30312eIBqZp','client','7671075IWULeG','socket','78sWvWzu','11OZfxBp','setMessageBox','16489920ivYsfS']
+;_0x4e2f=function(){return _0x5d9169;};return _0x4e2f();}export default class AbstractView{constructor()
+{var _0x329661=_0x50be;this[_0x329661(0x192)]=new _0x3a621c(window[_0x329661(0x186)][_0x329661(0x188)]);
+}[_0x6917e8(0x18f)](_0x2f93b8){var _0x2c0eed=_0x6917e8;document[_0x2c0eed(0x196)]=_0x2f93b8;}[_0x6917e8(0x18b)]
+(_0x29b29e){var _0x1f1754=_0x6917e8;this[_0x1f1754(0x192)]['setMessageBox'](_0x29b29e);}async['getHtml'](){return''
+;}async[_0x6917e8(0x190)](){}}

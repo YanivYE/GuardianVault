@@ -1,108 +1,38 @@
-// Converts a hexadecimal string to a cryptographic key.
-export async function hexToCryptoKey(hexString) {
-    // Convert hexadecimal string to array of bytes
-    const keyData = hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
-
-    // Import key from raw bytes
-    const cryptoKey = await crypto.subtle.importKey(
-        "raw",
-        new Uint8Array(keyData),
-        { name: "AES-GCM" },
-        false,
-        ["encrypt", "decrypt"]
-    );
-
-    return cryptoKey;
-}
-
-// Converts an array buffer to a base64 string.
-export function arrayBufferToBase64(arrayBuffer) {
-    const uint8Array = new Uint8Array(arrayBuffer);
-    const binaryString = Array.from(uint8Array, byte => String.fromCharCode(byte)).join('');
-    return btoa(binaryString);
-}
-
-// Converts a base64 string to an array buffer.
-export function base64ToArrayBuffer(base64) {
-    const binaryString = atob(base64);
-    const length = binaryString.length;
-    const arrayBuffer = new ArrayBuffer(length);
-    const uint8Array = new Uint8Array(arrayBuffer);
-
-    for (let i = 0; i < length; i++) {
-        uint8Array[i] = binaryString.charCodeAt(i);
-    }
-
-    return arrayBuffer;
-}
-
-// Converts an array buffer to a hexadecimal string.
-export function arrayBufferToHexString(arrayBuffer) {
-    const byteArray = new Uint8Array(arrayBuffer);
-    return Array.from(byteArray, byte => byte.toString(16).padStart(2, '0')).join('');
-}
-
-/**
- * Object containing supported file signatures.
- * Keys are file extensions, values are corresponding signatures in hexadecimal format.
- */
-export const supportedFileSignatures = {
-    "png": "89504E47",
-    "jpg": "FFD8FF",
-    "jpeg": "FFD8FF",
-    "gif": "47494638",
-    "bmp": "424D",
-    "webp": "52494646",
-    "ico": "00000100",
-    "tif": "49492A00",
-    "tiff": "49492A00",
-    "svg": "3C737667",
-    "pdf": "25504446",
-    "doc": "D0CF11E0",
-    "docx": "504B0304",
-    "xls": "D0CF11E0",
-    "xlsx": "504B0304",
-    "ppt": "D0CF11E0",
-    "pptx": "504B0304",
-    "csv": "0D0A",
-    "txt": "74657874",
-    "html": "3C68746D6C",
-    "css": "2F2A",
-    "json": "7B",
-    "xml": "3C3F786D6C",
-    "mp3": "494433",
-    "wav": "52494646",
-    "mp4": "66747970",
-    "avi": "52494646",
-    "mkv": "1A45DFA3",
-    "wmv": "3026B2758E66CF11",
-    "flv": "464C5601",
-    "mov": "6D6F6F76",
-    "zip": "504B0304",
-    "tar.gz": "1F8B",
-    "rar": "52617221",
-    "7z": "377ABCAF271C",
-    "apk": "504B0304",
-    "deb": "213C617263683E0A",
-    "rpm": "EDABEEDB",
-    "tar": "7573746172",
-    "gz": "1F8B",
-    "psd": "38425053",
-    "ai": "252150532D41646F6265",
-    "eps": "252150532D41646F6265",
-    "svgz": "1F8B",
-    "dwg": "41433130",
-    "dxf": "41433130",
-    "m4a": "00000020667479704D3441",
-    "m4v": "00000020667479706D703432",
-    "webm": "1A45DFA3",
-    "ogg": "4F676753",
-    "ogv": "4F676753",
-    "oga": "4F676753",
-    "woff": "774F4646",
-    "woff2": "774F4632",
-    "ttf": "0001000000040000",
-    "otf": "4F54544F",
-    "eot": "504B0304",
-    "csv": "0D0A",
-};
+const _0x33afee=_0x497e;function _0x497e(_0x53673f,_0xd6b07d){const _0x2c188=_0x2c18();return _0x497e=function
+(_0x497e61,_0x2dce55){_0x497e61=_0x497e61-0x181;let _0x103914=_0x2c188[_0x497e61];return _0x103914;},_0x497e
+(_0x53673f,_0xd6b07d);}(function(_0x4ef070,_0x258327){const _0xc53e02=_0x497e,_0x19665d=_0x4ef070();while(!![])
+{try{const _0x4fa930=parseInt(_0xc53e02(0x191))/0x1*(-parseInt(_0xc53e02(0x1b0))/0x2)+-parseInt(_0xc53e02
+(0x1ad))/0x3+parseInt(_0xc53e02(0x19f))/0x4*(-parseInt(_0xc53e02(0x1b1))/0x5)+parseInt(_0xc53e02(0x1ab))/0x6+parseInt
+(_0xc53e02(0x18b))/0x7*(-parseInt(_0xc53e02(0x1b2))/0x8)+parseInt(_0xc53e02(0x1a8))/0x9+-parseInt(_0xc53e02(0x1a2))
+/0xa;if(_0x4fa930===_0x258327)break;else _0x19665d['push'](_0x19665d['shift']());}catch(_0x4d4936){_0x19665d['push']
+(_0x19665d['shift']());}}}(_0x2c18,0x81e99));function _0x2c18(){const _0x1563d2=['importKey','00000100',
+'213C617263683E0A','toString','1F8B','3C3F786D6C','00000020667479704D3441','0001000000040000',
+'00000020667479706D703432','424D','494433','56lGkSUV','377ABCAF271C','504B0304','from','7573746172','66747970',
+'33037lyuMPR','774F4632','0D0A','774F4646','FFD8FF','4F54544F','D0CF11E0','47494638','3C737667','fromCharCode',
+'3C68746D6C','52494646','join','match','27656jJCvIL','raw','padStart','717010IlkPiD','25504446','464C5601','AES-GCM',
+'6D6F6F76','52617221','7337718vsAIQK','length','1A45DFA3','5740308oXqisD','3026B2758E66CF11','2081385rTSNSn',
+'map','encrypt','22qovGWm','30xWdUWb','69512JvzlcG','2F2A','252150532D41646F6265','38425053','4F676753','41433130',
+'subtle'];_0x2c18=function(){return _0x1563d2;};return _0x2c18();}export async function hexToCryptoKey(_0x581a6d)
+{const _0x1b8b82=_0x497e,_0x3a831f=_0x581a6d[_0x1b8b82(0x19e)](/.{1,2}/g)[_0x1b8b82(0x1ae)](_0x15f22e=>parseInt
+(_0x15f22e,0x10)),_0x25b065=await crypto[_0x1b8b82(0x1b8)][_0x1b8b82(0x1b9)](_0x1b8b82(0x1a0),new Uint8Array
+(_0x3a831f),{'name':_0x1b8b82(0x1a5)},![],[_0x1b8b82(0x1af),'decrypt']);return _0x25b065;}export function 
+arrayBufferToBase64(_0x31d59b){const _0x420e20=_0x497e,_0x1e8dd8=new Uint8Array(_0x31d59b),_0x313b9c=Array
+[_0x420e20(0x18e)](_0x1e8dd8,_0x3b2947=>String[_0x420e20(0x19a)](_0x3b2947))[_0x420e20(0x19d)]('');
+return btoa(_0x313b9c);}export function base64ToArrayBuffer(_0x585695){const _0x23ff2d=_0x497e,
+_0x3d76d2=atob(_0x585695),_0xa97631=_0x3d76d2[_0x23ff2d(0x1a9)],_0x45558c=new ArrayBuffer(_0xa97631),
+_0x26330a=new Uint8Array(_0x45558c);for(let _0x3cd3dc=0x0;_0x3cd3dc<_0xa97631;_0x3cd3dc++){_0x26330a
+[_0x3cd3dc]=_0x3d76d2['charCodeAt'](_0x3cd3dc);}return _0x45558c;}export function 
+arrayBufferToHexString(_0x3ecad4){const _0x649b2d=_0x497e,_0x5d9f90=new Uint8Array(_0x3ecad4);
+return Array[_0x649b2d(0x18e)](_0x5d9f90,_0x1746d2=>_0x1746d2[_0x649b2d(0x183)](0x10)
+[_0x649b2d(0x1a1)](0x2,'0'))[_0x649b2d(0x19d)]('');}export const supportedFileSignatures=
+{'png':'89504E47','jpg':_0x33afee(0x195),'jpeg':'FFD8FF','gif':_0x33afee(0x198),'bmp':_0x33afee
+(0x189),'webp':'52494646','ico':_0x33afee(0x181),'tif':'49492A00','tiff':'49492A00','svg':_0x33afee
+(0x199),'pdf':_0x33afee(0x1a3),'doc':_0x33afee(0x197),'docx':'504B0304','xls':_0x33afee(0x197),'xlsx':_0x33afee(0x18d),'ppt':
+'D0CF11E0','pptx':_0x33afee(0x18d),'csv':_0x33afee(0x193),'txt':'74657874','html':_0x33afee(0x19b),'css':_0x33afee(0x1b3),'json':
+'7B','xml':_0x33afee(0x185),'mp3':_0x33afee(0x18a),'wav':_0x33afee(0x19c),'mp4':_0x33afee(0x190),'avi':_0x33afee(0x19c),'mkv':
+_0x33afee(0x1aa),'wmv':_0x33afee(0x1ac),'flv':_0x33afee(0x1a4),'mov':_0x33afee(0x1a6),'zip':_0x33afee(0x18d),'tar.gz':'1F8B','rar'
+:_0x33afee(0x1a7),'7z':_0x33afee(0x18c),'apk':_0x33afee(0x18d),'deb':_0x33afee(0x182),'rpm':'EDABEEDB','tar':_0x33afee(0x18f),'gz'
+:_0x33afee(0x184),'psd':_0x33afee(0x1b5),'ai':'252150532D41646F6265','eps':_0x33afee(0x1b4),'svgz':_0x33afee(0x184),'dwg':_0x33afee
+(0x1b7),'dxf':_0x33afee(0x1b7),'m4a':_0x33afee(0x186),'m4v':_0x33afee(0x188),'webm':_0x33afee(0x1aa),'ogg':_0x33afee(0x1b6),
+'ogv':_0x33afee(0x1b6),'oga':_0x33afee(0x1b6),'woff':_0x33afee(0x194),'woff2':_0x33afee(0x192),'ttf':_0x33afee(0x187),'otf':
+_0x33afee(0x196),'eot':_0x33afee(0x18d),'csv':'0D0A'};
