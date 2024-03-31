@@ -1,0 +1,30 @@
+{
+  "name": "guardianvault",
+  "version": "1.0.0",
+  "description": "A secure vault application for storing sensitive data.",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "security",
+    "vault",
+    "node.js",
+    "express",
+    "socket.io"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mmmagic": "^0.5.3",
+    "socket.io": "^4.3.1",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  }
+}

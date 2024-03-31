@@ -1,0 +1,70 @@
+2024-03-29T19:56:16.802Z: XSS Attack Detected! Attacker: Unknown, Malicious Input: <script> alert("Hello! I</script>
+
+2024-03-29T19:57:00.216Z: Sql Injection Attack Detected! Attacker: yaniv, Malicious Input: csdvdf'
+
+2024-03-29T19:58:38.457Z: signatureSpoofing Attack Detected! Attacker: yaniv, Malicious Input: Fake docx file
+
+2024-03-29T19:59:26.683Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:29.473Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:29.624Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:29.786Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:32.667Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:32.829Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:33.016Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:33.176Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:34.533Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:34.680Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:34.820Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:42.444Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:42.593Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:42.770Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:42.929Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:43.086Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:43.215Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:51.900Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T19:59:57.537Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-29T20:00:00.287Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-30T10:36:43.638Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-30T10:36:48.716Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-30T10:36:51.578Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-30T10:36:53.434Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-30T10:36:53.601Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-30T10:36:53.780Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-30T10:36:53.934Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-30T10:36:54.108Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-30T10:36:54.270Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-30T10:36:54.453Z: CSRF Attack Detected! Attacker: yaniv, Malicious Input: Unauthenticated user found
+
+2024-03-30T11:49:17.238Z: signatureSpoofing Attack Detected! Attacker: elior, Malicious Input: Fake docx file
+
+2024-03-30T11:49:23.101Z: LFI Attack Detected! Attacker: elior, Malicious Input: vfd.php
+
