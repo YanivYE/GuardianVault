@@ -1,52 +1,73 @@
-function _0x482c(_0x4f3006,_0x43723c){const _0x5d4de2=_0x5d4d();return _0x482c=function(_0x482cdb,_0x15c73c)
-{_0x482cdb=_0x482cdb-0x13c;let _0x153c52=_0x5d4de2[_0x482cdb];return _0x153c52;},_0x482c(_0x4f3006,_0x43723c);}
-function _0x5d4d(){const _0x5e4a41=['VerifyEmailCode$','codeVerificationResult','16OhiGpP','message','submit','none',
-'3734090xehGqF','140PWmCjE','setMessageBox','/resetPassword','3415DqYKfP','style','verifyCodeForm','2784677LRjHeQ','value',
-'display','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22limiter\x22>\x0a\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22container-code100\x22\x20style=\x22background-image:\
-x20url(\x27static/css/images/bg-01.jpg\x27);\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20<div\x20class=\x22wrap-code100\x20p-t-30\x20p-b-50\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22code100-form-title\x20p-b-41\x22>\x0a\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20Check\x20Email\
-x20For\x20Verification\x20Code\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<form\
-x20id=\x22verifyCodeForm\x22\x20class=\x22code100-form\x20validate-form\x20p-b-33\x20p-t-5\x22>\x0a\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22wrap-input-code100\
-x20validate-input\x22\x20data-validate=\x22Enter\x20code\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<input\x20class=\x22input-code100\x22\x20type=\x22text\
-x22\x20name=\x22code\x22\x20placeholder=\x22Code\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22focus-input-code100\x22\
-x20data-placeholder=\x22✔\x22></span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22container-code100-form-btn\x20m-t-32\x22>\x0a\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<button\
-x20id=\x22verifyCodeButton\x22\x20type=\x22submit\x22\x20class=\x22code100-form-btn\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20Verify\
-x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20</button>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20<h2>‎\x20</h2>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20<div\x20id=\x22message\x22\x20style=\x22color:\x20red;\x20display:\x20none;\x22></div>\x20\x0a\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</form>\x0a\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20','Wrong\
-x20Verification\x20Code!','addEventListener','6054815tCANuE','setTitle','Code\x20Verification','client','navigateTo',
-'transferToServer','57474420fkQjnm','executeViewScript','44GchDZt','errorAlert','preventDefault','/menu','1289403oZnCes',
-'getElementsByName','4SHoswX','getElementById','Fail','1435233sERoMH','authenticate','12LwXqYI'];_0x5d4d=function(){return
-_0x5e4a41;};return _0x5d4d();}const _0x17887e=_0x482c;(function(_0x3d304e,_0x4ec8eb){const _0x2ad159=_0x482c,_0xa7134=
-_0x3d304e();while(!![]){try{const _0x37c82a=-parseInt(_0x2ad159(0x15f))/0x1*(-parseInt(_0x2ad159(0x15c))/0x2)+-
-parseInt(_0x2ad159(0x152))/0x3*(parseInt(_0x2ad159(0x14f))/0x4)+-parseInt(_0x2ad159(0x141))/0x5+-parseInt(_0x2ad159
-(0x154))/0x6*(parseInt(_0x2ad159(0x162))/0x7)+parseInt(_0x2ad159(0x157))/0x8*(-parseInt(_0x2ad159(0x14d))/0x9)
-+parseInt(_0x2ad159(0x15b))/0xa*(-parseInt(_0x2ad159(0x149))/0xb)+parseInt(_0x2ad159(0x147))/0xc;if(_0x37c82a
-===_0x4ec8eb)break;else _0xa7134['push'](_0xa7134['shift']());}catch(_0x1e80ac){_0xa7134['push'](_0xa7134
-['shift']());}}}(_0x5d4d,0xba61b));import _0xa56209 from'./AbstractView.js';export default class 
-CodeVerificationView extends _0xa56209{constructor(){const _0x34b2be=_0x482c;super(),this[_0x34b2be(0x142)]
-(_0x34b2be(0x143));}async['getHtml'](){const _0x79c974=_0x482c;return _0x79c974(0x13e);}async[_0x17887e
-(0x148)](){const _0x5ee463=_0x17887e,_0x296eed=this['inputValidator'],_0x8bd4b8=document[_0x5ee463(0x150)](_0x5ee463(0x158));
-_0x296eed[_0x5ee463(0x15d)](_0x8bd4b8),document[_0x5ee463(0x150)](_0x5ee463(0x161))[_0x5ee463(0x140)](_0x5ee463(0x159),
-async function(_0x560025){const _0x5dd12c=_0x5ee463;_0x560025[_0x5dd12c(0x14b)]();const _0x88d130=document[_0x5dd12c(0x14e)]('code')
-[0x0][_0x5dd12c(0x13c)];_0x8bd4b8[_0x5dd12c(0x160)][_0x5dd12c(0x13d)]=_0x5dd12c(0x15a);if(_0x296eed['generalInputValidation']
-(_0x88d130)&&_0x296eed['validateVerificationCode'](_0x88d130)){const _0x1a8c0a=_0x5dd12c(0x155)+_0x88d130,_0x1773d9=await window
-[_0x5dd12c(0x144)][_0x5dd12c(0x146)](_0x1a8c0a,_0x5dd12c(0x156));if(_0x1773d9===_0x5dd12c(0x151))_0x296eed[_0x5dd12c(0x14a)]
-(_0x5dd12c(0x13f));else _0x1773d9==='passwordReset'?window[_0x5dd12c(0x144)][_0x5dd12c(0x145)](_0x5dd12c(0x15e)):(await window
-['client'][_0x5dd12c(0x153)](),window[_0x5dd12c(0x144)][_0x5dd12c(0x145)](_0x5dd12c(0x14c)));}});}}
+import AbstractView from "./AbstractView.js";
+
+export default class CodeVerificationView extends AbstractView {
+    constructor() {
+        super();
+        this.setTitle("Code Verification");
+    }
+
+    // Generates HTML for the code verification form
+    async getHtml() {
+        return `
+            <div class="limiter">
+                <div class="container-code100" style="background-image: url('static/css/images/bg-01.jpg');">
+                    <div class="wrap-code100 p-t-30 p-b-50">
+                        <span class="code100-form-title p-b-41">
+                            Check Email For Verification Code
+                        </span>
+                        <form id="verifyCodeForm" class="code100-form validate-form p-b-33 p-t-5">
+                            <div class="wrap-input-code100 validate-input" data-validate="Enter code">
+                                <input class="input-code100" type="text" name="code" placeholder="Code">
+                                <span class="focus-input-code100" data-placeholder="✔"></span>
+                            </div>
+                            <div class="container-code100-form-btn m-t-32">
+                                <button id="verifyCodeButton" type="submit" class="code100-form-btn">
+                                    Verify
+                                </button>
+                            </div>
+                            <h2>‎ </h2>
+                            <div id="message" style="color: red; display: none;"></div> 
+                        </form>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Executes scripts associated with the view
+    async executeViewScript() {
+        // Initialize validator and message box
+        const validator = this.inputValidator;
+        const messageBox = document.getElementById("message");
+        validator.setMessageBox(messageBox);
+
+        // Event listener for form submission
+        document.getElementById("verifyCodeForm").addEventListener('submit', async function (event) {
+            event.preventDefault();
+            // Retrieve verification code from form
+            const verificationCode = document.getElementsByName("code")[0].value;
+            messageBox.style.display = "none"; // Hide message box initially
+
+            // Perform input validation and verification code validation
+            if (validator.generalInputValidation(verificationCode) && validator.validateVerificationCode(verificationCode)) {
+                // Construct verify code request
+                const verifyCodeRequest = 'VerifyEmailCode$' + verificationCode;
+                // Send code verification request to the server
+                const codeVerificationResult = await window.client.transferToServer(verifyCodeRequest, 'codeVerificationResult');
+                
+                // Handle verification result
+                if (codeVerificationResult === "Fail") {
+                    // Display error message for incorrect verification code
+                    validator.errorAlert("Wrong Verification Code!");
+                } else if (codeVerificationResult === "passwordReset") {
+                    // Navigate to password reset page if verification successful
+                    window.client.navigateTo('/resetPassword');
+                } else {
+                    // Authenticate and navigate to menu if verification successful
+                    await window.client.authenticate();
+                    window.client.navigateTo('/menu');
+                }
+            }
+        });
+    }
+}

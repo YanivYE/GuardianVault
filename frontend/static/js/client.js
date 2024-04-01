@@ -1,51 +1,138 @@
-const _0xb86e1c=_0x27f0;(function(_0x3dc5e5,_0x98076b){const _0x3f7bf5=_0x27f0,_0x4bbe38=_0x3dc5e5();while(!![]){try
-{const _0x4abf7c=parseInt(_0x3f7bf5(0x7e))/0x1+-parseInt(_0x3f7bf5(0x6b))/0x2+-parseInt(_0x3f7bf5(0x65))/0x3+-parseInt
-(_0x3f7bf5(0x91))/0x4+parseInt(_0x3f7bf5(0x97))/0x5+parseInt(_0x3f7bf5(0x6d))/0x6*(parseInt(_0x3f7bf5(0x79))/0x7)+parseInt
-(_0x3f7bf5(0x9b))/0x8;if(_0x4abf7c===_0x98076b)break;else _0x4bbe38['push'](_0x4bbe38['shift']());}catch(_0x49e6ba){_0x4bbe38
-['push'](_0x4bbe38['shift']());}}}(_0x50ce,0x4cb9f));import _0x4725ba from'./views/loginView.js';import _0x519f04 from
-'./views/signupView.js';import _0x342702 from'./views/forgotPasswordView.js';import _0x4887ce from
-'./views/codeVerificationView.js';function _0x27f0(_0xe95afe,_0x3751bb){const _0x50ce3f=_0x50ce();
-return _0x27f0=function(_0x27f04e,_0x25344d){_0x27f04e=_0x27f04e-0x65;let _0x3b67d9=_0x50ce3f[_0x27f04e];
-return _0x3b67d9;},_0x27f0(_0xe95afe,_0x3751bb);}import _0x2d4596 from'./views/resetPasswordView.js';
-import _0x2ce377 from'./views/menuView.js';function _0x50ce(){const _0x4d6165=['querySelector','onload',
-'21518WcHwmQ','view','/signup','generateClientPayload','ClientMessage','258348jorBAm','error','head',
-'/forgotPassword','client','executeViewScript','Connected\x20to\x20server','/login','navigateTo',
-'performKeyExchange','find','route','cryptographyTunnel','csrfToken','isMatch','setupEventListeners','/menu',
-'location','log','2252204NUELcv','authenticationResult','server-public-key','init','/upload','/codeVerification',
-'397920bgDVlk','waitForInitialization','once','innerHTML','8020400lhVqiG','839343dlJMRI','src','authenticate',
-'appendChild','transferToServer','https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js',
-'1190590WUXula','loggedIn','804bzmPud','/resetPassword','reload','pushState','socket','router','initSocket',
-'createElement','/download','path'];_0x50ce=function(){return _0x4d6165;};return _0x50ce();}
-import _0x4ee290 from'./views/uploadView.js';import _0x58aad9 from'./views/downloadView.js';
-import _0x5ee89c from'./cryptographyTunnel.js';export default class Client{constructor()
-{const _0x579ba3=_0x27f0;this[_0x579ba3(0x71)]=null,this[_0x579ba3(0x6c)]=![],this['username']='',
-this[_0x579ba3(0x8b)]='',this['cryptographyTunnel']=new _0x5ee89c();}async[_0xb86e1c(0x94)]()
-{const _0x4d0490=_0xb86e1c;try{await this['initSocket'](),await this[_0x4d0490(0x8d)](),await 
-this[_0x4d0490(0x98)]();}catch(_0xabe688){console[_0x4d0490(0x7f)](_0xabe688);}}async[_0xb86e1c(0x98)]()
-{return new Promise(_0x47b9a3=>{const _0x5d9a1f=()=>{const _0x4ff75e=_0x27f0;this[_0x4ff75e(0x8a)]
-['sharedKey']&&this['socket']?_0x47b9a3():setTimeout(_0x5d9a1f,0x64);};_0x5d9a1f();});}async
-[_0xb86e1c(0x8d)](){const _0x423a8a=_0xb86e1c;this[_0x423a8a(0x71)]['on']('connect',()=>
-{const _0x53875a=_0x423a8a;console[_0x53875a(0x90)](_0x53875a(0x84));}),this[_0x423a8a(0x71)]['on']
-(_0x423a8a(0x93),async _0x13ea3f=>{const _0x203b19=_0x423a8a;await this[_0x203b19(0x8a)][_0x203b19(0x87)]
-(this[_0x203b19(0x71)],_0x13ea3f);});}async[_0xb86e1c(0x73)](){return new Promise((_0x494bde,_0x18709c)=>
-{const _0x2371ab=_0x27f0,_0x5b2de4=document[_0x2371ab(0x74)]('script');_0x5b2de4
-[_0x2371ab(0x66)]=_0x2371ab(0x6a),_0x5b2de4[_0x2371ab(0x78)]=()=>{const _0x176752=_0x2371ab;
-this[_0x176752(0x71)]=io(),_0x494bde();},_0x5b2de4['onerror']=()=>{_0x18709c(new Error
-('Failed\x20to\x20load\x20socket.io\x20library'));},document[_0x2371ab(0x80)][_0x2371ab
-(0x68)](_0x5b2de4);});}async[_0xb86e1c(0x69)](_0x4ff4bf,_0x2af7c4){const _0x497269=
-_0xb86e1c;this['loggedIn']&&(_0x4ff4bf=this['csrfToken']+'$'+_0x4ff4bf);
-const _0x1b009f=await this['cryptographyTunnel'][_0x497269(0x7c)](_0x4ff4bf);return new Promise(_0x5befac=>
-{const _0x2bc6d0=_0x497269;this[_0x2bc6d0(0x71)]['emit'](_0x2bc6d0(0x7d),_0x1b009f),this[_0x2bc6d0(0x71)]
-[_0x2bc6d0(0x99)](_0x2af7c4,async _0x55aa54=>{const _0x1f37e6=_0x2bc6d0,_0x4ce2bc=await this[_0x1f37e6(0x8a)]
-['receivePayloadFromServer'](_0x55aa54);_0x5befac(_0x4ce2bc);});});}async[_0xb86e1c(0x67)](){const _0x3b5e00=_0xb86e1c
-,_0x3d65b8='Authentication$';this['csrfToken']=await window[_0x3b5e00(0x82)]['transferToServer'](_0x3d65b8,_0x3b5e00
-(0x92)),console[_0x3b5e00(0x90)](this[_0x3b5e00(0x8b)]),this['loggedIn']=!![];}async[_0xb86e1c(0x86)](_0x1f2f69)
-{const _0x40313a=_0xb86e1c;history[_0x40313a(0x70)](null,null,_0x1f2f69),await this[_0x40313a(0x72)]();}
-async[_0xb86e1c(0x72)](){const _0x7fc8=_0xb86e1c,_0x4a038e=[{'path':_0x7fc8(0x85),'view':_0x4725ba},
-{'path':_0x7fc8(0x7b),'view':_0x519f04},{'path':_0x7fc8(0x81),'view':_0x342702},{'path':_0x7fc8(0x96),
-'view':_0x4887ce},{'path':_0x7fc8(0x6e),'view':_0x2d4596},{'path':_0x7fc8(0x8e),'view':_0x2ce377},
-{'path':_0x7fc8(0x95),'view':_0x4ee290},{'path':_0x7fc8(0x75),'view':_0x58aad9}],_0x5459f6=_0x4a038e['map']
-(_0xca8d4=>({'route':_0xca8d4,'isMatch':location['pathname']===_0xca8d4[_0x7fc8(0x76)]}));let _0x545e21=_0x5459f6
-[_0x7fc8(0x88)](_0x2a3dab=>_0x2a3dab[_0x7fc8(0x8c)]);!_0x545e21&&window[_0x7fc8(0x8f)][_0x7fc8(0x6f)]();
-const _0x217e1e=new _0x545e21[(_0x7fc8(0x89))][(_0x7fc8(0x7a))]();document[_0x7fc8(0x77)]('#app')[_0x7fc8(0x9a)]=
-await _0x217e1e['getHtml'](),await _0x217e1e[_0x7fc8(0x83)]();}}
+// Import views and modules
+import LoginView from "./views/loginView.js";
+import SignupView from "./views/signupView.js";
+import ForgotPasswordView from "./views/forgotPasswordView.js";
+import CodeVerificationView from "./views/codeVerificationView.js";
+import ResetPasswordView from "./views/resetPasswordView.js";
+import MenuView from "./views/menuView.js";
+import UploadView from "./views/uploadView.js";
+import DownloadView from "./views/downloadView.js";
+import CryptographyTunnel from "./cryptographyTunnel.js";
+
+export default class Client {
+    constructor() {
+        // Initialize properties
+        this.socket = null;
+        this.loggedIn = false;
+        this.username = "";
+        this.csrfToken = "";
+        this.cryptographyTunnel = new CryptographyTunnel();
+    }
+
+    // Initialize the client
+    async init() {
+        try {
+            // Initialize socket
+            await this.initSocket();
+            // Set up event listeners
+            await this.setupEventListeners();
+            // Wait for both socket and key exchange
+            await this.waitForInitialization();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    
+    // Wait for initialization
+    async waitForInitialization() {
+        return new Promise((resolve) => {
+            const checkInitialization = () => {
+                if (this.cryptographyTunnel.sharedKey && this.socket) {
+                    resolve(); // Resolve when both key exchange and socket initialization are done
+                } else {
+                    setTimeout(checkInitialization, 100); // Check again after a short delay
+                }
+            };
+            checkInitialization();
+        });
+    }
+
+    // Set up event listeners
+    async setupEventListeners() {
+        this.socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        this.socket.on('server-public-key', async (serverPublicKeyBase64) => {
+            await this.cryptographyTunnel.performKeyExchange(this.socket, serverPublicKeyBase64);
+        });
+    }
+
+    // Initialize socket
+    async initSocket() {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js';
+            script.onload = () => {
+                this.socket = io();
+                resolve();
+            };
+            script.onerror = () => {
+                reject(new Error('Failed to load socket.io library'));
+            };
+            document.head.appendChild(script);
+        });
+    }
+
+    // Transfer data to server
+    async transferToServer(request, resultType) {
+        if(this.loggedIn) {
+            request = this.csrfToken + '$' + request;
+        }
+        const payload = await this.cryptographyTunnel.generateClientPayload(request);
+        return new Promise((resolve) => {
+            this.socket.emit('ClientMessage', payload); // Send message with token if logged in
+    
+            this.socket.once(resultType, async (resultPayload) => {
+                const operationResult = await this.cryptographyTunnel.receivePayloadFromServer(resultPayload);
+                resolve(operationResult);
+            });
+        });
+    }
+
+    // Authenticate user
+    async authenticate() {
+        const authenticationRequest = 'Authentication$';
+        this.csrfToken = await window.client.transferToServer(authenticationRequest, 'authenticationResult');
+        console.log(this.csrfToken);
+        this.loggedIn = true;
+    }
+
+    // Navigate to a specific URL
+    async navigateTo(url) {
+        history.pushState(null, null, url);
+        await this.router();
+    }
+    
+    // Route to appropriate view based on URL
+    async router() {
+        const routes = [
+            { path: "/login", view: LoginView },
+            { path: "/signup", view: SignupView },
+            { path: "/forgotPassword", view: ForgotPasswordView },
+            { path: "/codeVerification", view: CodeVerificationView },
+            { path: "/resetPassword", view: ResetPasswordView },
+            { path: "/menu", view: MenuView },
+            { path: "/upload", view: UploadView },
+            { path: "/download", view: DownloadView }
+        ];
+    
+        // Test each route for potential match
+        const potentialMatches = routes.map(route => ({
+            route,
+            isMatch: location.pathname === route.path
+        }));
+    
+        let match = potentialMatches.find(potentialMatch => potentialMatch.isMatch);
+    
+        if (!match) {
+            // Refresh page and return to index
+            window.location.reload();
+        }
+    
+        const view = new match.route.view();
+    
+        document.querySelector("#app").innerHTML = await view.getHtml();
+        await view.executeViewScript();
+    }
+}

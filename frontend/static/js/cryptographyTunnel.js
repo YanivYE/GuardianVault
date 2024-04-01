@@ -1,42 +1,129 @@
-const _0xfc3cc0=_0x2951;function _0x2951(_0x26a87e,_0x1a3451){const _0x9269b2=_0x9269();return _0x2951=function
-(_0x295133,_0x1e4acc){_0x295133=_0x295133-0x136;let _0x42e551=_0x9269b2[_0x295133];return _0x42e551;},_0x2951
-(_0x26a87e,_0x1a3451);}(function(_0x841cb3,_0x5e31ad){const _0x1dfd42=_0x2951,_0x2307a6=_0x841cb3();while(!![])
-{try{const _0x186c8e=-parseInt(_0x1dfd42(0x155))/0x1+-parseInt(_0x1dfd42(0x13d))/0x2*(-parseInt(_0x1dfd42
-(0x136))/0x3)+-parseInt(_0x1dfd42(0x142))/0x4*(parseInt(_0x1dfd42(0x151))/0x5)+parseInt(_0x1dfd42(0x144))
-/0x6*(parseInt(_0x1dfd42(0x149))/0x7)+parseInt(_0x1dfd42(0x15e))/0x8*(-parseInt(_0x1dfd42(0x147))/0x9)+parseInt
-(_0x1dfd42(0x150))/0xa*(parseInt(_0x1dfd42(0x140))/0xb)+parseInt(_0x1dfd42(0x158))/0xc;if(_0x186c8e===_0x5e31ad)
-break;else _0x2307a6['push'](_0x2307a6['shift']());}catch(_0x433961){_0x2307a6['push'](_0x2307a6['shift']());}}}
-(_0x9269,0x1a9b6));import{hexToCryptoKey,arrayBufferToBase64,base64ToArrayBuffer,arrayBufferToHexString}from
-'./utils.js';function _0x9269(){const _0x5c2237=['message','encryptData','set','ECDH','subtle','70cRUBpO','505ZVIxsO',
-'emit','error','decrypt','137108UXxlom','deriveBits','decode','426168UtNAuN','performKeyExchange','raw',
-'decryptData','AES-GCM','Decryption\x20error:','8CYyIlU','receivePayloadFromServer','1239cbYqHf','slice',
-'sharedKey','buffer','length','encrypt','P-256','474QNAyTc','importKey','client-public-key','316459iMuWWL',
-'crypto','3788QgJSiD','deriveKey','6qsaHtX','privateKey','exportKey','1380879ADkJwm','generateKey','1122730gNyNCI',
-'encode'];_0x9269=function(){return _0x5c2237;};return _0x9269();}export default class Client{constructor(){const 
-_0x13fce3=_0x2951;this[_0x13fce3(0x138)]=null;}async[_0xfc3cc0(0x159)](_0x5eb273,_0xc41a68){return new Promise
-(async(_0x5f1db1,_0x5ac52f)=>{const _0x4fd79a=_0x2951;try{const _0x13f2ca=await window[_0x4fd79a(0x141)]
-[_0x4fd79a(0x14f)][_0x4fd79a(0x148)]({'name':_0x4fd79a(0x14e),'namedCurve':'P-256'},!![],
-[_0x4fd79a(0x143),_0x4fd79a(0x156)]),_0x1332fa=await window['crypto']['subtle'][_0x4fd79a(0x146)]
-(_0x4fd79a(0x15a),_0x13f2ca['publicKey']),_0x4d7182=arrayBufferToBase64(_0x1332fa);_0x5eb273[_0x4fd79a(0x152)]
-(_0x4fd79a(0x13f),_0x4d7182);const _0x41dc59=await window[_0x4fd79a(0x141)]['subtle'][_0x4fd79a(0x13e)]
-('raw',base64ToArrayBuffer(_0xc41a68),{'name':_0x4fd79a(0x14e),'namedCurve':'P-256'},!![],[]),_0x1a43c4=
-{'name':_0x4fd79a(0x14e),'namedCurve':_0x4fd79a(0x13c),'public':_0x41dc59};this[_0x4fd79a(0x138)]=await window
-['crypto']['subtle'][_0x4fd79a(0x156)](_0x1a43c4,_0x13f2ca[_0x4fd79a(0x145)],0x100),this[_0x4fd79a(0x138)]=
-await hexToCryptoKey(arrayBufferToHexString(this['sharedKey'])),_0x5f1db1();}catch(_0x46542c){_0x5ac52f(_0x46542c);
-}});}async['generateClientPayload'](_0x2841ac){const _0xcac7b8=_0xfc3cc0,{iv:_0x34ccf0,ciphertext:_0x2df15a,
-tag:_0x3ab0ff}=await this[_0xcac7b8(0x14c)](_0x2841ac),_0x206cfc=new Uint8Array(_0x34ccf0['length']+_0x2df15a
-[_0xcac7b8(0x13a)]+_0x3ab0ff[_0xcac7b8(0x13a)]);_0x206cfc[_0xcac7b8(0x14d)](_0x34ccf0,0x0),_0x206cfc[_0xcac7b8
-(0x14d)](_0x2df15a,_0x34ccf0[_0xcac7b8(0x13a)]),_0x206cfc['set'](_0x3ab0ff,_0x34ccf0[_0xcac7b8(0x13a)]
-+_0x2df15a['length']);const _0x2770ff=arrayBufferToBase64(_0x206cfc[_0xcac7b8(0x139)]);return _0x2770ff;}
-async[_0xfc3cc0(0x15f)](_0x10efea){const _0x2b9bb9=_0xfc3cc0,_0x3ef1f8=base64ToArrayBuffer(_0x10efea);
-return await this[_0x2b9bb9(0x15b)](_0x3ef1f8);}async[_0xfc3cc0(0x14c)](_0x579882){const 
-_0x2dfe15=_0xfc3cc0,_0x47300f=crypto['getRandomValues'](new Uint8Array(0x10)),_0x2f052d=new 
-TextEncoder()[_0x2dfe15(0x14a)](_0x579882),_0x4c3e58=await crypto[_0x2dfe15(0x14f)][_0x2dfe15
-(0x13b)]({'name':_0x2dfe15(0x15c),'iv':_0x47300f},this[_0x2dfe15(0x138)],_0x2f052d)
-,_0x524f51=new Uint8Array(_0x4c3e58),_0x257cc7=new Uint8Array(_0x4c3e58['slice'](-0x10));
-return{'iv':_0x47300f,'ciphertext':_0x524f51,'tag':_0x257cc7};}async[_0xfc3cc0(0x15b)]
-(_0x5311c8){const _0x335315=_0xfc3cc0;try{const _0x3df37d=await crypto[_0x335315(0x14f)]
-[_0x335315(0x154)]({'name':_0x335315(0x15c),'iv':_0x5311c8[_0x335315(0x137)](0x0,0x10)},
-this[_0x335315(0x138)],_0x5311c8[_0x335315(0x137)](0x10)),_0x1e2bd1=new TextDecoder()
-[_0x335315(0x157)](_0x3df37d);return _0x1e2bd1;}catch(_0x4c6fdd){console[_0x335315(0x153)]
-(_0x335315(0x15d),_0x4c6fdd[_0x335315(0x14b)]);throw _0x4c6fdd;}}}
+import { 
+    hexToCryptoKey, 
+    arrayBufferToBase64, 
+    base64ToArrayBuffer, 
+    arrayBufferToHexString 
+} from './utils.js';
+
+export default class Client {
+    constructor() {
+        this.sharedKey = null;
+    }
+
+    // Performs key exchange with the server.
+    async performKeyExchange(socket, serverPublicKeyBase64) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                // Generate ECDH key pair
+                const keyPair = await window.crypto.subtle.generateKey(
+                    {
+                        name: "ECDH",
+                        namedCurve: "P-256"
+                    },
+                    true,
+                    ["deriveKey", "deriveBits"]
+                );
+
+                // Export client's public key
+                const clientPublicKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
+                const clientPublicKeyBase64 = arrayBufferToBase64(clientPublicKey);
+
+                // Send client's public key to server
+                socket.emit('client-public-key', clientPublicKeyBase64);
+
+                // Import server's public key
+                const importedServerPublicKey = await window.crypto.subtle.importKey(
+                    "raw",
+                    base64ToArrayBuffer(serverPublicKeyBase64),
+                    {
+                        name: "ECDH",
+                        namedCurve: "P-256"
+                    },
+                    true,
+                    []
+                );
+
+                // Derive shared secret
+                const sharedSecretAlgorithm = {
+                    name: 'ECDH',
+                    namedCurve: 'P-256',
+                    public: importedServerPublicKey
+                };
+
+                this.sharedKey = await window.crypto.subtle.deriveBits(
+                    sharedSecretAlgorithm,
+                    keyPair.privateKey,
+                    256
+                );
+
+                // Convert shared key to usable format
+                this.sharedKey = await hexToCryptoKey(arrayBufferToHexString(this.sharedKey));
+
+                resolve(); // Resolve the promise to indicate key exchange completion
+            } catch (error) {
+                reject(error); // Reject with error if key exchange fails
+            }
+        });
+    }
+
+    // Generates a payload for sending to the server.
+    async generateClientPayload(data) {
+        const { iv, ciphertext, tag } = await this.encryptData(data);
+        const payload = new Uint8Array(iv.length + ciphertext.length + tag.length);
+        payload.set(iv, 0);
+        payload.set(ciphertext, iv.length);
+        payload.set(tag, iv.length + ciphertext.length);
+        const base64Payload = arrayBufferToBase64(payload.buffer);
+        return base64Payload;
+    }
+
+    // Decrypts the payload received from the server.
+    async receivePayloadFromServer(serverPayload) {
+        const payload = base64ToArrayBuffer(serverPayload);
+        return await this.decryptData(payload);
+    }
+
+    // Encrypts data using AES-GCM.
+    async encryptData(data) {    
+        // Generate a random IV (Initialization Vector)
+        const iv = crypto.getRandomValues(new Uint8Array(16));
+
+        // Convert the text to ArrayBuffer
+        const arrayBufferData = new TextEncoder().encode(data);
+
+        // Encrypt the data using AES-GCM
+        const encryptedData = await crypto.subtle.encrypt(
+            { name: 'AES-GCM', iv },
+            this.sharedKey,
+            arrayBufferData
+        );
+
+        // Get the ciphertext and authentication tag
+        const ciphertext = new Uint8Array(encryptedData);
+        const tag = new Uint8Array(encryptedData.slice(-16));
+
+        return { iv, ciphertext, tag };
+    }
+
+    // Decrypts data encrypted using AES-GCM.
+    async decryptData(payload) {    
+        try {
+            // Decrypt the data using AES-GCM
+            const decryptedData = await crypto.subtle.decrypt(
+                { name: 'AES-GCM', iv: payload.slice(0, 16)},
+                this.sharedKey,
+                payload.slice(16)
+            );
+
+            // Convert the decrypted ArrayBuffer to a string
+            const decryptedText = new TextDecoder().decode(decryptedData);
+
+            // Return the decrypted plaintext
+            return decryptedText;
+        } catch (error) {
+            // Handle decryption errors
+            console.error('Decryption error:', error.message);
+            throw error;
+        }
+    }
+}

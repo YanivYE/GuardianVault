@@ -1,137 +1,219 @@
-const _0x450b02=_0x1e36;(function(_0xa8a348,_0x23a785){const _0x58a839=_0x1e36,_0x18b5d7=_0xa8a348();while(!![]){try{const 
-_0x28b708=-parseInt(_0x58a839(0x1f0))/0x1+-parseInt(_0x58a839(0x229))/0x2+-parseInt(_0x58a839(0x20c))/0x3*(-parseInt
-(_0x58a839(0x207))/0x4)+parseInt(_0x58a839(0x213))/0x5*(-parseInt(_0x58a839(0x1f7))/0x6)+-parseInt(_0x58a839(0x1ed))
-/0x7+-parseInt(_0x58a839(0x217))/0x8*(parseInt(_0x58a839(0x1f2))/0x9)+parseInt(_0x58a839(0x221))/0xa;if(_0x28b708===
-_0x23a785)break;else _0x18b5d7['push'](_0x18b5d7['shift']());}catch(_0x1a937f){_0x18b5d7['push'](_0x18b5d7['shift']
-());}}}(_0x4ffd,0x28071));import _0x1be2aa from'./AbstractView.js';function _0x1e36(_0x4f2928,_0x594091){const
-_0x4ffd65=_0x4ffd();return _0x1e36=function(_0x1e3695,_0x7ca24f){_0x1e3695=_0x1e3695-0x1ec;let _0x3c7278=
-_0x4ffd65[_0x1e3695];return _0x3c7278;},_0x1e36(_0x4f2928,_0x594091);}function _0x4ffd(){const _0x335ea1=
-['addEventListener','.input-reset100','navigateTo','60tStbMi','style','type','resetPasswordForm',
-'click','48885JHQlEX','Weak','querySelectorAll','password-strength-text','lower-check','Reset\x20Password'
-,'setMessageBox','5eFtiIO','eye-reset','setAttribute','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20<div\x20class=\x22limiter\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\
-x20Reset\x20password\x20container\x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20<div\x20class=\x22container-reset100\x22\x20style=\x22background-image:\x20url(\x27static/css/images/bg-01.jpg\x27);\x22>\x0a\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22wrap-reset100\x20p-t-30\x20p-b-50\
-x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\x20Title\x20-->\x0a\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\
-x22reset100-form-title\x20p-b-41\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20Reset\x20Your\x20Password\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\
-x20Password\x20reset\x20form\x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20<form\x20id=\x22resetPasswordForm\x22\x20class=\x22reset100-form\x20validate-form\x20p-b-33\x20p-t-5\x22>\x0a\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\x20Password\x20input\
-x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\
-x20class=\x22wrap-input-reset100\x20validate-input\x22\x20data-validate=\x22Enter\x20password\x22>\x0a\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<input\x20class=\
-x22input-reset100\x22\x20type=\x22text\x22\x20name=\x22password\x22\x20id=\x22password-reset\x22\x20placeholder=\x22Password\
-x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20<span\x20class=\x22focus-input-reset100\x22\x20data-placeholder=\x22&#xe80f;\x22></span>\x0a\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\x20Show/Hide\
-x20password\x20toggle\x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22btn-show-pass\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<i\x20class=\x22fa-solid\x20fa-eye\x22\
-x20id=\x22eye-reset\x22></i>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\x20Password\x20strength\x20indicator\x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20id=\
-x22password-strength-reset\x22\x20class=\x22password-strength-reset\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22strength-text\
-x22>Password\x20Requirements:</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22requirements\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20<!--\x20Password\x20strength\x20requirements\x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22requirement\x22\
-x20id=\x22length-req\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<input\x20type=\x22checkbox\x22\x20id=\
-x22length-check\x22\x20disabled>\x20Minimum\x208\x20characters\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20<div\x20class=\x22requirement\x22\x20id=\x22lower-req\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<input\
-x20type=\x22checkbox\x22\x20id=\x22lower-check\x22\x20disabled>\x20At\x20least\x201\x20lowercase\x20letter\x0a\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22requirement\x22\x20id=\x22upper-req\x22>\x0a\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<input\x20type=\x22checkbox\x22\x20id=\x22upper-check\x22\x20disabled>\x20At\x20least\x201\
-x20uppercase\x20letter\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22requirement\
-x22\x20id=\x22special-req\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<input\x20type=\x22checkbox\x22\x20id=\
-x22special-check\x22\x20disabled>\x20At\x20least\x201\x20special\x20character\x20(!@#$%^&*-)\x0a\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\x20Password\x20strength\x20meter\x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\
-x22strength-meter\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22strength-bar-reset\x22\x20id=\x22strength-bar-reset\
-x22></div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\x20Password\x20strength\x20text\x20-->\x0a\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\
-x20class=\x22password-strength-text\x22\x20id=\x22password-strength-text\x22></div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\x20Submit\x20button\x20-->\x0a\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\
-x22container-reset100-form-btn\x20m-t-32\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<button\x20id=\x22resetPasswordButton\x22\x20type=\x22submit\x22\x20class=\
-x22reset100-form-btn\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20Reset\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</button>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\x20Error\x20message\x20display\x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20id=\x22message\x22\x20style=\x22color:\x20red;\
-x20display:\x20none;\x22></div>\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\
-x20\x20</form>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\
-x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\
-x20\x20\x20\x20','1240eoXLcK','Strong','classList','getHtml','resetPasswordResult','inputValidator','authenticate','Password\
-x20reset\x20successfully!','successAlert','has-val','6719400ToQAxZ','getElementById','parentElement','client','ResetPassword$',
-'input','upper-check','text','182232SCGZcJ','preventDefault','none','validatePasswordStrength','1998101azwfut','strength-bar-reset'
-,'generalInputValidation','23798ywuKZM','setTitle','7893AahEDj','textContent','toggle','Medium','checked','1296720rGwkdm',
-'password','forEach','test','password-reset','executeViewScript','add','fa-eye-slash','getAttribute','length-check','blur','value',
-'message'];_0x4ffd=function(){return _0x335ea1;};return _0x4ffd();}export default class ResetPasswordView extends _0x1be2aa
-{constructor(){const _0x3ce0d7=_0x1e36;super(),this[_0x3ce0d7(0x1f1)](_0x3ce0d7(0x211));}async[_0x450b02(0x21a)](){const _0x488a7b=
-_0x450b02;return _0x488a7b(0x216);}async[_0x450b02(0x1fc)](){const _0x5f35c2=_0x450b02,_0x5357e5=this[_0x5f35c2(0x21c)],
-_0x5ee066=document[_0x5f35c2(0x222)](_0x5f35c2(0x203));_0x5357e5[_0x5f35c2(0x212)](_0x5ee066);const _0x5ebb4e=document
-[_0x5f35c2(0x20e)](_0x5f35c2(0x205));_0x5ebb4e[_0x5f35c2(0x1f9)](_0x2f09ba);const _0x5b70c0=document['getElementById']
-(_0x5f35c2(0x20a));_0x5b70c0[_0x5f35c2(0x204)]('submit',_0x15538b);const _0x4129dc=document['getElementById'](_0x5f35c2
-(0x214)),_0xe7b59d=document[_0x5f35c2(0x222)](_0x5f35c2(0x1fb));_0x4129dc['addEventListener'](_0x5f35c2(0x20b),
-_0x5da618),_0x1d673f(_0xe7b59d,_0x4129dc),document['getElementById'](_0x5f35c2(0x1fb))[_0x5f35c2(0x204)](_0x5f35c2
-(0x226),function(){const _0x1b36de=_0x5f35c2,_0x2b0cbe=this[_0x1b36de(0x202)];_0x3b83ab(_0x2b0cbe);});function 
-_0x2f09ba(_0x4a5e0a){const _0x542a22=_0x5f35c2;_0x4a5e0a[_0x542a22(0x204)](_0x542a22(0x201),function(){_0x381db2
-(_0x4a5e0a);});}function _0x5da618(){const _0x22beb0=_0x5f35c2,_0x32daba=document['getElementById']
-(_0x22beb0(0x214)),_0x560f11=document['getElementById'](_0x22beb0(0x1fb)),_0x3935d6=_0x560f11[_0x22beb0(0x1ff)]
-(_0x22beb0(0x209))==='password'?_0x22beb0(0x228):_0x22beb0(0x1f8);_0x560f11[_0x22beb0(0x215)](_0x22beb0(0x209)
-,_0x3935d6),_0x32daba[_0x22beb0(0x219)][_0x22beb0(0x1f4)]('fa-eye-slash',_0x3935d6===_0x22beb0(0x1f8));}
-function _0x1d673f(_0x84b685,_0x3d3812){const _0x4351be=_0x5f35c2,_0x33228c=_0x84b685[_0x4351be(0x1ff)]
-(_0x4351be(0x209))==='password'?_0x4351be(0x228):_0x4351be(0x1f8);_0x84b685[_0x4351be(0x215)]('type',
-_0x33228c),_0x3d3812[_0x4351be(0x219)][_0x4351be(0x1f4)](_0x4351be(0x1fe),_0x33228c===_0x4351be(0x1f8));}
-function _0x381db2(_0x1cc32b){const _0x30d73a=_0x5f35c2;_0x1cc32b[_0x30d73a(0x202)]['trim']()!==''?
-_0x1cc32b['parentElement'][_0x30d73a(0x219)][_0x30d73a(0x1fd)](_0x30d73a(0x220)):_0x1cc32b[_0x30d73a(0x223)
-]['classList']['remove'](_0x30d73a(0x220));}function _0x3b83ab(_0x38e6ea){const _0x4e88cf=_0x5f35c2,
-_0x48fd7c=/(?=.{8,})/,_0x3c4e0f=/(?=.*[a-z])/,_0x3bcfa8=/(?=.*[A-Z])/,_0x56cc23=/(?=.*[!@#$%^&*-])/
-,_0x2eb330=document[_0x4e88cf(0x222)](_0x4e88cf(0x200)),_0x542efc=document[_0x4e88cf(0x222)]
-(_0x4e88cf(0x210)),_0x429dc4=document[_0x4e88cf(0x222)](_0x4e88cf(0x227)),_0x20e841=document
-[_0x4e88cf(0x222)]('special-check');_0x2eb330['checked']=_0x48fd7c['test'](_0x38e6ea),_0x542efc
-[_0x4e88cf(0x1f6)]=_0x3c4e0f[_0x4e88cf(0x1fa)](_0x38e6ea),_0x429dc4[_0x4e88cf(0x1f6)]=_0x3bcfa8
-[_0x4e88cf(0x1fa)](_0x38e6ea),_0x20e841[_0x4e88cf(0x1f6)]=_0x56cc23[_0x4e88cf(0x1fa)](_0x38e6ea);
-const _0x260ff8=(_0x48fd7c['test'](_0x38e6ea)+_0x3c4e0f['test'](_0x38e6ea)+_0x3bcfa8['test']
-(_0x38e6ea)+_0x56cc23[_0x4e88cf(0x1fa)](_0x38e6ea))/0x4,_0x5b3901=document[_0x4e88cf(0x222)](_0x4e88cf
-(0x1ee));_0x5b3901[_0x4e88cf(0x208)]['width']=_0x260ff8*0x64+'%',_0x5b3901['style']
-['backgroundColor']=_0x3bac38(_0x260ff8),_0x406f1c(_0x260ff8);}function _0x406f1c(_0x53118f)
-{const _0x2b43be=_0x5f35c2,_0x7d727b=document[_0x2b43be(0x222)](_0x2b43be(0x20f));_0x7d727b
-[_0x2b43be(0x1f3)]=_0x53f4bb(_0x53118f);}function _0x3bac38(_0x2e5ad0){if(_0x2e5ad0<0.3)
-return'#FF0000';else{if(_0x2e5ad0<0.6)return'#FFD700';else return _0x2e5ad0<0.9?
-'#00FF00':'#006400';}}function _0x53f4bb(_0x102d5e){const _0x248807=_0x5f35c2;if
-(_0x102d5e<0.3)return _0x248807(0x20d);else{if(_0x102d5e<0.6)return _0x248807(0x1f5);else return _0x102d5e<0.9?_0x248807(0x218):
-'Excellent!';}}function _0xa67796(_0x214de3){const _0x592fd5=_0x5f35c2,_0x3d31c6=document['getElementById'](_0x592fd5(0x20f))
-[_0x592fd5(0x1f3)];return _0x5357e5[_0x592fd5(0x1ef)](_0x214de3)&&_0x5357e5[_0x592fd5(0x1ec)](_0x3d31c6);}async function 
-_0x15538b(_0x4d3cbb){const _0x5dba56=_0x5f35c2;_0x4d3cbb[_0x5dba56(0x22a)]();const _0x5d72bb=document['getElementsByName']
-(_0x5dba56(0x1f8))[0x0][_0x5dba56(0x202)];_0x5ee066[_0x5dba56(0x208)]['display']=_0x5dba56(0x22b);if(_0xa67796(_0x5d72bb))
-{_0x5357e5[_0x5dba56(0x21f)](_0x5dba56(0x21e));const _0x88d9fa=_0x5dba56(0x225)+_0x5d72bb,_0x32fd2f=await window[_0x5dba56
-(0x224)]['transferToServer'](_0x88d9fa,_0x5dba56(0x21b));_0x32fd2f==='Success'&&(await window[_0x5dba56(0x224)][_0x5dba56
-(0x21d)](),window['client'][_0x5dba56(0x206)]('/menu'));}}}}
+import AbstractView from "./AbstractView.js";
+
+export default class ResetPasswordView extends AbstractView {
+    constructor() {
+        super();
+        this.setTitle("Reset Password");
+    }
+
+    async getHtml() {
+        // HTML template for the reset password view
+        return `
+            <div class="limiter">
+                <!-- Reset password container -->
+                <div class="container-reset100" style="background-image: url('static/css/images/bg-01.jpg');">
+                    <div class="wrap-reset100 p-t-30 p-b-50">
+                        <!-- Title -->
+                        <span class="reset100-form-title p-b-41">
+                            Reset Your Password
+                        </span>
+                        <!-- Password reset form -->
+                        <form id="resetPasswordForm" class="reset100-form validate-form p-b-33 p-t-5">
+                            <!-- Password input -->
+                            <div class="wrap-input-reset100 validate-input" data-validate="Enter password">
+                                <input class="input-reset100" type="text" name="password" id="password-reset" placeholder="Password">
+                                <span class="focus-input-reset100" data-placeholder="&#xe80f;"></span>
+                                <!-- Show/Hide password toggle -->
+                                <span class="btn-show-pass">
+                                    <i class="fa-solid fa-eye" id="eye-reset"></i>
+                                </span>
+                                <!-- Password strength indicator -->
+                                <div id="password-strength-reset" class="password-strength-reset">
+                                    <div class="strength-text">Password Requirements:</div>
+                                    <div class="requirements">
+                                        <!-- Password strength requirements -->
+                                        <div class="requirement" id="length-req">
+                                            <input type="checkbox" id="length-check" disabled> Minimum 8 characters
+                                        </div>
+                                        <div class="requirement" id="lower-req">
+                                            <input type="checkbox" id="lower-check" disabled> At least 1 lowercase letter
+                                        </div>
+                                        <div class="requirement" id="upper-req">
+                                            <input type="checkbox" id="upper-check" disabled> At least 1 uppercase letter
+                                        </div>
+                                        <div class="requirement" id="special-req">
+                                            <input type="checkbox" id="special-check" disabled> At least 1 special character (!@#$%^&*-)
+                                        </div>
+                                    </div>
+                                    <!-- Password strength meter -->
+                                    <div class="strength-meter">
+                                        <div class="strength-bar-reset" id="strength-bar-reset"></div>
+                                    </div>
+                                    <!-- Password strength text -->
+                                    <div class="password-strength-text" id="password-strength-text"></div>
+                                </div>
+                            </div>
+                            <!-- Submit button -->
+                            <div class="container-reset100-form-btn m-t-32">
+                                <button id="resetPasswordButton" type="submit" class="reset100-form-btn">
+                                    Reset
+                                </button>
+                            </div>
+                            <!-- Error message display -->
+                            <div id="message" style="color: red; display: none;"></div> 
+                        </form>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    async executeViewScript() {
+        // Initialize validator and message box
+        const validator = this.inputValidator;
+        const messageBox = document.getElementById("message");
+        validator.setMessageBox(messageBox);
+
+        // Add event listeners and initialize password visibility
+        const inputFields = document.querySelectorAll('.input-reset100');
+        inputFields.forEach(addInputBlurEventListener);
+
+        const resetPasswordForm = document.getElementById("resetPasswordForm");
+        resetPasswordForm.addEventListener("submit", handleFormSubmission);
+
+        const eyeIcon = document.getElementById("eye-reset");
+        const passwordInput = document.getElementById("password-reset");
+        eyeIcon.addEventListener("click", togglePasswordVisibility);
+        setPasswordVisibility(passwordInput, eyeIcon);
+
+        // Add input event listener for password strength
+        document.getElementById('password-reset').addEventListener('input', function () {
+            const password = this.value;
+            checkPasswordStrength(password);
+        });
+
+        // Function to add blur event listener for input fields
+        function addInputBlurEventListener(input) {
+            input.addEventListener("blur", function () {
+                toggleInputClass(input);
+            });
+        }
+
+        // Function to toggle password visibility
+        function togglePasswordVisibility() {
+            const eyeIcon = document.getElementById("eye-reset");
+            const passwordInput = document.getElementById("password-reset");
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            eyeIcon.classList.toggle("fa-eye-slash", type === "password");
+        }
+
+        // Function to set initial password visibility
+        function setPasswordVisibility(passwordInput, eyeIcon) {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            eyeIcon.classList.toggle("fa-eye-slash", type === "password");
+        }
+
+        // Function to toggle input class based on value
+        function toggleInputClass(input) {
+            if (input.value.trim() !== "") {
+                input.parentElement.classList.add("has-val");
+            } else {
+                input.parentElement.classList.remove("has-val");
+            }
+        }
+
+        // Function to check password strength
+        function checkPasswordStrength(password) {
+            // Regular expressions for password strength
+            const regexLength = /(?=.{8,})/;
+            const regexLower = /(?=.*[a-z])/;
+            const regexUpper = /(?=.*[A-Z])/;
+            const regexSpecial = /(?=.*[!@#$%^&*-])/;
+
+            // Get checkbox elements for strength requirements
+            const lengthCheck = document.getElementById('length-check');
+            const lowerCheck = document.getElementById('lower-check');
+            const upperCheck = document.getElementById('upper-check');
+            const specialCheck = document.getElementById('special-check');
+
+            // Check password against each requirement
+            lengthCheck.checked = regexLength.test(password);
+            lowerCheck.checked = regexLower.test(password);
+            upperCheck.checked = regexUpper.test(password);
+            specialCheck.checked = regexSpecial.test(password);
+
+            // Calculate strength
+            const strength = (regexLength.test(password) + regexLower.test(password) +
+                regexUpper.test(password) + regexSpecial.test(password)) / 4;
+
+            // Update strength bar and text
+            const strengthBar = document.getElementById('strength-bar-reset');
+            strengthBar.style.width = (strength * 100) + '%';
+            strengthBar.style.backgroundColor = getStrengthColor(strength);
+            updatePasswordStrengthText(strength);
+        }
+
+        // Function to update password strength text
+        function updatePasswordStrengthText(strength) {
+            const passwordStrengthText = document.getElementById('password-strength-text');
+            passwordStrengthText.textContent = getStrengthText(strength);
+        }
+
+        // Function to get strength color
+        function getStrengthColor(strength) {
+            if (strength < 0.3) {
+                return "#FF0000"; // Red for weak
+            } else if (strength < 0.6) {
+                return "#FFD700"; // Yellow for medium
+            } else if (strength < 0.9) {
+                return "#00FF00"; // Green for strong
+            } else {
+                return "#006400"; // Darker green
+            }
+        }
+
+        // Function to get strength text
+        function getStrengthText(strength) {
+            if (strength < 0.3) {
+                return "Weak";
+            } else if (strength < 0.6) {
+                return "Medium";
+            } else if (strength < 0.9) {
+                return "Strong";
+            } else {
+                return "Excellent!";
+            }
+        }
+
+        // Function to validate password
+        function validate(password) {
+            const strengthText = document.getElementById('password-strength-text').textContent;
+            return validator.generalInputValidation(password) && validator.validatePasswordStrength(strengthText);
+        }
+
+        // Function to handle form submission
+        async function handleFormSubmission(event) {
+            event.preventDefault();
+            const password = document.getElementsByName("password")[0].value;
+            messageBox.style.display = "none";
+
+            // Validate password
+            if (validate(password)) {
+                // Display success message
+                validator.successAlert("Password reset successfully!");
+                
+                // Send reset password request to server
+                const resetPasswordRequest = 'ResetPassword$' + password;
+                const resetPasswordResult = await window.client.transferToServer(resetPasswordRequest, 'resetPasswordResult');
+
+                // If reset successful, authenticate and navigate to menu
+                if (resetPasswordResult === 'Success') {
+                    await window.client.authenticate();
+                    window.client.navigateTo('/menu');
+                }
+            }
+        }
+    }
+}

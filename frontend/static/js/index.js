@@ -1,25 +1,55 @@
-(function(_0x44cd7a,_0x262ddb){const _0xe6c7ca=_0x378d,_0x5c426b=_0x44cd7a();while(!![]){try
-{const _0x5e31dc=-parseInt(_0xe6c7ca(0x157))/0x1*(-parseInt(_0xe6c7ca(0x153))/0x2)+parseInt
-(_0xe6c7ca(0x14f))/0x3*(-parseInt(_0xe6c7ca(0x158))/0x4)+-parseInt(_0xe6c7ca(0x14a))/0x5*(-parseInt(_0xe6c7ca(0x165))
-/0x6)+parseInt(_0xe6c7ca(0x15f))/0x7+parseInt(_0xe6c7ca(0x14d))/0x8*(parseInt(_0xe6c7ca(0x162))/0x9)+-parseInt
-(_0xe6c7ca(0x152))/0xa+parseInt(_0xe6c7ca(0x15a))/0xb*(-parseInt(_0xe6c7ca(0x160))/0xc);if(_0x5e31dc===_0x262ddb)
-break;else _0x5c426b['push'](_0x5c426b['shift']());}catch(_0x3ca498){_0x5c426b['push'](_0x5c426b['shift']());}}}
-(_0xd02d,0xdc82a));import _0x51288b from'./client.js';const initializeClient=async()=>{const _0x1b107d=_0x378d;window
-['client']=new _0x51288b(),await window[_0x1b107d(0x164)][_0x1b107d(0x15b)]();},handlePopState=()=>
-{const _0xfa180e=_0x378d;window[_0xfa180e(0x164)][_0xfa180e(0x14c)]();},enableButton=()=>{const 
-_0x5ef4c6=_0x378d,_0x22b93f=document['getElementById'](_0x5ef4c6(0x150));setTimeout(()=>{const _0x3d3c62=_0x5ef4c6;_0x22b93f
-['removeAttribute']('disabled'),document['getElementById'](_0x3d3c62(0x15d))[_0x3d3c62(0x15c)]='Established',document
-[_0x3d3c62(0x14b)](_0x3d3c62(0x15d))['classList'][_0x3d3c62(0x14e)](_0x3d3c62(0x156));},0xbb8);},addConnectionAnimation=
-()=>{setTimeout(()=>{const _0x1e293e=_0x378d;document[_0x1e293e(0x14b)](_0x1e293e(0x15d))[_0x1e293e(0x161)]
-[_0x1e293e(0x163)](_0x1e293e(0x156));},0x1f4);},handleContinueButtonClick=()=>{const _0x2a70cf=_0x378d
-,_0x10822c=document[_0x2a70cf(0x14b)](_0x2a70cf(0x150));_0x10822c['addEventListener'](_0x2a70cf(0x15e)
-,_0x311e79=>{const _0x2c0106=_0x2a70cf;_0x10822c[_0x2c0106(0x155)]('disabled')?_0x311e79[_0x2c0106(0x154)]():
-window[_0x2c0106(0x164)][_0x2c0106(0x151)](_0x2c0106(0x159));});},main=async()=>{await initializeClient(),window
-['addEventListener']('popstate',handlePopState),enableButton(),addConnectionAnimation(),handleContinueButtonClick()
-;};main();function _0x378d(_0x5ae991,_0x1ebd84){const _0xd02d80=_0xd02d();return _0x378d=function
-(_0x378df8,_0x266717){_0x378df8=_0x378df8-0x14a;let _0x53e95f=_0xd02d80[_0x378df8];return _0x53e95f;}
-,_0x378d(_0x5ae991,_0x1ebd84);}function _0xd02d(){const _0x2ae1f7=['5892821qMEadm','init','textContent',
-'connectionStatus','click','4696447umEFlE','48FLtLdQ','classList','256527iNpWRl','add','client','78lmHGLq',
-'195715COfhfK','getElementById','router','472vUmwsD','remove','3faOpVf','continueButton','navigateTo',
-'7186480VmCdeV','4264PVgBLF','preventDefault','hasAttribute','animating','466enIVEp','361068YvLWIV',
-'/login'];_0xd02d=function(){return _0x2ae1f7;};return _0xd02d();}
+import Client from "./client.js";
+
+// Initialize client
+const initializeClient = async () => {
+  window.client = new Client();
+  await window.client.init();
+};
+
+// Handle popstate events with router
+const handlePopState = () => {
+  window.client.router();
+};
+
+// Enable the button after 3 seconds
+const enableButton = () => {
+  const continueButton = document.getElementById('continueButton');
+  setTimeout(() => {
+    continueButton.removeAttribute('disabled');
+    document.getElementById('connectionStatus').textContent = 'Established';
+    // Remove animation class
+    document.getElementById('connectionStatus').classList.remove('animating');
+  }, 3000);
+};
+
+// Add animation class while establishing connection
+const addConnectionAnimation = () => {
+  setTimeout(() => {
+    document.getElementById('connectionStatus').classList.add('animating');
+  }, 500);
+};
+
+// Handle click event on continue button
+const handleContinueButtonClick = () => {
+  const continueButton = document.getElementById('continueButton');
+  continueButton.addEventListener('click', (event) => {
+    // Prevent default action (click) during the first 3 seconds
+    if (continueButton.hasAttribute('disabled')) {
+      event.preventDefault();
+    } else {
+      window.client.navigateTo('/login');
+    }
+  });
+};
+
+// Main function to run the initialization and event listeners
+const main = async () => {
+  await initializeClient();
+  window.addEventListener("popstate", handlePopState);
+  enableButton();
+  addConnectionAnimation();
+  handleContinueButtonClick();
+};
+
+// Run the main function
+main();
