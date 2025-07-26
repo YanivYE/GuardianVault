@@ -1,72 +1,30 @@
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to GuardianVault</title>
-  <!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="static/css/images/icons/logo.png"/>
-  <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="static/css/vendor/bootstrap/css/bootstrap.min.css">
-  <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="static/css/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-  <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="static/css/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
-  <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="static/css/vendor/animate/animate.css">
-  <!--===============================================================================================-->	
-    <link rel="stylesheet" type="text/css" href="static/css/vendor/css-hamburgers/hamburgers.min.css">
-  <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="static/css/vendor/animsition/css/animsition.min.css">
-  <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="static/css/vendor/select2/select2.min.css">
-  <!--===============================================================================================-->	
-    <link rel="stylesheet" type="text/css" href="static/css/vendor/daterangepicker/daterangepicker.css">
-  <!--===============================================================================================-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-  <!--===============================================================================================-->  
-    <link rel="stylesheet" type="text/css" href="static/css/main.css">
-  <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="static/css/util.css">
-  <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="static/css/index.css">
-  <!--===============================================================================================-->
-    
-
-    <script src="static/css/vendor/jquery/jquery-3.2.1.min.js"></script>
-  <!--===============================================================================================-->
-    <script src="static/css/vendor/animsition/js/animsition.min.js"></script>
-  <!--===============================================================================================-->
-    <script src="static/css/vendor/bootstrap/js/popper.js"></script>
-  <!--===============================================================================================-->
-    <script src="static/css/vendor/bootstrap/js/bootstrap.min.js"></script>
-  <!--===============================================================================================-->
-    <script src="static/css/vendor/select2/select2.min.js"></script>
-  <!--===============================================================================================-->
-    <script src="static/css/vendor/daterangepicker/moment.min.js"></script>
-  <!--===============================================================================================-->
-    <script src="static/css/vendor/daterangepicker/daterangepicker.js"></script>
-  <!--===============================================================================================-->
-    <script src="static/css/vendor/countdowntime/countdowntime.js"></script>
-
-</head>
-<body>
-  <div id="app">
-    <div class="container-index100" style="background-image: url('static/css/images/bg-01.jpg');">
-      <div id="topContent">
-        <h1>Welcome to GuardianVault!</h1>
-        <h1>Made by Yaniv Yehezkel and Elior Yousefi.</h1> 
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to GuardianVault</title>
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="static/css/images/icons/logo.png" />
+  </head>
+  <body>
+    <div id="app">
+      <div
+        class="container-index100"
+        style="background-image: url('static/css/images/bg-01.jpg')"
+      >
+        <div id="topContent">
+          <h1>Welcome to GuardianVault!</h1>
+          <h1>Made by Yaniv Yehezkel and Elior Yousefi.</h1>
+        </div>
+        <div id="contentContainer"></div>
+        <div class="container-index100-form-btn">
+          <p id="connectionStatus">Establishing a secure connection</p>
+          <button id="continueButton" class="index100-form-btn" disabled>
+            Continue
+          </button>
+        </div>
       </div>
-      <div id="contentContainer"></div>
-      <div class="container-index100-form-btn">
-        <p id="connectionStatus">Establishing a secure connection</p>
-        <button id="continueButton" class="index100-form-btn" disabled>
-          Continue
-        </button>
-      </div>
+      <script type="module" src="static/js/index.js"></script>
     </div>
-    <script type="module" src="static/js/index.js"></script>
-  </div>
-</body>
-</html> 
-
-
+  </body>
+</html>
